@@ -52,9 +52,19 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter_icons:
-  android: true
+  android: "launcher_icon"
   ios: true
   image_path: "assets/icon/logo_gc_verde_1.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icon/logo_gc_verde_1.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/icon/logo_gc_verde_1.png"
+    icon_size: 128 # min:48, max:256, default: 48
 
 # The following section is specific to Flutter packages.
 flutter:
