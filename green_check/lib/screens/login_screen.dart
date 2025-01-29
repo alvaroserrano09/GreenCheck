@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:green_check/widgets/background.dart'; // Ensure this import is correct
 import 'package:auto_size_text/auto_size_text.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -29,9 +17,20 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (context, constraints) {
           final screenHeight = constraints.maxHeight;
           final screenWidth = constraints.maxWidth;
-          return Stack(
+        return Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFD1E34B),
+                Color(0xFF5EAD09)
+              ],
+              stops: [0.0, 1.0],
+            ),
+          ),
+          child: Stack(
             children: [
-              const BackGround(title: 'Green Check', isUserLoggedIn:true),
               Positioned(
                 top: screenHeight * 0.1,
                 left: (screenWidth - screenWidth * 0.8) / 2,
@@ -42,6 +41,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
+            Positioned(
+              top:screenHeight * 0.26,
+              left:screenWidth * 0.55,
+              right:screenWidth * 0.05,
+              child:Image(
+                image: AssetImage(
+                  'assets/check_2.png'
+                  ),
+                  width: screenWidth * 0.2,
+                  height: screenHeight * 0.5,
+            ),
+
+              ),
        Positioned(
             top: screenHeight * 0.54,
             left: screenWidth * 0.1,
@@ -49,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Opacity(
               opacity: 0.69, 
               child: AutoSizeText(
-                "Todo tipo de tests \n al alcance de tu mano.",
+                "Todo tipo de tests al \n alcance de tu mano.",
                 style: TextStyle(
                   fontSize: 22,
                   color: Colors.white,
@@ -62,9 +74,117 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          Positioned(
+              top:screenHeight * 0.40,
+              left: screenWidth * 0.05, 
+              right: screenWidth * 0.55,
+              child:Image(
+                image: AssetImage(
+                  'assets/check_1.png'
+                  ),
+                  width: screenWidth * 0.2,
+                  height: screenHeight * 0.5,
+            ),
+
+              ),
+          Positioned(
+            top: screenHeight * 0.7,
+            left: screenWidth * 0.1,
+            right: screenWidth * 0.1,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF9CCA2C),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 30,
+                ),
+                alignment: Alignment.center,
+              ),
+              child: const Text(
+                'Iniciar sesión',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'InriaSans',
+                  color: Colors.white,
+
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.8,
+            left: screenWidth * 0.1,
+            right: screenWidth * 0.1,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/register');
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFA5D671),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 30,
+                  ),
+                  alignment: Alignment.center,
+              ),
+            
+              child: const Text(
+                'Registrarse',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'InriaSans',
+                  color: Colors.white,
+
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.9,
+            left: screenWidth * 0.1,
+            right: screenWidth * 0.1,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/googleSession');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF1965BD),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 30,
+                ),
+                alignment: Alignment.center,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                Image.asset(
+                  'assets/logoGoogle.png',
+                  width: 30,
+                  height: 30,
+                ),
+                  const SizedBox(width: 15),
+
+                  const Text(
+                    'Continuar con Google',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'InriaSans',
+                      color: Colors.white,
+                    ),
+                  ),
+                 
+                ],
+              )
+            ),
+          ),
           
               // Otros widgets pueden ir aquí
             ],
+          ),
           );
         },
       ),
