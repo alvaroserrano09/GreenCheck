@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: screenWidth * 0.1,
                     right: screenWidth * 0.1,
                     child: CustomButton(
-                      text: "Login",
+                      text: "Iniciar Sesión",
                       backgroundColor: Color(0xFF9CCA2C),
                       onPressed: () {
                         Navigator.pushNamed(context, '/login');
@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: screenWidth * 0.1,
                     right: screenWidth * 0.1,
                     child: CustomButton(
-                      text: "Register",
+                      text: "Registrarse",
                       backgroundColor: Color(0xFFA5D671),
                       onPressed: () {
                         Navigator.pushNamed(context, '/register');
