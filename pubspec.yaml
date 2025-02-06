@@ -2,7 +2,7 @@ name: green_check
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -35,11 +35,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   auto_size_text: ^3.0.0
+  supabase_flutter: ^2.8.3
+  flutter_dotenv: ^5.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
+
   flutter_launcher_icons: ^0.13.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -69,7 +71,6 @@ flutter_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -79,12 +80,16 @@ flutter:
   # assets:
   #   - images/a_dot_ham.jpeg
   assets:
+    - .env
     - assets/icon/logo_gc_verde_1.png
     - assets/icon/logo_gc_blanco.png
     - assets/logoGoogle.png
     - assets/check_1.png
     - assets/check_2.png
-
+    - assets/book_icon.png
+    - assets/home_icon.png
+    - assets/bell_icon.png
+    - assets/user_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,14 +97,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     )),
                 Positioned(
-                    top: screenHeight * 0.9,
-                    left: screenWidth * 0.1,
-                    right: screenWidth * 0.1,
-                    child: CustomButton(
-                        text: "Continuar con Google",
-                        backgroundColor: Color(0xFF1965BD),
-                        imagePath: "assets/logoGoogle.png",
-                        onPressed: () {})),
+                  top: screenHeight * 0.9,
+                  left: screenWidth * 0.1,
+                  right: screenWidth * 0.1,
+                  child: CustomButton(
+                    text: "Continuar con Google",
+                    backgroundColor: Color(0xFF1965BD),
+                    imagePath: "assets/logoGoogle.png",
+                    onPressed: () {},
+                  ),
+                ),
               ],
             ),
           );

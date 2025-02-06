@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
+import 'package:green_check/presentation/widgets/toolbar.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -103,6 +104,7 @@ class RegisterScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const Toolbar(),
     );
   }
 }
