@@ -43,18 +43,10 @@ class BackGround extends StatelessWidget {
           ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-            Color(0xFFD1E34B),
-            Color(0xFF5EAD09)
-            ],
-             stops: [0.0, 1.0],
-          ),
+    color: Colors.white, // Fondo blanco
+  ),
         ),
      
-      ),
-    );
+      );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_check/screens/home_screen.dart';
 import 'package:green_check/screens/login_screen.dart';
 import 'package:green_check/screens/register_screen.dart';
 
@@ -21,9 +22,10 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/register': (context) => RegisterScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
       },
-      home:const LoginScreen(),
+      home: const HomeScreen(),
     );
   }
 }
-
