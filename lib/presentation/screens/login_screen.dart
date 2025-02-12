@@ -38,6 +38,7 @@ class LoginScreen extends StatelessWidget {
                                 icon: Icons.remove_red_eye,
                                 labelText: 'Contraseña',
                                 obscureText: true,
+                                isPasswordField: true,
                               ),
                             ],
                           ),

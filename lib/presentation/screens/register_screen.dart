@@ -5,32 +5,72 @@ import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
 
-class RegisterScreen extends ConsumerWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  late TextEditingController emailController;
+  late TextEditingController nameController;
+  late TextEditingController lastNameController;
+  late TextEditingController passwordController;
+  late TextEditingController confirmPasswordController;
+
+  Map<String, String?> errorMessages = {
+    'email': null,
+    'name': null,
+    'lastName': null,
+    'password': null,
+    'confirmPassword': null,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    nameController = TextEditingController();
+    lastNameController = TextEditingController();
+    passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    nameController.dispose();
+    lastNameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void validateFields() {
+    setState(() {
+      errorMessages['email'] = emailController.text.isEmpty
+          ? 'El correo electrónico es obligatorio.'
+          : null;
+      errorMessages['name'] =
+          nameController.text.isEmpty ? 'El nombre es obligatorio.' : null;
+      errorMessages['lastName'] = lastNameController.text.isEmpty
+          ? 'Los apellidos son obligatorios.'
+          : null;
+      errorMessages['password'] = passwordController.text.isEmpty
+          ? 'La contraseña es obligatoria.'
+          : null;
+      errorMessages['confirmPassword'] = confirmPasswordController.text.isEmpty
+          ? 'Debes repetir la contraseña.'
+          : null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final provider = ref.watch(studentProvider);
     final isLoading = provider.isLoading;
     final errorMessage = provider.errorMessage;
-    final isRegistered = provider.isRegistered;
-
-    final emailController = TextEditingController();
-    final nameController = TextEditingController();
-    final lastNameController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isRegistered) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registrado con éxito')),
-        );
-        Future.delayed(const Duration(microseconds: 10), () {
-          Navigator.pushReplacementNamed(context, '/home');
-        });
-      }
-    });
 
     return Scaffold(
       body: SafeArea(
@@ -55,32 +95,74 @@ class RegisterScreen extends ConsumerWidget {
                                 icon: Icons.email,
                                 controller: emailController,
                               ),
+                              if (errorMessages['email'] != null)
+                                Text(
+                                  errorMessages['email']!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 labelText: 'Nombre',
                                 icon: Icons.person,
                                 controller: nameController,
                               ),
+                              if (errorMessages['name'] != null)
+                                Text(
+                                  errorMessages['name']!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 labelText: 'Apellidos',
                                 icon: Icons.person,
                                 controller: lastNameController,
                               ),
+                              if (errorMessages['lastName'] != null)
+                                Text(
+                                  errorMessages['lastName']!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
                                 labelText: 'Contraseña',
                                 obscureText: true,
                                 controller: passwordController,
+                                isPasswordField: true,
                               ),
+                              if (errorMessages['password'] != null)
+                                Text(
+                                  errorMessages['password']!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
                                 labelText: 'Repetir Contraseña',
                                 obscureText: true,
                                 controller: confirmPasswordController,
+                                isPasswordField: true,
                               ),
+                              if (errorMessages['confirmPassword'] != null)
+                                Text(
+                                  errorMessages['confirmPassword']!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               if (errorMessage != null)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16),
@@ -108,7 +190,13 @@ class RegisterScreen extends ConsumerWidget {
             : CustomButton(
                 text: "Registrarse",
                 backgroundColor: const Color(0xFF8DC324),
-                onPressed: () {
+                onPressed: () async {
+                  validateFields();
+                  if (errorMessages.values.any((message) => message != null)) {
+                    return;
+                  }
+
+                  // Check if passwords match
                   if (passwordController.text !=
                       confirmPasswordController.text) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -119,12 +207,19 @@ class RegisterScreen extends ConsumerWidget {
                     return;
                   }
 
-                  ref.read(studentProvider.notifier).registerStudent(
+                  await ref.read(studentProvider).registerStudent(
                         email: emailController.text,
                         password: passwordController.text,
                         name: nameController.text,
                         surname: lastNameController.text,
                       );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Registrado con éxito')),
+                  );
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    Navigator.pushNamed(context, '/home');
+                  });
                 },
               ),
       ),

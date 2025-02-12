@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
-      // ProviderScope should wrap MaterialApp
       child: MaterialApp(
         title: 'Green Check',
         debugShowCheckedModeBanner: false,
