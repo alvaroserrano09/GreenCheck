@@ -4,7 +4,6 @@ import 'package:green_check/infrastructure/entities/supabase_student.dart';
 class StudentMapper {
   static SupabaseStudent toEntity(Student student) {
     return SupabaseStudent(
-        id: student.id,
         email: student.email,
         nombre: student.name,
         apellidos: student.surname,

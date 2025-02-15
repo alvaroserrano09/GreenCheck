@@ -1,12 +1,12 @@
 class SupabaseStudent {
-  final int id;
+  final int? id;
   final String nombre;
   final String apellidos;
   final String email;
   final String contrasena;
 
   SupabaseStudent({
-    required this.id,
+    this.id,
     required this.email,
     required this.nombre,
     required this.apellidos,

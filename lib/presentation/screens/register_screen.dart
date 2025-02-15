@@ -196,7 +196,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     return;
                   }
 
-                  // Check if passwords match
+                  // Verificar si las contraseñas coinciden
                   if (passwordController.text !=
                       confirmPasswordController.text) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -207,19 +207,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     return;
                   }
 
-                  await ref.read(studentProvider).registerStudent(
-                        email: emailController.text,
-                        password: passwordController.text,
-                        name: nameController.text,
-                        surname: lastNameController.text,
-                      );
+                  try {
+                    // Llamar al método registerStudent del provider
+                    await ref.read(studentProvider.notifier).registerStudent(
+                          email: emailController.text,
+                          password: passwordController.text,
+                          name: nameController.text,
+                          surname: lastNameController.text,
+                        );
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Registrado con éxito')),
-                  );
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    Navigator.pushNamed(context, '/home');
-                  });
+                    // Mostrar mensaje de éxito
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Registrado con éxito')),
+                    );
+
+                    // Navegar a la pantalla de inicio después de un breve retraso
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      Navigator.pushNamed(context, '/home');
+                    });
+                  } catch (e) {
+                    // Manejar errores
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
                 },
               ),
       ),

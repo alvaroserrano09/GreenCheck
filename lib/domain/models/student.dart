@@ -1,5 +1,5 @@
 class Student {
-  final int id;
+  final int? id;
   final String email;
   final String name;
   final String surname;
@@ -7,14 +7,14 @@ class Student {
 
   Student({
     required this.email,
-    required this.id,
+    this.id,
     required this.name,
     required this.surname,
     required this.password,
   });
 
   factory Student.create({
-    required int id,
+    int? id,
     required String name,
     required String surname,
     required String email,
