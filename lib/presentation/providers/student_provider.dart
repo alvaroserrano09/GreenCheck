@@ -68,7 +68,6 @@ class StudentNotifier extends StateNotifier<StudentState> {
   }
 }
 
-// Provider para exponer el StudentNotifier
 final studentProvider = StateNotifierProvider<StudentNotifier, StudentState>(
   (ref) => StudentNotifier(ref.watch(saveStudentUseCaseProvider)),
 );
