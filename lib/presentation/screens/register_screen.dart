@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
@@ -7,6 +8,7 @@ import 'package:green_check/presentation/widgets/custom_text_field.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
+  static const String name = 'register-screen';
 
   @override
   ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
@@ -196,7 +198,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     return;
                   }
 
-                  // Verificar si las contraseñas coinciden
                   if (passwordController.text !=
                       confirmPasswordController.text) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -208,7 +209,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   }
 
                   try {
-                    // Llamar al método registerStudent del provider
                     await ref.read(studentProvider.notifier).registerStudent(
                           email: emailController.text,
                           password: passwordController.text,
@@ -216,20 +216,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           surname: lastNameController.text,
                         );
 
-                    // Mostrar mensaje de éxito
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Registrado con éxito')),
                     );
 
-                    // Navegar a la pantalla de inicio después de un breve retraso
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      Navigator.pushNamed(context, '/home');
-                    });
+                    // Limpia los controladores
+                    emailController.clear();
+                    passwordController.clear();
+                    nameController.clear();
+                    lastNameController.clear();
+
+                    // Navega a la ruta principal
+                    context.push('/');
                   } catch (e) {
-                    // Manejar errores
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
+                    throw Exception(e);
                   }
                 },
               ),

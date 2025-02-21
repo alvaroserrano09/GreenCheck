@@ -4,6 +4,7 @@ import 'package:green_check/presentation/widgets/toolbar.dart';
 
 class UserHomeScreen extends StatelessWidget {
   const UserHomeScreen({super.key});
+  static const String name = 'home-user-screen';
 
   @override
   Widget build(BuildContext context) {

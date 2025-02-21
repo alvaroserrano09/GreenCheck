@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+  static const String name = 'home-screen';
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,7 @@ class HomeScreen extends StatelessWidget {
                       text: "Iniciar Sesión",
                       backgroundColor: Color(0xFF9CCA2C),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        context.push("/login");
                       },
                     )),
                 Positioned(
@@ -93,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                       text: "Registrarse",
                       backgroundColor: Color(0xFFA5D671),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/register');
+                        context.push("/register");
                       },
                     )),
                 Positioned(

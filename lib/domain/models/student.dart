@@ -28,13 +28,13 @@ class Student {
       password: password,
     );
   }
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "email": email,
-      "nombre": name,
-      "apellidos": surname,
-      "contrasena": password,
-    };
+  factory Student.fromJson(Map<String, dynamic> json) {
+    return Student(
+      id: json['id'],
+      email: json['email'],
+      name: json['nombre'],
+      surname: json['apellidos'],
+      password: json['contrasena'],
+    );
   }
 }

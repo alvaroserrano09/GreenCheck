@@ -6,7 +6,10 @@ class StudentRepository {
   StudentRepository(this.datasource);
 
   Future<Student> saveStudent(Student student) {
-    print('Saving student...');
     return datasource.saveStudent(student);
+  }
+
+  authStudent(String email, String password) {
+    return datasource.authStudent(email, password);
   }
 }

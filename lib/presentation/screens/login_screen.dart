@@ -1,11 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
+  static const String name = 'login-screen';
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Map<String, String?> errorMessages = {
+    'email': null,
+    'password': null,
+  };
+
+  void validateFields() {
+    setState(() {
+      errorMessages['email'] = emailController.text.isEmpty
+          ? 'El correo electrónico es obligatorio.'
+          : null;
+      errorMessages['password'] = passwordController.text.isEmpty
+          ? 'La contraseña es obligatoria.'
+          : null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +76,7 @@ class LoginScreen extends StatelessWidget {
                               CustomTextField(
                                 labelText: 'Correo electrónico',
                                 icon: Icons.email,
+                                controller: emailController,
                               ),
                               SizedBox(height: 16),
                               CustomTextField(
@@ -39,6 +84,7 @@ class LoginScreen extends StatelessWidget {
                                 labelText: 'Contraseña',
                                 obscureText: true,
                                 isPasswordField: true,
+                                controller: passwordController,
                               ),
                             ],
                           ),
@@ -56,7 +102,31 @@ class LoginScreen extends StatelessWidget {
                   CustomButton(
                     text: "Iniciar Sesión",
                     backgroundColor: Color(0xFF8DC324),
-                    onPressed: () {},
+                    onPressed: () async {
+                      validateFields();
+                      if (errorMessages.values
+                          .any((message) => message != null)) {
+                        return;
+                      }
+
+                      try {
+                        await ref.read(studentProvider.notifier).loginStudent(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+
+                        scaffoldMessengerKey.currentState?.showSnackBar(
+                          const SnackBar(
+                              content: Text('Inicio de sesión exitoso')),
+                        );
+
+                        context.push('/home/:home-users-screen');
+                      } catch (e) {
+                        scaffoldMessengerKey.currentState?.showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(height: 16),
                   GestureDetector(

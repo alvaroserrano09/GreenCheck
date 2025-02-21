@@ -29,12 +29,12 @@ import 'package:mockito/mockito.dart' as _i1;
 class _FakeStudentService_0 extends _i1.SmartFake
     implements _i2.StudentService {
   _FakeStudentService_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeStudent_1 extends _i1.SmartFake implements _i3.Student {
   _FakeStudent_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [StudentRepository].
@@ -46,23 +46,24 @@ class MockStudentRepository extends _i1.Mock implements _i4.StudentRepository {
   }
 
   @override
-  _i2.StudentService get datasource =>
-      (super.noSuchMethod(
-            Invocation.getter(#datasource),
-            returnValue: _FakeStudentService_0(
-              this,
-              Invocation.getter(#datasource),
-            ),
-          )
-          as _i2.StudentService);
+  _i2.StudentService get datasource => (super.noSuchMethod(
+        Invocation.getter(#datasource),
+        returnValue: _FakeStudentService_0(
+          this,
+          Invocation.getter(#datasource),
+        ),
+      ) as _i2.StudentService);
 
   @override
   _i5.Future<_i3.Student> saveStudent(_i3.Student? student) =>
       (super.noSuchMethod(
-            Invocation.method(#saveStudent, [student]),
-            returnValue: _i5.Future<_i3.Student>.value(
-              _FakeStudent_1(this, Invocation.method(#saveStudent, [student])),
-            ),
-          )
-          as _i5.Future<_i3.Student>);
+        Invocation.method(#saveStudent, [student]),
+        returnValue: _i5.Future<_i3.Student>.value(
+          _FakeStudent_1(this, Invocation.method(#saveStudent, [student])),
+        ),
+      ) as _i5.Future<_i3.Student>);
+
+  @override
+  dynamic authStudent(String? email, String? password) =>
+      super.noSuchMethod(Invocation.method(#authStudent, [email, password]));
 }

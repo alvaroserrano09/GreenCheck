@@ -23,30 +23,29 @@ class BackGround extends StatelessWidget {
           title,
           textAlign: TextAlign.center,
           style: const TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255)),
-              ),
-              backgroundColor: const Color(0xFF8DC324),
-              centerTitle: true,
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(2),
-                child: Container(color: Colors.white, height: 2),
-              ),
-              actions: [
-                Image.asset(
-                  'assets/icon/logo_gc_blanco.png',
-                  height: 60,
-                  width: 60,
-                ),
-              ],
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 255, 255, 255)),
+        ),
+        backgroundColor: const Color(0xFF8DC324),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2),
+          child: Container(color: Colors.white, height: 2),
+        ),
+        actions: [
+          Image.asset(
+            'assets/icon/logo_gc_blanco.png',
+            height: 60,
+            width: 60,
           ),
+        ],
+      ),
       body: Container(
         decoration: const BoxDecoration(
-    color: Colors.white, // Fondo blanco
-  ),
+          color: Colors.white, // Fondo blanco
         ),
-     
-      );
+      ),
+    );
   }
 }
