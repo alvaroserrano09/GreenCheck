@@ -20,26 +20,25 @@ class Toolbar extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Image(image: AssetImage('home_icon.png')),
+              icon: Image(image: AssetImage('assets/home_icon.png')),
               label: 'Inicio',
             ),
             BottomNavigationBarItem(
-              icon: Image(image: AssetImage('book_icon.png')),
+              icon: Image(image: AssetImage('assets/book_icon.png')),
               label: 'Mis cursos',
             ),
             BottomNavigationBarItem(
-              icon: Image(image: AssetImage('bell_icon.png')),
+              icon: Image(image: AssetImage('assets/bell_icon.png')),
               label: "Avisos",
             ),
             BottomNavigationBarItem(
-              icon: Image(image: AssetImage('user_icon.png')),
+              icon: Image(image: AssetImage('assets/user_icon.png')),
               label: 'Perfil',
             ),
           ],
-          selectedItemColor: Colors.white, // Color del texto seleccionado
-          unselectedItemColor:
-              Colors.white70, // Color del texto no seleccionado
-          iconSize: 30, // Tamaño de los iconos
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          iconSize: 30,
         ),
       ),
     );

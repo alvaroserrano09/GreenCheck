@@ -77,7 +77,7 @@ class UserHomeScreen extends ConsumerWidget {
                       text: 'Ver Últimos Resultados', onPressed: () {}),
                 ),
                 Positioned(
-                  top: screenHeight * 0.82,
+                  top: screenHeight * 0.81,
                   left: screenWidth * 0.1,
                   right: screenWidth * 0.1,
                   child: CustomButtonUser(
