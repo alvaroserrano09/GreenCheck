@@ -5,7 +5,7 @@ import 'package:green_check/domain/models/student.dart';
 import 'package:green_check/domain/usecases/authenticate_student_use_case.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 
-import 'save_student_use_case_test.mocks.dart';
+import 'authenticate_student_use_case_test.mocks.dart';
 
 @GenerateMocks([StudentRepository])
 void main() {

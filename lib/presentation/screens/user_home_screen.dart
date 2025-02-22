@@ -1,13 +1,22 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:green_check/presentation/widgets/custom_button_user.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
+import 'package:green_check/presentation/providers/student_provider.dart'; // Importa tu provider
 
-class UserHomeScreen extends StatelessWidget {
+class UserHomeScreen extends ConsumerWidget {
+  // Cambia StatelessWidget a ConsumerWidget
   const UserHomeScreen({super.key});
   static const String name = 'home-user-screen';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final studentState = ref.watch(studentProvider);
+    final student = studentState.student;
+
+    final userName = student?.name ?? "Usuario";
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
@@ -40,7 +49,7 @@ class UserHomeScreen extends StatelessWidget {
                   left: screenWidth * 0.1,
                   right: screenWidth * 0.1,
                   child: AutoSizeText(
-                    "Bienvenido de\nnuevo, Usuario",
+                    "Bienvenido de\nnuevo, $userName",
                     style: TextStyle(
                       fontSize: 48,
                       color: Colors.white,
@@ -53,6 +62,27 @@ class UserHomeScreen extends StatelessWidget {
                     stepGranularity: 1,
                   ),
                 ),
+                Positioned(
+                  top: screenHeight * 0.55,
+                  left: screenWidth * 0.1,
+                  right: screenWidth * 0.1,
+                  child: CustomButtonUser(
+                      text: 'Realizar Últimos Tests', onPressed: () {}),
+                ),
+                Positioned(
+                  top: screenHeight * 0.68,
+                  left: screenWidth * 0.1,
+                  right: screenWidth * 0.1,
+                  child: CustomButtonUser(
+                      text: 'Ver Últimos Resultados', onPressed: () {}),
+                ),
+                Positioned(
+                  top: screenHeight * 0.82,
+                  left: screenWidth * 0.1,
+                  right: screenWidth * 0.1,
+                  child: CustomButtonUser(
+                      text: 'Cursos favoritos', onPressed: () {}),
+                )
               ],
             ),
           );
