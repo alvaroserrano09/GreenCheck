@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:green_check/domain/models/student.dart' as _i3;
+import 'package:green_check/domain/models/user.dart' as _i3;
 import 'package:green_check/infrastructure/repositories/student_repository.dart'
     as _i4;
 import 'package:green_check/infrastructure/services/student_service.dart'
@@ -26,45 +26,44 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeStudentService_0 extends _i1.SmartFake
-    implements _i2.StudentService {
-  _FakeStudentService_0(Object parent, Invocation parentInvocation)
+class _FakeUserService_0 extends _i1.SmartFake implements _i2.UserService {
+  _FakeUserService_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeStudent_1 extends _i1.SmartFake implements _i3.Student {
-  _FakeStudent_1(Object parent, Invocation parentInvocation)
+class _FakeUser_1 extends _i1.SmartFake implements _i3.User {
+  _FakeUser_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-/// A class which mocks [StudentRepository].
+/// A class which mocks [UserRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStudentRepository extends _i1.Mock implements _i4.StudentRepository {
-  MockStudentRepository() {
+class MockUserRepository extends _i1.Mock implements _i4.UserRepository {
+  MockUserRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.StudentService get datasource =>
+  _i2.UserService get datasource =>
       (super.noSuchMethod(
             Invocation.getter(#datasource),
-            returnValue: _FakeStudentService_0(
+            returnValue: _FakeUserService_0(
               this,
               Invocation.getter(#datasource),
             ),
           )
-          as _i2.StudentService);
+          as _i2.UserService);
 
   @override
-  _i5.Future<_i3.Student> saveStudent(_i3.Student? student) =>
+  _i5.Future<_i3.User> saveStudent(_i3.User? student) =>
       (super.noSuchMethod(
             Invocation.method(#saveStudent, [student]),
-            returnValue: _i5.Future<_i3.Student>.value(
-              _FakeStudent_1(this, Invocation.method(#saveStudent, [student])),
+            returnValue: _i5.Future<_i3.User>.value(
+              _FakeUser_1(this, Invocation.method(#saveStudent, [student])),
             ),
           )
-          as _i5.Future<_i3.Student>);
+          as _i5.Future<_i3.User>);
 
   @override
   dynamic authStudent(String? email, String? password) =>

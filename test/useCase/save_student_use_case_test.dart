@@ -2,20 +2,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:green_check/domain/models/student.dart';
+import 'package:green_check/domain/models/user.dart';
 
 import 'save_student_use_case_test.mocks.dart';
 
-@GenerateMocks([StudentRepository])
+@GenerateMocks([UserRepository])
 void main() {
-  late MockStudentRepository mockStudentRepository;
+  late MockUserRepository mockUserRepository;
 
   setUp(() {
-    mockStudentRepository = MockStudentRepository();
+    mockUserRepository = MockUserRepository();
   });
 
-  group('StudentRepository', () {
-    final student = Student(
+  group('UserRepository', () {
+    final student = User(
       email: 'test@example.com',
       password: 'password123',
       name: 'John',
@@ -23,22 +23,22 @@ void main() {
     );
 
     test('debería guardar al estudiante correctamente', () async {
-      when(mockStudentRepository.saveStudent(student))
+      when(mockUserRepository.saveStudent(student))
           .thenAnswer((_) async => student);
 
-      final result = await mockStudentRepository.saveStudent(student);
+      final result = await mockUserRepository.saveStudent(student);
 
       expect(result, equals(student));
-      verify(mockStudentRepository.saveStudent(student)).called(1);
+      verify(mockUserRepository.saveStudent(student)).called(1);
     });
 
     test('debería lanzar una excepción cuando falla', () async {
-      when(mockStudentRepository.saveStudent(student))
+      when(mockUserRepository.saveStudent(student))
           .thenThrow(Exception('Error al guardar'));
 
-      expect(() async => await mockStudentRepository.saveStudent(student),
+      expect(() async => await mockUserRepository.saveStudent(student),
           throwsA(isA<Exception>()));
-      verify(mockStudentRepository.saveStudent(student)).called(1);
+      verify(mockUserRepository.saveStudent(student)).called(1);
     });
   });
 }

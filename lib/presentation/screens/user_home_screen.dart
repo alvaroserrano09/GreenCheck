@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:green_check/presentation/widgets/custom_button_user.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
-import 'package:green_check/presentation/providers/student_provider.dart'; // Importa tu provider
+import 'package:green_check/presentation/providers/student_provider.dart';
 
 class UserHomeScreen extends ConsumerWidget {
-  // Cambia StatelessWidget a ConsumerWidget
   const UserHomeScreen({super.key});
   static const String name = 'home-user-screen';
 
@@ -16,6 +15,10 @@ class UserHomeScreen extends ConsumerWidget {
     final student = studentState.student;
 
     final userName = student?.name ?? "Usuario";
+    final role = student?.role; // Obtener el rol del estudiante/profesor
+
+    // Verificar si el usuario es un profesor
+    final isTeacher = role == 'profesor';
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -23,6 +26,15 @@ class UserHomeScreen extends ConsumerWidget {
         builder: (context, constraints) {
           final screenHeight = constraints.maxHeight;
           final screenWidth = constraints.maxWidth;
+
+          double buttonTopPosition(int buttonNumber) {
+            if (isTeacher) {
+              return screenHeight * (0.55 + (buttonNumber - 1) * 0.2);
+            } else {
+              return screenHeight * (0.55 + (buttonNumber - 1) * 0.13);
+            }
+          }
+
           return Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -62,27 +74,55 @@ class UserHomeScreen extends ConsumerWidget {
                     stepGranularity: 1,
                   ),
                 ),
-                Positioned(
-                  top: screenHeight * 0.55,
-                  left: screenWidth * 0.1,
-                  right: screenWidth * 0.1,
-                  child: CustomButtonUser(
-                      text: 'Realizar Últimos Tests', onPressed: () {}),
-                ),
-                Positioned(
-                  top: screenHeight * 0.68,
-                  left: screenWidth * 0.1,
-                  right: screenWidth * 0.1,
-                  child: CustomButtonUser(
-                      text: 'Ver Últimos Resultados', onPressed: () {}),
-                ),
-                Positioned(
-                  top: screenHeight * 0.81,
-                  left: screenWidth * 0.1,
-                  right: screenWidth * 0.1,
-                  child: CustomButtonUser(
-                      text: 'Cursos favoritos', onPressed: () {}),
-                )
+                if (!isTeacher) ...[
+                  Positioned(
+                    top: buttonTopPosition(1),
+                    left: screenWidth * 0.1,
+                    right: screenWidth * 0.1,
+                    child: CustomButtonUser(
+                      text: 'Realizar Últimos Tests',
+                      onPressed: () {},
+                    ),
+                  ),
+                  Positioned(
+                    top: buttonTopPosition(2),
+                    left: screenWidth * 0.1,
+                    right: screenWidth * 0.1,
+                    child: CustomButtonUser(
+                      text: 'Ver Últimos Resultados',
+                      onPressed: () {},
+                    ),
+                  ),
+                  Positioned(
+                    top: buttonTopPosition(3),
+                    left: screenWidth * 0.1,
+                    right: screenWidth * 0.1,
+                    child: CustomButtonUser(
+                      text: 'Cursos favoritos',
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+                if (isTeacher) ...[
+                  Positioned(
+                    top: buttonTopPosition(1),
+                    left: screenWidth * 0.1,
+                    right: screenWidth * 0.1,
+                    child: CustomButtonUser(
+                      text: 'Añadir aviso',
+                      onPressed: () {},
+                    ),
+                  ),
+                  Positioned(
+                    top: buttonTopPosition(2),
+                    left: screenWidth * 0.1,
+                    right: screenWidth * 0.1,
+                    child: CustomButtonUser(
+                      text: 'Añadir curso',
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
               ],
             ),
           );

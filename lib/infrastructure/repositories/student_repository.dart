@@ -1,11 +1,11 @@
-import 'package:green_check/domain/models/student.dart';
+import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
 
-class StudentRepository {
-  final StudentService datasource;
-  StudentRepository(this.datasource);
+class UserRepository {
+  final UserService datasource;
+  UserRepository(this.datasource);
 
-  Future<Student> saveStudent(Student student) {
+  Future<User> saveStudent(User student) {
     return datasource.saveStudent(student);
   }
 

@@ -1,10 +1,10 @@
-import 'package:green_check/domain/models/student.dart';
+import 'package:green_check/domain/models/user.dart' as user;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final SupabaseClient supabase = Supabase.instance.client;
 
-class StudentService {
-  Future<Student> saveStudent(Student student) async {
+class UserService {
+  Future<user.User> saveStudent(user.User student) async {
     try {
       await supabase.from("Alumno").insert({
         'nombre': student.name,
@@ -18,28 +18,38 @@ class StudentService {
     }
   }
 
-  Future<Student> authStudent(String email, String password) async {
+  Future<user.User> authStudent(String email, String password) async {
     try {
-      // Busca al estudiante por su correo electrónico
-      final data = await supabase
-          .from('Alumno') // Asegúrate de que el nombre de la tabla sea correcto
+      final student = await supabase
+          .from('Alumno')
           .select()
-          .eq('email', email) // Filtra por el correo electrónico
-          .maybeSingle(); // Usa maybeSingle para manejar casos donde no hay resultados
+          .eq('email', email)
+          .maybeSingle();
 
-      // Verifica si se encontró un estudiante con ese correo electrónico
-      if (data == null || data.isEmpty) {
-        throw Exception(
-            'No se encontró un estudiante con ese correo electrónico');
+      if (student == null || student.isEmpty) {
+        final teacher = await supabase
+            .from('Profesor')
+            .select()
+            .eq('email', email)
+            .maybeSingle();
+
+        if (teacher == null || teacher.isEmpty) {
+          throw Exception('Email no registrado');
+        }
+        if (teacher['contrasena'] != password) {
+          throw Exception('Contraseña incorrecta');
+        }
+        final userAuth = user.User.fromJson(teacher);
+
+        return userAuth;
       }
 
-      // Verifica si la contraseña coincide
-      if (data['contrasena'] != password) {
+      if (student['contrasena'] != password) {
         throw Exception('Contraseña incorrecta');
       }
-      final student = Student.fromJson(data);
+      final studentUser = user.User.fromJson(student);
 
-      return student;
+      return studentUser;
     } catch (e) {
       rethrow;
     }

@@ -1,13 +1,13 @@
-import 'package:green_check/domain/models/student.dart';
+import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 
 class AuthenticateStudentUseCase {
-  final StudentRepository studentRepository;
-  AuthenticateStudentUseCase(this.studentRepository);
+  final UserRepository userRepository;
+  AuthenticateStudentUseCase(this.userRepository);
 
-  Future<Student> execute(
+  Future<User> execute(
       {required String email, required String password}) async {
-    Student authStudent = await studentRepository.authStudent(email, password);
+    User authStudent = await userRepository.authStudent(email, password);
     return authStudent;
   }
 }

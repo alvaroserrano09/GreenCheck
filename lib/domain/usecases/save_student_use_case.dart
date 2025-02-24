@@ -1,12 +1,12 @@
-import 'package:green_check/domain/models/student.dart';
+import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 
 class SaveStudentUseCase {
-  final StudentRepository studentRepository;
-  SaveStudentUseCase(this.studentRepository);
+  final UserRepository userRepository;
+  SaveStudentUseCase(this.userRepository);
 
-  Future<Student> execute(Student student) async {
-    Student studentSaved = await studentRepository.saveStudent(student);
+  Future<User> execute(User student) async {
+    User studentSaved = await userRepository.saveStudent(student);
     return studentSaved;
   }
 }
