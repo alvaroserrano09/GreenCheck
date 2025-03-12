@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:go_router/go_router.dart';
 import 'package:green_check/presentation/widgets/custom_button_user.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
@@ -15,9 +16,8 @@ class UserHomeScreen extends ConsumerWidget {
     final student = studentState.student;
 
     final userName = student?.name ?? "Usuario";
-    final role = student?.role; // Obtener el rol del estudiante/profesor
+    final role = student?.role;
 
-    // Verificar si el usuario es un profesor
     final isTeacher = role == 'profesor';
 
     return Scaffold(
@@ -81,7 +81,9 @@ class UserHomeScreen extends ConsumerWidget {
                     right: screenWidth * 0.1,
                     child: CustomButtonUser(
                       text: 'Realizar Últimos Tests',
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push("/");
+                      },
                     ),
                   ),
                   Positioned(
@@ -119,7 +121,9 @@ class UserHomeScreen extends ConsumerWidget {
                     right: screenWidth * 0.1,
                     child: CustomButtonUser(
                       text: 'Añadir curso',
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push("/home/add-course-screen");
+                      },
                     ),
                   ),
                 ],

@@ -14,11 +14,8 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
-  // Ejecuta la aplicación
   runApp(const MyApp());
 }
-
-// Configura el enrutador con go_router
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

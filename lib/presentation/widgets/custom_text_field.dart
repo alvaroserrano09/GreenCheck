@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
-  final IconData icon;
+  final IconData? icon;
   final String? Function(String?)? validator;
   final TextEditingController? controller;
   final TextInputType keyboardType;
@@ -20,7 +20,7 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.controller,
     this.keyboardType = TextInputType.text,
-    required this.icon,
+    this.icon,
     this.obscureText = false,
     this.suffixIcon,
     this.onTap,
@@ -70,7 +70,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   _isObscure ? Icons.visibility : Icons.visibility_off,
                 ),
               )
-            : Icon(widget.icon),
+            : widget.icon != null
+                ? Icon(widget.icon)
+                : null,
       ),
     );
   }

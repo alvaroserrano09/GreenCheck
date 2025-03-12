@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
+import 'package:green_check/presentation/screens/courses_screen.dart';
 
 import 'package:green_check/presentation/screens/home_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
@@ -27,9 +29,21 @@ final appRouter =
     builder: (BuildContext context, GoRouterState state) => const LoginScreen(),
   ),
   GoRoute(
-    path: '/home/:page',
+    path: '/home/user',
     name: UserHomeScreen.name,
     builder: (BuildContext context, GoRouterState state) =>
         const UserHomeScreen(),
+  ),
+  GoRoute(
+    path: '/home/add-course-screen',
+    name: AddCourseScreen.name,
+    builder: (BuildContext context, GoRouterState state) =>
+        const AddCourseScreen(),
+  ),
+  GoRoute(
+    path: '/home/course-screen',
+    name: CourseScreen.name,
+    builder: (BuildContext context, GoRouterState state) =>
+        const CourseScreen(),
   )
 ]);
