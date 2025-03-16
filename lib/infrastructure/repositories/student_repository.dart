@@ -12,4 +12,8 @@ class UserRepository {
   authStudent(String email, String password) {
     return datasource.authStudent(email, password);
   }
+
+  updatePersonalInfo(String email, String name, String surname) {
+    return datasource.updatePersonalInfo(email, name, surname);
+  }
 }

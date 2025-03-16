@@ -8,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
-  // Inicializa Supabase
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,

@@ -54,4 +54,29 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<user.User> updatePersonalInfo(
+    String email,
+    String name,
+    String surname,
+  ) async {
+    try {
+      if (email.isEmpty || name.isEmpty || surname.isEmpty) {
+        throw Exception('Todos los campos son obligatorios');
+      }
+
+      final userUpdated = await supabase
+          .from('Profesor')
+          .update({
+            'nombre': name,
+            'apellidos': surname,
+          })
+          .eq('email', email)
+          .select();
+      final response = user.User.fromJson(userUpdated[0]);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/domain/usecases/authenticate_student_use_case.dart';
 import 'package:green_check/domain/usecases/save_student_use_case.dart';
+import 'package:green_check/domain/usecases/update_personal_info_use_case.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
 
@@ -16,6 +17,11 @@ final authenticatUseCaseProvider = Provider<AuthenticateStudentUseCase>((ref) {
 final saveStudentUseCaseProvider = Provider<SaveStudentUseCase>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
   return SaveStudentUseCase(userRepository);
+});
+
+final updatePersonalInfoUseCase = Provider<UpdatePersonalInfoUseCase>((ref) {
+  final userRepository = ref.watch(userRepositoryProvider);
+  return UpdatePersonalInfoUseCase(userRepository);
 });
 
 class UserState {
@@ -47,8 +53,10 @@ class UserState {
 class StudentNotifier extends StateNotifier<UserState> {
   final SaveStudentUseCase saveStudentUseCase;
   final AuthenticateStudentUseCase authenticateStudentUseCase;
+  final UpdatePersonalInfoUseCase updatePersonalInfoUseCase;
 
-  StudentNotifier(this.saveStudentUseCase, this.authenticateStudentUseCase)
+  StudentNotifier(this.saveStudentUseCase, this.authenticateStudentUseCase,
+      this.updatePersonalInfoUseCase)
       : super(UserState.initial());
 
   Future<void> registerStudent({
@@ -92,9 +100,29 @@ class StudentNotifier extends StateNotifier<UserState> {
       throw Exception(e);
     }
   }
+
+  Future<void> updatePersonalInfo(
+      {required String email,
+      required String name,
+      required String surname}) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final response = await updatePersonalInfoUseCase.execute(
+        email: email,
+        name: name,
+        surname: surname,
+      );
+      state = state.copyWith(isLoading: false, student: response);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      throw Exception(e);
+    }
+  }
 }
 
 final studentProvider = StateNotifierProvider<StudentNotifier, UserState>(
-  (ref) => StudentNotifier(ref.watch(saveStudentUseCaseProvider),
-      ref.watch(authenticatUseCaseProvider)),
+  (ref) => StudentNotifier(
+      ref.watch(saveStudentUseCaseProvider),
+      ref.watch(authenticatUseCaseProvider),
+      ref.watch(updatePersonalInfoUseCase)),
 );

@@ -5,6 +5,7 @@ import 'package:green_check/presentation/screens/courses_screen.dart';
 
 import 'package:green_check/presentation/screens/home_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
+import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
 import 'package:green_check/presentation/screens/user_home_screen.dart';
 
@@ -45,5 +46,11 @@ final appRouter =
     name: CourseScreen.name,
     builder: (BuildContext context, GoRouterState state) =>
         const CourseScreen(),
+  ),
+  GoRoute(
+    path: '/home/profile-screen',
+    name: ProfileScreen.name,
+    builder: (BuildContext context, GoRouterState state) =>
+        const ProfileScreen(),
   )
 ]);
