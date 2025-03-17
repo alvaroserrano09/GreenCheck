@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -106,7 +109,16 @@ class HomeScreen extends StatelessWidget {
                     text: "Continuar con Google",
                     backgroundColor: Color(0xFF1965BD),
                     imagePath: "assets/logoGoogle.png",
-                    onPressed: () {},
+                    onPressed: () async {
+                      if (!kIsWeb) {
+                        await _nativeGoogleSignIn();
+                      } else {
+                        await Supabase.instance.client.auth.signInWithOAuth(
+                          OAuthProvider.google,
+                        );
+                        context.push('/home/user');
+                      }
+                    },
                   ),
                 ),
               ],
@@ -116,4 +128,33 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _nativeGoogleSignIn() async {
+  const webClientId =
+      '815189116906-cnlpe910hrrjciipisipavobbuaqd9gp.apps.googleusercontent.com';
+
+  const iosClientId = 'my-ios.apps.googleusercontent.com';
+
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    clientId: iosClientId,
+    serverClientId: webClientId,
+  );
+  final googleUser = await googleSignIn.signIn();
+  final googleAuth = await googleUser!.authentication;
+  final accessToken = googleAuth.accessToken;
+  final idToken = googleAuth.idToken;
+
+  if (accessToken == null) {
+    throw 'No Access Token found.';
+  }
+  if (idToken == null) {
+    throw 'No ID Token found.';
+  }
+
+  await Supabase.instance.client.auth.signInWithIdToken(
+    provider: OAuthProvider.google,
+    idToken: idToken,
+    accessToken: accessToken,
+  );
 }
