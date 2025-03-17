@@ -21,6 +21,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
   late TextEditingController passwordController;
   late TextEditingController newPasswordController;
   late TextEditingController repeatPasswordController;
+
   @override
   void initState() {
     super.initState();
@@ -46,34 +47,34 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
     final studentState = ref.read(studentProvider);
     final User? student = studentState.student;
     final isLoading = studentState.isLoading;
+
     return Scaffold(
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height,
-                  ),
-                  child: IntrinsicHeight(
-                    child: Stack(
-                      children: [
-                        const BackGround(title: "Editar Perfil"),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : Column(
+            const BackGround(title: "Editar Perfil"),
+            Padding(
+              padding: const EdgeInsets.only(top: 50.0),
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
                                   children: [
                                     const SizedBox(height: 50),
                                     Container(
-                                      padding: const EdgeInsets.all(
-                                          16), // Añade un padding interno
+                                      padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFD9D9D9)
-                                            .withOpacity(
-                                                0.25), // Fondo gris con opacidad
+                                            .withOpacity(0.25),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Column(
@@ -82,11 +83,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Nombre",
-                                              textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'InriaSans',
                                                 color: Color(0x63000000),
                                               ),
                                             ),
@@ -101,11 +100,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Apellidos",
-                                              textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'InriaSans',
                                                 color: Color(0x63000000),
                                               ),
                                             ),
@@ -120,11 +117,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Correo Electrónico",
-                                              textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'InriaSans',
                                                 color: Color(0x63000000),
                                               ),
                                             ),
@@ -147,13 +142,11 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                                     .updatePersonalInfo(
                                                       email: student.email,
                                                       name: nameController
-                                                                  .text !=
-                                                              ''
+                                                              .text.isNotEmpty
                                                           ? nameController.text
                                                           : student.name,
                                                       surname: surnameController
-                                                                  .text !=
-                                                              ''
+                                                              .text.isNotEmpty
                                                           ? surnameController
                                                               .text
                                                           : student.surname,
@@ -176,7 +169,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                                     .showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                        'Error al actulizar la información  $e'),
+                                                        'Error al actualizar la información $e'),
                                                     backgroundColor: Colors.red,
                                                   ),
                                                 );
@@ -186,6 +179,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(height: 50),
                                     Container(
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
@@ -199,11 +193,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Contraseña Actual",
-                                              textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'InriaSans',
                                                 color: Color(0x63000000),
                                               ),
                                             ),
@@ -221,11 +213,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Nueva Contraseña",
-                                              textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'InriaSans',
                                                 color: Color(0x63000000),
                                               ),
                                             ),
@@ -243,11 +233,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Repetir Contraseña",
-                                              textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'InriaSans',
                                                 color: Color(0x63000000),
                                               ),
                                             ),
@@ -280,38 +268,17 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                                     ),
                                                   );
                                                   return;
-                                                } else if (newPasswordController
-                                                        .text ==
-                                                    passwordController.text) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'La nueva contraseña no puede ser igual a la anterior'),
-                                                    ),
-                                                  );
-                                                  return;
-                                                } else if (passwordController
-                                                        .text !=
-                                                    student.password) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'La contraseña actual no es correcta'),
-                                                    ),
-                                                  );
-                                                  return;
                                                 }
                                                 await ref
                                                     .read(studentProvider
                                                         .notifier)
                                                     .updatePassword(
-                                                        email: student.email,
-                                                        password:
-                                                            newPasswordController
-                                                                .text,
-                                                        role: student.role!);
+                                                      email: student.email,
+                                                      password:
+                                                          newPasswordController
+                                                              .text,
+                                                      role: student.role!,
+                                                    );
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
@@ -331,7 +298,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                                     .showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                        'Error al actulizar la información  $e'),
+                                                        'Error al actualizar la información $e'),
                                                     backgroundColor: Colors.red,
                                                   ),
                                                 );
@@ -343,12 +310,12 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                     ),
                                   ],
                                 ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),
