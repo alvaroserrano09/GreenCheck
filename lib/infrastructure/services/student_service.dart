@@ -15,6 +15,10 @@ class UserService {
         'contrasena': student.password,
       }).select();
       final studentSaved = user.User.fromJson(studentDatabase[0]);
+      await Supabase.instance.client.auth.signUp(
+        email: student.email,
+        password: student.password,
+      );
       return studentSaved;
     } catch (e) {
       rethrow;
@@ -23,36 +27,34 @@ class UserService {
 
   Future<user.User> authStudent(String email, String password) async {
     try {
-      final student = await supabase
-          .from('Alumno')
-          .select()
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      final userData = response.user;
+      if (userData == null) {
+        throw Exception("No se pudo autenticar al usuario.");
+      }
+
+      final student = await Supabase.instance.client
+          .from("Alumno")
+          .select("nombre, email, apellidos,id,contrasena,rol")
           .eq('email', email)
           .maybeSingle();
-
       if (student == null || student.isEmpty) {
-        final teacher = await supabase
-            .from('Profesor')
-            .select()
+        final teacherUser = await Supabase.instance.client
+            .from("Profesor")
+            .select("nombre, email, apellidos,id,contrasena,rol")
             .eq('email', email)
-            .maybeSingle();
-
-        if (teacher == null || teacher.isEmpty) {
-          throw Exception('Email no registrado');
+            .single();
+        if (teacherUser.isEmpty) {
+          throw Exception("No se pudo autenticar al usuario.");
         }
-        if (teacher['contrasena'] != password) {
-          throw Exception('Contraseña incorrecta');
-        }
-        final userAuth = user.User.fromJson(teacher);
-
-        return userAuth;
+        return user.User.fromJson(teacherUser);
       }
 
-      if (student['contrasena'] != password) {
-        throw Exception('Contraseña incorrecta');
-      }
-      final studentUser = user.User.fromJson(student);
-
-      return studentUser;
+      return user.User.fromJson(student);
     } catch (e) {
       rethrow;
     }
@@ -95,46 +97,6 @@ class UserService {
           .update({
             'nombre': name,
             'apellidos': surname,
-          })
-          .eq('email', email)
-          .select();
-      final response = user.User.fromJson(userUpdated[0]);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<user.User> updatePasswordTeacher(String password, String email) async {
-    try {
-      if (password.isEmpty || email.isEmpty) {
-        throw Exception('Todos los campos son obligatorios');
-      }
-
-      final userUpdated = await supabase
-          .from('Profesor')
-          .update({
-            'contrasena': password,
-          })
-          .eq('email', email)
-          .select();
-      final response = user.User.fromJson(userUpdated[0]);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<user.User> updatePasswordStudent(String password, String email) async {
-    try {
-      if (password.isEmpty || email.isEmpty) {
-        throw Exception('Todos los campos son obligatorios');
-      }
-
-      final userUpdated = await supabase
-          .from('Alumno')
-          .update({
-            'contrasena': password,
           })
           .eq('email', email)
           .select();
