@@ -22,4 +22,12 @@ class UserRepository {
       String email, String name, String surname) {
     return datasource.updatePersonalInfoStudent(email, name, surname);
   }
+
+  Future<User> updatePasswordTeacher(String password, String email) {
+    return datasource.updatePasswordTeacher(password, email);
+  }
+
+  Future<User> updatePasswordStudent(String password, String email) {
+    return datasource.updatePasswordStudent(password, email);
+  }
 }

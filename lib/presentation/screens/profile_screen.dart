@@ -18,17 +18,26 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
   late TextEditingController emailController;
   late TextEditingController nameController;
   late TextEditingController surnameController;
+  late TextEditingController passwordController;
+  late TextEditingController newPasswordController;
+  late TextEditingController repeatPasswordController;
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController();
     surnameController = TextEditingController();
+    passwordController = TextEditingController();
+    newPasswordController = TextEditingController();
+    repeatPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
     nameController.dispose();
     surnameController.dispose();
+    passwordController.dispose();
+    newPasswordController.dispose();
+    repeatPasswordController.dispose();
     super.dispose();
   }
 
@@ -160,6 +169,161 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
 
                                                 nameController.clear();
                                                 surnameController.clear();
+
+                                                Navigator.pop(context);
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Error al actulizar la información  $e'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFD9D9D9)
+                                            .withOpacity(0.25),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Contraseña Actual",
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'InriaSans',
+                                                color: Color(0x63000000),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          CustomTextField(
+                                            icon: Icons.remove_red_eye,
+                                            labelText: '',
+                                            obscureText: true,
+                                            isPasswordField: true,
+                                            controller: passwordController,
+                                          ),
+                                          const SizedBox(height: 50),
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Nueva Contraseña",
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'InriaSans',
+                                                color: Color(0x63000000),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          CustomTextField(
+                                            icon: Icons.remove_red_eye,
+                                            labelText: '',
+                                            obscureText: true,
+                                            isPasswordField: true,
+                                            controller: newPasswordController,
+                                          ),
+                                          const SizedBox(height: 50),
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Repetir Contraseña",
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'InriaSans',
+                                                color: Color(0x63000000),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          CustomTextField(
+                                            icon: Icons.remove_red_eye,
+                                            labelText: '',
+                                            obscureText: true,
+                                            isPasswordField: true,
+                                            controller:
+                                                repeatPasswordController,
+                                          ),
+                                          const SizedBox(height: 30),
+                                          CustomButton(
+                                            text: "Guardar Cambios",
+                                            backgroundColor:
+                                                const Color(0xFF8DC324),
+                                            onPressed: () async {
+                                              try {
+                                                if (newPasswordController
+                                                        .text !=
+                                                    repeatPasswordController
+                                                        .text) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Las contraseñas no coinciden'),
+                                                    ),
+                                                  );
+                                                  return;
+                                                } else if (newPasswordController
+                                                        .text ==
+                                                    passwordController.text) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'La nueva contraseña no puede ser igual a la anterior'),
+                                                    ),
+                                                  );
+                                                  return;
+                                                } else if (passwordController
+                                                        .text !=
+                                                    student.password) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'La contraseña actual no es correcta'),
+                                                    ),
+                                                  );
+                                                  return;
+                                                }
+                                                await ref
+                                                    .read(studentProvider
+                                                        .notifier)
+                                                    .updatePassword(
+                                                        email: student.email,
+                                                        password:
+                                                            newPasswordController
+                                                                .text,
+                                                        role: student.role!);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Información actualizada'),
+                                                  ),
+                                                );
+
+                                                passwordController.clear();
+                                                newPasswordController.clear();
+                                                repeatPasswordController
+                                                    .clear();
 
                                                 Navigator.pop(context);
                                               } catch (e) {

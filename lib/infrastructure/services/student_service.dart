@@ -104,4 +104,44 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<user.User> updatePasswordTeacher(String password, String email) async {
+    try {
+      if (password.isEmpty || email.isEmpty) {
+        throw Exception('Todos los campos son obligatorios');
+      }
+
+      final userUpdated = await supabase
+          .from('Profesor')
+          .update({
+            'contrasena': password,
+          })
+          .eq('email', email)
+          .select();
+      final response = user.User.fromJson(userUpdated[0]);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<user.User> updatePasswordStudent(String password, String email) async {
+    try {
+      if (password.isEmpty || email.isEmpty) {
+        throw Exception('Todos los campos son obligatorios');
+      }
+
+      final userUpdated = await supabase
+          .from('Alumno')
+          .update({
+            'contrasena': password,
+          })
+          .eq('email', email)
+          .select();
+      final response = user.User.fromJson(userUpdated[0]);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
