@@ -175,7 +175,6 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                                     type: typeController.text,
                                   );
 
-                              // Mostrar mensaje de éxito
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Curso añadido con éxito.'),

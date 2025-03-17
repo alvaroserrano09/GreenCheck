@@ -11,9 +11,7 @@ class CustomTextField extends StatefulWidget {
   final VoidCallback? onTap;
   final bool enabled;
   final Function(String)? onChanged;
-  final bool
-      isPasswordField; // Nueva variable para identificar si es un campo de contraseña
-
+  final bool isPasswordField;
   const CustomTextField({
     super.key,
     required this.labelText,

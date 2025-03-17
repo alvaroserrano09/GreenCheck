@@ -6,9 +6,23 @@ class UpdatePersonalInfoUseCase {
   UpdatePersonalInfoUseCase(this.userRepository);
 
   Future<User> execute(
-      {required email, required String name, required surname}) async {
-    User studentSaved =
-        await userRepository.updatePersonalInfo(email, name, surname);
-    return studentSaved;
+      String email, String name, String surname, String role) async {
+    if (role == 'profesor') {
+      User teacherSaved = await userRepository.updatePersonalInfoTeacher(
+        email,
+        name,
+        surname,
+      );
+      return teacherSaved;
+    } else if (role == 'alumno') {
+      User studentSaved = await userRepository.updatePersonalInfoStudent(
+        email,
+        name,
+        surname,
+      );
+      return studentSaved;
+    } else {
+      throw Exception('Invalid role: $role');
+    }
   }
 }

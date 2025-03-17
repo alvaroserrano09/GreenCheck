@@ -104,13 +104,15 @@ class StudentNotifier extends StateNotifier<UserState> {
   Future<void> updatePersonalInfo(
       {required String email,
       required String name,
-      required String surname}) async {
+      required String surname,
+      required String role}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final response = await updatePersonalInfoUseCase.execute(
-        email: email,
-        name: name,
-        surname: surname,
+        email,
+        name,
+        surname,
+        role,
       );
       state = state.copyWith(isLoading: false, student: response);
     } catch (e) {

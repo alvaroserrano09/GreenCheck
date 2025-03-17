@@ -28,12 +28,12 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeUserService_0 extends _i1.SmartFake implements _i2.UserService {
   _FakeUserService_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeUser_1 extends _i1.SmartFake implements _i3.User {
   _FakeUser_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [UserRepository].
@@ -45,27 +45,28 @@ class MockUserRepository extends _i1.Mock implements _i4.UserRepository {
   }
 
   @override
-  _i2.UserService get datasource =>
-      (super.noSuchMethod(
-            Invocation.getter(#datasource),
-            returnValue: _FakeUserService_0(
-              this,
-              Invocation.getter(#datasource),
-            ),
-          )
-          as _i2.UserService);
+  _i2.UserService get datasource => (super.noSuchMethod(
+        Invocation.getter(#datasource),
+        returnValue: _FakeUserService_0(
+          this,
+          Invocation.getter(#datasource),
+        ),
+      ) as _i2.UserService);
 
   @override
-  _i5.Future<_i3.User> saveStudent(_i3.User? student) =>
-      (super.noSuchMethod(
-            Invocation.method(#saveStudent, [student]),
-            returnValue: _i5.Future<_i3.User>.value(
-              _FakeUser_1(this, Invocation.method(#saveStudent, [student])),
-            ),
-          )
-          as _i5.Future<_i3.User>);
+  _i5.Future<_i3.User> saveStudent(_i3.User? student) => (super.noSuchMethod(
+        Invocation.method(#saveStudent, [student]),
+        returnValue: _i5.Future<_i3.User>.value(
+          _FakeUser_1(this, Invocation.method(#saveStudent, [student])),
+        ),
+      ) as _i5.Future<_i3.User>);
 
   @override
-  dynamic authStudent(String? email, String? password) =>
-      super.noSuchMethod(Invocation.method(#authStudent, [email, password]));
+  _i5.Future<_i3.User> authStudent(String? email, String? password) =>
+      (super.noSuchMethod(
+        Invocation.method(#authStudent, [email, password]),
+        returnValue: _i5.Future<_i3.User>.value(
+          _FakeUser_1(this, Invocation.method(#authStudent, [email, password])),
+        ),
+      ) as _i5.Future<_i3.User>);
 }

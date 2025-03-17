@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:green_check/domain/models/user.dart' as user;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -56,7 +58,7 @@ class UserService {
     }
   }
 
-  Future<user.User> updatePersonalInfo(
+  Future<user.User> updatePersonalInfoTeacher(
     String email,
     String name,
     String surname,
@@ -68,6 +70,28 @@ class UserService {
 
       final userUpdated = await supabase
           .from('Profesor')
+          .update({
+            'nombre': name,
+            'apellidos': surname,
+          })
+          .eq('email', email)
+          .select();
+      final response = user.User.fromJson(userUpdated[0]);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<user.User> updatePersonalInfoStudent(
+      String email, String name, String surname) async {
+    try {
+      if (email.isEmpty || name.isEmpty || surname.isEmpty) {
+        throw Exception('Todos los campos son obligatorios');
+      }
+
+      final userUpdated = await supabase
+          .from('Alumno')
           .update({
             'nombre': name,
             'apellidos': surname,

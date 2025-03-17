@@ -9,11 +9,17 @@ class UserRepository {
     return datasource.saveStudent(student);
   }
 
-  authStudent(String email, String password) {
+  Future<User> authStudent(String email, String password) {
     return datasource.authStudent(email, password);
   }
 
-  updatePersonalInfo(String email, String name, String surname) {
-    return datasource.updatePersonalInfo(email, name, surname);
+  Future<User> updatePersonalInfoTeacher(
+      String email, String name, String surname) {
+    return datasource.updatePersonalInfoTeacher(email, name, surname);
+  }
+
+  Future<User> updatePersonalInfoStudent(
+      String email, String name, String surname) {
+    return datasource.updatePersonalInfoStudent(email, name, surname);
   }
 }

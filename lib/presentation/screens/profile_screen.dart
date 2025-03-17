@@ -23,14 +23,12 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
     super.initState();
     nameController = TextEditingController();
     surnameController = TextEditingController();
-    emailController = TextEditingController();
   }
 
   @override
   void dispose() {
     nameController.dispose();
     surnameController.dispose();
-    emailController.dispose();
     super.dispose();
   }
 
@@ -124,8 +122,9 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                           ),
                                           const SizedBox(height: 5),
                                           CustomTextField(
-                                              labelText: student.email,
-                                              controller: emailController),
+                                            labelText: student.email,
+                                            enabled: false,
+                                          ),
                                           const SizedBox(height: 30),
                                           CustomButton(
                                             text: "Guardar Cambios",
@@ -138,10 +137,31 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                                         .notifier)
                                                     .updatePersonalInfo(
                                                       email: student.email,
-                                                      name: nameController.text,
+                                                      name: nameController
+                                                                  .text !=
+                                                              ''
+                                                          ? nameController.text
+                                                          : student.name,
                                                       surname: surnameController
-                                                          .text,
+                                                                  .text !=
+                                                              ''
+                                                          ? surnameController
+                                                              .text
+                                                          : student.surname,
+                                                      role: student.role!,
                                                     );
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Información actualizada'),
+                                                  ),
+                                                );
+
+                                                nameController.clear();
+                                                surnameController.clear();
+
+                                                Navigator.pop(context);
                                               } catch (e) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
