@@ -6,13 +6,14 @@ final SupabaseClient supabase = Supabase.instance.client;
 class UserService {
   Future<user.User> saveStudent(user.User student) async {
     try {
-      await supabase.from("Alumno").insert({
+      final studentDatabase = await supabase.from("Alumno").insert({
         'nombre': student.name,
         'email': student.email,
         'apellidos': student.surname,
         'contrasena': student.password,
-      });
-      return student;
+      }).select();
+      final studentSaved = user.User.fromJson(studentDatabase[0]);
+      return studentSaved;
     } catch (e) {
       rethrow;
     }
