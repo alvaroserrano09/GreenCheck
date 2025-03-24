@@ -8,16 +8,16 @@ import 'package:green_check/presentation/widgets/course_card.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CourseScreen extends ConsumerStatefulWidget {
-  static const String name = "course-screen";
+class CoursesScreen extends ConsumerStatefulWidget {
+  static const String name = "courses-screen";
 
-  const CourseScreen({super.key});
+  const CoursesScreen({super.key});
 
   @override
-  ConsumerState<CourseScreen> createState() => _CourseScreenState();
+  ConsumerState<CoursesScreen> createState() => _CourseScreenState();
 }
 
-class _CourseScreenState extends ConsumerState<CourseScreen> {
+class _CourseScreenState extends ConsumerState<CoursesScreen> {
   @override
   @override
   void initState() {
@@ -41,7 +41,6 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
     final studentState = ref.watch(studentProvider);
 
     final bool isProfessor = studentState.student?.role == 'profesor';
-
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -71,7 +70,8 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
                       child: CourseCard(
                         title: course.name,
                         teacher: 'Profesor ${studentState.student?.name}',
-                        onTap: () => context.push('/course/${course.id}'),
+                        onTap: () =>
+                            context.push('/home/course-screen/${course.id}'),
                       ),
                     );
                   },

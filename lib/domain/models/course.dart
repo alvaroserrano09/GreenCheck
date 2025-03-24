@@ -34,7 +34,7 @@ class Course {
     return Course(
       id: json['id'],
       name: json['nombre'],
-      description: json['description'],
+      description: json['descripcion'],
       idTeacher: json['id_profesor'],
       type: json['tipo'],
     );

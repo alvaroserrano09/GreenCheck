@@ -16,4 +16,8 @@ class CourseRepository {
   getCoursesForStudent(int idStudent) {
     return datasource.getCoursesForStudent(idStudent);
   }
+
+  getCourse(int idStudent) {
+    return datasource.getCourse(idStudent);
+  }
 }

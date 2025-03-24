@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/domain/usecases/authenticate_student_use_case.dart';
 import 'package:green_check/domain/usecases/save_student_use_case.dart';
@@ -9,6 +10,7 @@ import 'package:green_check/infrastructure/services/student_service.dart';
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepository(UserService());
 });
+
 final authenticatUseCaseProvider = Provider<AuthenticateStudentUseCase>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
   return AuthenticateStudentUseCase(userRepository);
@@ -59,7 +61,49 @@ class StudentNotifier extends StateNotifier<UserState> {
     this.saveStudentUseCase,
     this.authenticateStudentUseCase,
     this.updatePersonalInfoUseCase,
-  ) : super(UserState.initial());
+  ) : super(UserState.initial()) {
+    _loadUserState();
+  }
+
+  Future<void> _loadUserState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getInt('user_id');
+    final email = prefs.getString('user_email');
+    final name = prefs.getString('user_name');
+    final surname = prefs.getString('user_surname');
+    final role = prefs.getString('user_role');
+
+    if (email != null && name != null && surname != null && role != null) {
+      state = state.copyWith(
+        student: User(
+          id: id,
+          email: email,
+          password: "",
+          name: name,
+          surname: surname,
+          role: role,
+        ),
+      );
+    }
+  }
+
+  Future<void> _saveUserState(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('user_id', user.id ?? 1);
+    await prefs.setString('user_email', user.email);
+    await prefs.setString('user_name', user.name);
+    await prefs.setString('user_surname', user.surname);
+    await prefs.setString('user_role', user.role ?? '');
+  }
+
+  Future<void> _clearUserState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_id');
+    await prefs.remove('user_email');
+    await prefs.remove('user_name');
+    await prefs.remove('user_surname');
+    await prefs.remove('user_role');
+  }
 
   Future<void> registerStudent({
     required String email,
@@ -76,6 +120,8 @@ class StudentNotifier extends StateNotifier<UserState> {
         name: name,
         surname: surname,
       ));
+
+      await _saveUserState(response);
 
       state = state.copyWith(isLoading: false, student: response);
     } catch (e) {
@@ -96,6 +142,8 @@ class StudentNotifier extends StateNotifier<UserState> {
         password: password,
       );
 
+      await _saveUserState(response);
+
       state = state.copyWith(isLoading: false, student: response);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
@@ -103,12 +151,20 @@ class StudentNotifier extends StateNotifier<UserState> {
     }
   }
 
-  Future<void> updatePersonalInfo(
-      {required String email,
-      required String name,
-      required String surname,
-      required String role}) async {
+  Future<void> logoutStudent() async {
+    await _clearUserState();
+
+    state = state.copyWith(student: null);
+  }
+
+  Future<void> updatePersonalInfo({
+    required String email,
+    required String name,
+    required String surname,
+    required String role,
+  }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
+
     try {
       final response = await updatePersonalInfoUseCase.execute(
         email,
@@ -116,6 +172,9 @@ class StudentNotifier extends StateNotifier<UserState> {
         surname,
         role,
       );
+
+      await _saveUserState(response);
+
       state = state.copyWith(isLoading: false, student: response);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
@@ -126,7 +185,8 @@ class StudentNotifier extends StateNotifier<UserState> {
 
 final studentProvider = StateNotifierProvider<StudentNotifier, UserState>(
   (ref) => StudentNotifier(
-      ref.watch(saveStudentUseCaseProvider),
-      ref.watch(authenticatUseCaseProvider),
-      ref.watch(updatePersonalInfoUseCase)),
+    ref.watch(saveStudentUseCaseProvider),
+    ref.watch(authenticatUseCaseProvider),
+    ref.watch(updatePersonalInfoUseCase),
+  ),
 );

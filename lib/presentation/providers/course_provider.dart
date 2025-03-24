@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/domain/models/course.dart';
+import 'package:green_check/domain/usecases/get_course_use_case.dart';
 import 'package:green_check/domain/usecases/get_courses_student_use_case.dart';
 import 'package:green_check/domain/usecases/get_courses_teacher_use_case.dart';
 import 'package:green_check/domain/usecases/save_course_use_case.dart';
@@ -25,6 +26,12 @@ final getCoursesStudentUseCaseProvider =
     Provider<GetCoursesStudentUseCase>((ref) {
   final courseRepository = ref.watch(courseRepositoryProvider);
   return GetCoursesStudentUseCase(courseRepository);
+});
+
+final getCourseStudentUseCaseProvider =
+    Provider<GetCourseStudentUseCase>((ref) {
+  final courseRepository = ref.watch(courseRepositoryProvider);
+  return GetCourseStudentUseCase(courseRepository);
 });
 
 class CourseState {
@@ -61,9 +68,10 @@ class CourseNotifier extends StateNotifier<CourseState> {
   final SaveCourseUseCase saveCourseUseCase;
   final GetCoursesTeacherUseCase getCoursesTeacherUseCase;
   final GetCoursesStudentUseCase getCoursesStudentUseCase;
+  final GetCourseStudentUseCase getCourseStudentUseCase;
 
   CourseNotifier(this.saveCourseUseCase, this.getCoursesTeacherUseCase,
-      this.getCoursesStudentUseCase)
+      this.getCoursesStudentUseCase, this.getCourseStudentUseCase)
       : super(CourseState.initial());
 
   Future<void> saveCourse({
@@ -126,6 +134,25 @@ class CourseNotifier extends StateNotifier<CourseState> {
       }
     }
   }
+
+  Future<void> loadCourse(int idCourse) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      final course = await getCourseStudentUseCase.execute(idCourse);
+
+      if (mounted) {
+        state = state.copyWith(isLoading: false, course: course);
+      }
+    } catch (e) {
+      if (mounted) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: e.toString(),
+        );
+      }
+    }
+  }
 }
 
 final courseProvider = StateNotifierProvider<CourseNotifier, CourseState>(
@@ -133,5 +160,6 @@ final courseProvider = StateNotifierProvider<CourseNotifier, CourseState>(
     ref.watch(saveCourseUseCaseProvider),
     ref.watch(getCoursesTeacherUseCaseProvider),
     ref.watch(getCoursesStudentUseCaseProvider),
+    ref.watch(getCourseStudentUseCaseProvider),
   ),
 );

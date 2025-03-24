@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
@@ -183,8 +184,9 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
 
                               titleController.clear();
                               descriptionController.clear();
+                              typeController.clear();
 
-                              Navigator.pop(context);
+                              context.push('/home/courses-screen');
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

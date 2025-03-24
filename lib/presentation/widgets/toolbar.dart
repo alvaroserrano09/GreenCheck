@@ -42,7 +42,7 @@ class Toolbar extends StatelessWidget {
               context.push('/home/user');
               break;
             case 1:
-              context.push('/home/course-screen');
+              context.push('/home/courses-screen');
               break;
             case 2:
               Navigator.pushNamed(context, '/avisos');

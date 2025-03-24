@@ -61,4 +61,19 @@ class CourseService {
 
     return courses;
   }
+
+  Future<Course?> getCourse(int idStudent) async {
+    try {
+      print('idStudent $idStudent');
+      final response = await supabase
+          .from('Curso')
+          .select()
+          .eq('id', idStudent)
+          .maybeSingle();
+      return Course.fromJson(response!);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 }

@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 22,
                         color: Colors.white,
-                        fontFamily: 'InriaSans',
+                        fontFamily: '',
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 2,
@@ -115,8 +115,9 @@ class HomeScreen extends StatelessWidget {
                       } else {
                         await Supabase.instance.client.auth.signInWithOAuth(
                           OAuthProvider.google,
+                          redirectTo: 'http://localhost:5000/login',
                         );
-                        context.push('/home/user');
+                        context.push("/login");
                       }
                     },
                   ),
