@@ -1,4 +1,5 @@
 import 'package:green_check/domain/models/course.dart';
+import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
 
 class CourseRepository {
@@ -19,5 +20,17 @@ class CourseRepository {
 
   getCourse(int idStudent) {
     return datasource.getCourse(idStudent);
+  }
+
+  Future<List<User>> getStudents(int courseId) async {
+    return datasource.getStudents(courseId);
+  }
+
+  Future<User> saveStudent(int courseId, int idStudent) {
+    return datasource.saveStudent(courseId, idStudent);
+  }
+
+  Future<void> deleteStudent(int idStudent, int idCourse) {
+    return datasource.deleteStudent(idStudent, idCourse);
   }
 }

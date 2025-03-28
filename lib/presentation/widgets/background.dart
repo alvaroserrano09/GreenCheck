@@ -43,7 +43,7 @@ class BackGround extends StatelessWidget {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          color: Colors.white, // Fondo blanco
+          color: Colors.white,
         ),
       ),
     );

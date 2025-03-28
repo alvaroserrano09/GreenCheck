@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
@@ -33,6 +34,8 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
   @override
   Widget build(BuildContext context) {
     final courseState = ref.watch(courseProvider);
+    final studentState = ref.watch(studentProvider);
+    final bool isProfessor = studentState.student?.role == 'profesor';
 
     return Scaffold(
       body: SafeArea(
@@ -86,26 +89,21 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
                       _buildClickableCard(
                         title: 'Tests',
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Navegaría a la pantalla de Tests'),
-                            ),
-                          );
+                          context.push(
+                              "/home/tests-screen/${courseState.course!.id}");
                         },
                       ),
                       const SizedBox(height: 16),
-                      _buildClickableCard(
-                        title: 'Alumnos',
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content:
-                                  Text('Navegaría a la pantalla de Alumnos'),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 80), // Espacio para el toolbar
+                      if (isProfessor) ...[
+                        _buildClickableCard(
+                          title: 'Alumnos',
+                          onTap: () {
+                            context.push(
+                                '/home/course-creen/students-screen/${courseState.course!.id}');
+                          },
+                        ),
+                        const SizedBox(height: 80),
+                      ]
                     ],
                   ),
                 ),

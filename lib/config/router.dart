@@ -7,6 +7,8 @@ import 'package:green_check/presentation/screens/home_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
+import 'package:green_check/presentation/screens/students_screen.dart';
+import 'package:green_check/presentation/screens/tests_screen.dart';
 import 'package:green_check/presentation/screens/user_home_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -66,6 +68,22 @@ final appRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) =>
           const ProfileScreen(),
     ),
+    GoRoute(
+      path: '/home/tests-screen/:courseId',
+      name: TestsScreen.name,
+      builder: (context, state) {
+        final int courseId = int.parse(state.pathParameters['courseId']!);
+        return TestsScreen(courseId: courseId);
+      },
+    ),
+    GoRoute(
+      path: '/home/course-creen/students-screen/:courseId',
+      name: StudentsScreen.name,
+      builder: (context, state) {
+        final int courseId = int.parse(state.pathParameters['courseId']!);
+        return StudentsScreen(courseId: courseId);
+      },
+    )
   ],
   redirect: (BuildContext context, GoRouterState state) async {
     final isAuthenticated = await _checkIfUserIsAuthenticated();
@@ -80,10 +98,7 @@ final appRouter = GoRouter(
 
 // Simula la verificación de autenticación
 Future<bool> _checkIfUserIsAuthenticated() async {
-  print("entro");
-  print(Supabase.instance.client.auth.currentUser);
   if (Supabase.instance.client.auth.currentUser != null) {
-    print("entro true");
     return true;
   }
   return false; // Cambia esto según tu lógica de autenticación

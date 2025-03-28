@@ -22,4 +22,8 @@ class UserRepository {
       String email, String name, String surname) {
     return datasource.updatePersonalInfoStudent(email, name, surname);
   }
+
+  Future<User> getStudentByEmail(String email) {
+    return datasource.getStudentByEmail(email);
+  }
 }

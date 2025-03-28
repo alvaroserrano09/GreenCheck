@@ -1,5 +1,6 @@
 import 'package:green_check/domain/models/course.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:green_check/domain/models/user.dart' as user;
 
 final SupabaseClient supabase = Supabase.instance.client;
 
@@ -64,7 +65,6 @@ class CourseService {
 
   Future<Course?> getCourse(int idStudent) async {
     try {
-      print('idStudent $idStudent');
       final response = await supabase
           .from('Curso')
           .select()
@@ -72,8 +72,67 @@ class CourseService {
           .maybeSingle();
       return Course.fromJson(response!);
     } catch (e) {
-      print(e);
       rethrow;
+    }
+  }
+
+  Future<List<user.User>> getStudents(int courseId) async {
+    try {
+      final response = await supabase.from('Alumno-curso').select('''
+          Alumno: id_alumno (id, nombre, email,apellidos)
+      ''').eq('id_curso', courseId);
+      return response.map<user.User>((studentData) {
+        final student = studentData['Alumno'];
+        return user.User(
+            id: student['id'],
+            name: student['nombre'],
+            email: student['email'],
+            surname: student['apellidos'],
+            password: '');
+      }).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch students: $e');
+    }
+  }
+
+  Future<user.User> saveStudent(int courseId, int idStudent) async {
+    try {
+      await supabase.from('Alumno-curso').insert({
+        'id_curso': courseId,
+        'id_alumno': idStudent,
+      });
+
+      final response = await supabase
+          .from('Alumno')
+          .select()
+          .eq('id', idStudent)
+          .maybeSingle();
+
+      if (response == null) {
+        throw Exception('Student not found');
+      }
+
+      return user.User(
+        id: response['id'],
+        name: response['nombre'],
+        email: response['email'],
+        surname: response['apellidos'],
+        password: '',
+      );
+    } catch (e) {
+      throw Exception('Failed to save student: $e');
+    }
+  }
+
+  Future<void> deleteStudent(int idStudent, int idCourse) async {
+    try {
+      await supabase
+          .from('Alumno-curso')
+          .delete()
+          .eq('id_alumno', idStudent)
+          .eq('id_curso', idCourse);
+    } catch (e) {
+      throw Exception('Failed to delete student: $e');
     }
   }
 }

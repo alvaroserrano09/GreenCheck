@@ -8,7 +8,6 @@ class GetCourseStudentUseCase {
 
   Future<Course> execute(int idStudent) async {
     final response = await courseRepository.getCourse(idStudent);
-    print(response);
     return response;
   }
 }

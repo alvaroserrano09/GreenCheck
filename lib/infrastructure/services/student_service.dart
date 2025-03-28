@@ -106,4 +106,23 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<user.User> getStudentByEmail(String email) async {
+    try {
+      final student = await supabase
+          .from('Alumno')
+          .select()
+          .eq('email', email)
+          .maybeSingle();
+
+      if (student == null || student.isEmpty) {
+        throw Exception(
+            'No se encontró un estudiante con el email proporcionado.');
+      }
+
+      return user.User.fromJson(student);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
