@@ -1,3 +1,4 @@
+import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/domain/models/test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -16,6 +17,69 @@ class TestService {
       }).toList();
 
       return tests;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Test> saveTest(String title, int idCurso) async {
+    try {
+      final response = await supabase
+          .from('Test')
+          .insert({'titulo': title, 'id_curso': idCurso})
+          .select()
+          .single();
+      return Test(
+        courseId: response['id_curso'],
+        title: response['titulo'],
+        id: response['id'],
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> saveQuestions(List<Question> questionsToSave, int testId) async {
+    try {
+      final List<Map<String, dynamic>> questionsData =
+          questionsToSave.map((question) {
+        return {
+          'id_test': testId,
+          'titulo': question.title,
+          'respuestas': {
+            'respuestas': question.answers
+                .map((option) => {
+                      'respuesta': option.text,
+                      'correcta': option.isCorrect,
+                      if (option.feedback != null) 'feedback': option.feedback,
+                    })
+                .toList(),
+            'respuestas_correctas': question.correctAnswers,
+          }
+        };
+      }).toList();
+
+      final response =
+          await supabase.from('Preguntas').insert(questionsData).select();
+
+      if (response.isEmpty) {
+        throw Exception('No se guardaron las preguntas');
+      }
+
+      print('✅ Preguntas guardadas: ${response.length}');
+    } catch (e) {
+      print('❌ Error al guardar preguntas: $e');
+      rethrow;
+    }
+  }
+
+  void deleteTest(int idTest, int idCourse) async {
+    try {
+      await supabase
+          .from('Test')
+          .delete()
+          .eq('id', idTest)
+          .eq('id_curso', idCourse);
     } catch (e) {
       rethrow;
     }
