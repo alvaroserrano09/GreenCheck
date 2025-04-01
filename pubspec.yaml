@@ -46,6 +46,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.5.2
+  file_picker: ^10.0.0
 
 dev_dependencies:
   flutter_test:

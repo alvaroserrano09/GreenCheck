@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/domain/models/test.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
@@ -19,9 +21,8 @@ class TestsScreen extends ConsumerStatefulWidget {
 }
 
 class _TestsScreenState extends ConsumerState<TestsScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  String? _selectedFilePath;
+  PlatformFile? _selectedFile;
 
   @override
   void initState() {
@@ -38,34 +39,62 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
   }
 
   Future<void> _pickFile() async {
-    setState(() => _selectedFilePath = '/ruta/del/archivo.pdf');
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['txt', 'pdf', 'doc', 'docx', 'jpg', 'png'],
+        allowMultiple: false,
+      );
+
+      if (result != null) {
+        if (result.files.first.size > 10 * 1024 * 1024) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('El archivo es demasiado grande (máximo 10MB)')),
+          );
+          return;
+        }
+
+        setState(() {
+          _selectedFile = result.files.first;
+        });
+      }
+    } on PlatformException catch (e) {
+      print("Error de plataforma al seleccionar archivo: ${e.toString()}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al seleccionar archivo: ${e.message}')),
+      );
+    } catch (e) {
+      print("Error al seleccionar archivo: ${e.toString()}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Error al seleccionar archivo: ${e.toString()}')),
+      );
+    }
   }
 
-  void _submitNewTest() {
-    if (_formKey.currentState!.validate()) {
-      if (_selectedFilePath == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Por favor selecciona un archivo')));
-        return;
-      }
+  Future<void> _submitNewTest() async {
+    if (_selectedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor selecciona un archivo')),
+      );
+      return;
+    }
 
-      // Aquí llamarías a tu provider para subir el test
-      // Ejemplo:
-      // ref.read(testProvider.notifier).uploadTest(
-      //   courseId: widget.courseId,
-      //   title: _titleController.text,
-      //   filePath: _selectedFilePath!,
-      // );
+    try {
+      await ref.read(testProvider.notifier).uploadTest(
+            courseId: widget.courseId,
+            title: _titleController.text,
+            file: _selectedFile!,
+          );
 
-      // Limpiar el formulario
       _titleController.clear();
-      setState(() {
-        _selectedFilePath = null;
-      });
+      setState(() => _selectedFile = null);
 
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Test creado exitosamente')));
-    }
+        const SnackBar(content: Text('Test creado exitosamente')),
+      );
+    } catch (e) {}
   }
 
   @override
@@ -131,11 +160,13 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          CustomTextField(labelText: 'Ingrese el titulo'),
+          CustomTextField(
+            labelText: 'Ingrese el titulo',
+            controller: _titleController,
+          ),
           const SizedBox(height: 16),
-          _selectedFilePath != null
-              ? Text(
-                  'Archivo seleccionado: ${_selectedFilePath!.split('/').last}')
+          _selectedFile != null
+              ? Text('Archivo seleccionado: ${_selectedFile?.name}')
               : const Text('Ningún archivo seleccionado'),
           const SizedBox(height: 8),
           CustomButton(
@@ -165,6 +196,14 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
       children: tests
           .map((test) => ListTile(
                 leading: const Icon(Icons.play_arrow, color: Colors.green),
+                trailing: IconButton(
+                  icon: const Icon(Icons.remove_circle_outline,
+                      color: Colors.red),
+                  onPressed: () async {
+                    ref.read(testProvider.notifier).deleteTest(
+                        courseId: widget.courseId, testId: test.id!);
+                  },
+                ),
                 title: Text(test.title),
                 onTap: () {},
               ))
