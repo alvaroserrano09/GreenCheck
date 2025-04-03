@@ -1,8 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/domain/models/test.dart';
 import 'package:green_check/domain/usecases/delete_test_use_case.dart';
+import 'package:green_check/domain/usecases/get_questions_test_use_case.dart';
 import 'package:green_check/domain/usecases/get_tests_use_case.dart';
 import 'package:green_check/domain/usecases/upload_test_use_case.dart';
 import 'package:green_check/infrastructure/repositories/test_repository.dart';
@@ -36,6 +38,10 @@ final uploadTestUseCaseProvider = Provider<UploadTestUseCase>((ref) {
 final deleteTestUseCaseProvider = Provider<DeleteTestUseCase>((ref) {
   return DeleteTestUseCase(ref.watch(testRepositoryProvider));
 });
+final getQuestionsTestUseCaseProvider =
+    Provider<GetQuestionsTestUseCase>((ref) {
+  return GetQuestionsTestUseCase(ref.watch(testRepositoryProvider));
+});
 
 class TestState {
   final bool isLoading;
@@ -43,6 +49,7 @@ class TestState {
   final String? errorMessage;
   final Test? currentTest;
   final List<Test> tests;
+  final List<Question> questions;
   final double? uploadProgress;
 
   const TestState({
@@ -51,6 +58,7 @@ class TestState {
     this.errorMessage,
     this.currentTest,
     this.tests = const [],
+    this.questions = const [],
     this.uploadProgress,
   });
 
@@ -60,6 +68,7 @@ class TestState {
     String? errorMessage,
     Test? currentTest,
     List<Test>? tests,
+    List<Question>? questions,
     double? uploadProgress,
   }) {
     return TestState(
@@ -69,6 +78,7 @@ class TestState {
       currentTest: currentTest ?? this.currentTest,
       tests: tests ?? this.tests,
       uploadProgress: uploadProgress ?? this.uploadProgress,
+      questions: this.questions,
     );
   }
 }
@@ -77,14 +87,17 @@ class TestNotifier extends StateNotifier<TestState> {
   final GetTestsUseCase _getTestsUseCase;
   final UploadTestUseCase _uploadTestUseCase;
   final DeleteTestUseCase _deleteTestUseCase;
+  final GetQuestionsTestUseCase _getQuestionsTestUseCase;
 
   TestNotifier({
     required GetTestsUseCase getTestsUseCase,
     required UploadTestUseCase uploadTestUseCase,
     required DeleteTestUseCase deleteTestUseCase,
+    required GetQuestionsTestUseCase getQuestionsTestUseCase,
   })  : _getTestsUseCase = getTestsUseCase,
         _uploadTestUseCase = uploadTestUseCase,
         _deleteTestUseCase = deleteTestUseCase,
+        _getQuestionsTestUseCase = getQuestionsTestUseCase,
         super(const TestState());
 
   Future<void> getTests({required int idCourse}) async {
@@ -177,6 +190,27 @@ class TestNotifier extends StateNotifier<TestState> {
   void clearError() {
     state = state.copyWith(errorMessage: null);
   }
+
+  Future<List<Question>> getTestQuestions(int testId) async {
+    state = state.copyWith(isLoading: true, errorMessage: null, questions: []);
+
+    try {
+      final questions = await _getQuestionsTestUseCase.execute(testId);
+      state = state.copyWith(
+        isLoading: false,
+        questions: questions,
+        errorMessage: null,
+      );
+      return questions;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Error al cargar preguntas del test: ${e.toString()}',
+        questions: [],
+      );
+      rethrow;
+    }
+  }
 }
 
 final testProvider = StateNotifierProvider<TestNotifier, TestState>((ref) {
@@ -184,5 +218,6 @@ final testProvider = StateNotifierProvider<TestNotifier, TestState>((ref) {
     getTestsUseCase: ref.watch(getTestsUseCaseProvider),
     uploadTestUseCase: ref.watch(uploadTestUseCaseProvider),
     deleteTestUseCase: ref.watch(deleteTestUseCaseProvider),
+    getQuestionsTestUseCase: ref.watch(getQuestionsTestUseCaseProvider),
   );
 });

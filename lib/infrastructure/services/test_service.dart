@@ -84,4 +84,42 @@ class TestService {
       rethrow;
     }
   }
+
+  Future<List<Question>> getQuestions(int testId) async {
+    try {
+      print(testId);
+      final response =
+          await supabase.from('Preguntas').select().eq('id_test', testId);
+
+      final List<Question> questions = response.map<Question>((questionData) {
+        final List<dynamic> answersData =
+            questionData['respuestas']['respuestas'] ?? [];
+
+        final List<Answer> answers = answersData.map<Answer>((answerData) {
+          return Answer(
+            text: answerData['respuesta'] as String,
+            isCorrect: answerData['correcta'] as bool,
+            feedback: answerData['feedback'] as String?,
+          );
+        }).toList();
+
+        final List<String> correctAnswers = (questionData['respuestas']
+                    ['respuestas_correctas'] as List<dynamic>?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [];
+
+        return Question(
+          title: questionData['titulo'] as String,
+          answers: answers,
+          correctAnswers: correctAnswers,
+          questionType: 'Test',
+        );
+      }).toList();
+
+      return questions;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

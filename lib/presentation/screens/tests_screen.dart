@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/test.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
@@ -128,7 +129,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
                           if (testState.errorMessage != null)
                             Text('Error: ${testState.errorMessage}'),
                           if (testState.tests.isNotEmpty)
-                            _buildTestsList(testState.tests)
+                            _buildTestsList(testState.tests, studentState)
                           else if (!testState.isLoading &&
                               testState.errorMessage == null)
                             const Center(
@@ -188,26 +189,34 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
     );
   }
 
-  Widget _buildTestsList(List<Test> tests) {
+  Widget _buildTestsList(List<Test> tests, dynamic studentState) {
     return ExpansionTile(
       title: const Text('Mis Tests',
           style: TextStyle(fontWeight: FontWeight.bold)),
       initiallyExpanded: true,
-      children: tests
-          .map((test) => ListTile(
-                leading: const Icon(Icons.play_arrow, color: Colors.green),
-                trailing: IconButton(
+      children: tests.map((test) {
+        return ListTile(
+          leading: IconButton(
+            icon: Icon(Icons.play_arrow, color: Colors.green),
+            onPressed: () {
+              context.push(
+                  '/home/course-screen/tests-screen/test-screen/${test.id}');
+            },
+          ),
+          trailing: studentState.student?.role == "profesor"
+              ? IconButton(
                   icon: const Icon(Icons.remove_circle_outline,
                       color: Colors.red),
                   onPressed: () async {
                     ref.read(testProvider.notifier).deleteTest(
                         courseId: widget.courseId, testId: test.id!);
                   },
-                ),
-                title: Text(test.title),
-                onTap: () {},
-              ))
-          .toList(),
+                )
+              : null,
+          title: Text(test.title),
+          onTap: () {},
+        );
+      }).toList(),
     );
   }
 }

@@ -8,6 +8,7 @@ import 'package:green_check/presentation/screens/login_screen.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
 import 'package:green_check/presentation/screens/students_screen.dart';
+import 'package:green_check/presentation/screens/test_screen.dart';
 import 'package:green_check/presentation/screens/tests_screen.dart';
 import 'package:green_check/presentation/screens/user_home_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -83,6 +84,16 @@ final appRouter = GoRouter(
         final int courseId = int.parse(state.pathParameters['courseId']!);
         return StudentsScreen(courseId: courseId);
       },
+    ),
+    GoRoute(
+      path: '/home/course-screen/tests-screen/test-screen/:testId',
+      name: TestScreen.name,
+      builder: (context, state) {
+        final int testId = int.parse(state.pathParameters['testId']!);
+        return TestScreen(
+          testId: testId,
+        );
+      },
     )
   ],
   redirect: (BuildContext context, GoRouterState state) async {
@@ -96,10 +107,9 @@ final appRouter = GoRouter(
   },
 );
 
-// Simula la verificación de autenticación
 Future<bool> _checkIfUserIsAuthenticated() async {
   if (Supabase.instance.client.auth.currentUser != null) {
     return true;
   }
-  return false; // Cambia esto según tu lógica de autenticación
+  return false;
 }
