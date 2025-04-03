@@ -22,4 +22,8 @@ class TestRepository {
   void deleteTest(int idTest, int idCourse) {
     return datasource.deleteTest(idTest, idCourse);
   }
+
+  Future<List<Question>> getQuestions(int testId) {
+    return datasource.getQuestions(testId);
+  }
 }

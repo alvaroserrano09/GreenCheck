@@ -88,8 +88,11 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                     onPressed: () {
                       context.push("/home/add-course-screen");
                     },
-                    child: const Icon(Icons.add),
                     backgroundColor: const Color(0xFF8DC324),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
