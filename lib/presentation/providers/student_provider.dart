@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:green_check/domain/usecases/save_student_google_use_case.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/domain/usecases/authenticate_student_use_case.dart';
@@ -21,9 +22,15 @@ final saveStudentUseCaseProvider = Provider<SaveStudentUseCase>((ref) {
   return SaveStudentUseCase(userRepository);
 });
 
-final updatePersonalInfoUseCase = Provider<UpdatePersonalInfoUseCase>((ref) {
+final updatePersonalInfoUseCaseProvider =
+    Provider<UpdatePersonalInfoUseCase>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
   return UpdatePersonalInfoUseCase(userRepository);
+});
+final saveStudentGoogleUseCaseProvider =
+    Provider<SaveStudentGoogleUseCase>((ref) {
+  final userRepository = ref.watch(userRepositoryProvider);
+  return SaveStudentGoogleUseCase(userRepository);
 });
 
 class UserState {
@@ -56,11 +63,13 @@ class StudentNotifier extends StateNotifier<UserState> {
   final SaveStudentUseCase saveStudentUseCase;
   final AuthenticateStudentUseCase authenticateStudentUseCase;
   final UpdatePersonalInfoUseCase updatePersonalInfoUseCase;
+  final SaveStudentGoogleUseCase saveStudentGoogleUseCase;
 
   StudentNotifier(
     this.saveStudentUseCase,
     this.authenticateStudentUseCase,
     this.updatePersonalInfoUseCase,
+    this.saveStudentGoogleUseCase,
   ) : super(UserState.initial()) {
     _loadUserState();
   }
@@ -181,12 +190,35 @@ class StudentNotifier extends StateNotifier<UserState> {
       throw Exception(e);
     }
   }
+
+  Future<void> signInWithGoogle(currentUser) async {
+    try {
+      if (currentUser != null) {
+        final fullName =
+            currentUser.userMetadata?['full_name']?.split(' ') ?? ['', ''];
+        final user = User(
+          email: currentUser.email!,
+          name: fullName.first,
+          surname: fullName.length > 1 ? fullName.sublist(1).join(' ') : '',
+          password: '', // Google no proporciona contraseña
+        );
+
+        // 4. Guardar en `Alumno` usando el caso de uso
+        final response = await saveStudentGoogleUseCase.execute(user);
+
+        state = state.copyWith(isLoading: false, student: response);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 
 final studentProvider = StateNotifierProvider<StudentNotifier, UserState>(
   (ref) => StudentNotifier(
     ref.watch(saveStudentUseCaseProvider),
     ref.watch(authenticatUseCaseProvider),
-    ref.watch(updatePersonalInfoUseCase),
+    ref.watch(updatePersonalInfoUseCaseProvider),
+    ref.watch(saveStudentGoogleUseCaseProvider),
   ),
 );

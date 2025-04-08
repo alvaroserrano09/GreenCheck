@@ -1,15 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
   static const String name = 'home-screen';
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,14 +117,25 @@ class HomeScreen extends StatelessWidget {
                     backgroundColor: Color(0xFF1965BD),
                     imagePath: "assets/logoGoogle.png",
                     onPressed: () async {
-                      if (!kIsWeb) {
-                        await _nativeGoogleSignIn();
-                      } else {
-                        await Supabase.instance.client.auth.signInWithOAuth(
-                          OAuthProvider.google,
-                          redirectTo: 'http://localhost:5000/login',
-                        );
-                        context.push("/login");
+                      try {
+                        if (!kIsWeb) {
+                          await _nativeGoogleSignIn(context);
+                        } else {
+                          await Supabase.instance.client.auth.signInWithOAuth(
+                            OAuthProvider.google,
+                            queryParams: {
+                              'prompt': 'select_account',
+                            },
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    'Error al iniciar sesión con Google: $e')),
+                          );
+                        }
                       }
                     },
                   ),
@@ -131,31 +149,43 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-Future<void> _nativeGoogleSignIn() async {
-  const webClientId =
-      '815189116906-cnlpe910hrrjciipisipavobbuaqd9gp.apps.googleusercontent.com';
+Future<void> _nativeGoogleSignIn(BuildContext context) async {
+  try {
+    const webClientId =
+        '815189116906-cnlpe910hrrjciipisipavobbuaqd9gp.apps.googleusercontent.com';
 
-  const iosClientId = 'my-ios.apps.googleusercontent.com';
+    const iosClientId = 'my-ios.apps.googleusercontent.com';
 
-  final GoogleSignIn googleSignIn = GoogleSignIn(
-    clientId: iosClientId,
-    serverClientId: webClientId,
-  );
-  final googleUser = await googleSignIn.signIn();
-  final googleAuth = await googleUser!.authentication;
-  final accessToken = googleAuth.accessToken;
-  final idToken = googleAuth.idToken;
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: iosClientId,
+      serverClientId: webClientId,
+      signInOption: SignInOption.standard,
+      forceCodeForRefreshToken: true,
+    );
 
-  if (accessToken == null) {
-    throw 'No Access Token found.';
+    final googleUser = await googleSignIn.signIn();
+    if (googleUser == null) {
+      throw 'Usuario canceló el inicio de sesión';
+    }
+
+    final googleAuth = await googleUser.authentication;
+    final accessToken = googleAuth.accessToken;
+    final idToken = googleAuth.idToken;
+
+    if (accessToken == null) {
+      throw 'No se encontró Access Token.';
+    }
+    if (idToken == null) {
+      throw 'No se encontró ID Token.';
+    }
+
+    await Supabase.instance.client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+    context.go("/");
+  } catch (e) {
+    rethrow;
   }
-  if (idToken == null) {
-    throw 'No ID Token found.';
-  }
-
-  await Supabase.instance.client.auth.signInWithIdToken(
-    provider: OAuthProvider.google,
-    idToken: idToken,
-    accessToken: accessToken,
-  );
 }

@@ -10,7 +10,7 @@ class SaveStudentCourseUseCase {
 
   Future<User> execute(int idCourse, String email) async {
     final student = await studentRepositoy.getStudentByEmail(email);
-    final response = await courseRepository.saveStudent(idCourse, student.id!);
+    final response = await courseRepository.saveStudent(idCourse, student!.id!);
     return response;
   }
 }

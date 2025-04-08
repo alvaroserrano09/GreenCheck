@@ -6,7 +6,7 @@ class GetStudentUseCase {
 
   GetStudentUseCase(this.repository);
 
-  Future<User> execute(String email) async {
+  Future<User?> execute(String email) async {
     return await repository.getStudentByEmail(email);
   }
 }

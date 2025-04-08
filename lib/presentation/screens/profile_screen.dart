@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:green_check/domain/models/user.dart' as user;
 import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
@@ -186,12 +187,48 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                     children: [
                                       const Divider(color: Colors.grey),
                                       TextButton(
-                                        onPressed: () {
-                                          studentNotifier.logoutStudent();
-                                          Supabase.instance.client.auth
-                                              .signOut();
+                                        onPressed: () async {
+                                          try {
+                                            final overlay = OverlayEntry(
+                                              builder: (context) => const Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                            );
+                                            Overlay.of(context).insert(overlay);
 
-                                          context.go("/");
+                                            await Supabase.instance.client.auth
+                                                .signOut();
+
+                                            try {
+                                              final googleSignIn =
+                                                  GoogleSignIn();
+                                              if (await googleSignIn
+                                                  .isSignedIn()) {
+                                                await googleSignIn.disconnect();
+                                                await googleSignIn.signOut();
+                                              }
+                                            } catch (e) {
+                                              debugPrint(
+                                                  'Error al cerrar Google: $e');
+                                            }
+
+                                            studentNotifier.logoutStudent();
+
+                                            overlay.remove();
+                                            if (mounted) context.go("/");
+                                          } catch (e) {
+                                            // Manejo de errores
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Error al cerrar sesión: ${e.toString()}'),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            }
+                                          }
                                         },
                                         child: const Text(
                                           'Cerrar sesión',

@@ -15,10 +15,14 @@ class UserService {
         'contrasena': student.password,
       }).select();
       final studentSaved = user.User.fromJson(studentDatabase[0]);
-      await Supabase.instance.client.auth.signUp(
-        email: student.email,
-        password: student.password,
-      );
+      if (student.password != "") {
+        studentSaved.password = student.password;
+
+        await Supabase.instance.client.auth.signUp(
+          email: student.email,
+          password: student.password,
+        );
+      }
       return studentSaved;
     } catch (e) {
       rethrow;
@@ -107,7 +111,7 @@ class UserService {
     }
   }
 
-  Future<user.User> getStudentByEmail(String email) async {
+  Future<user.User?> getStudentByEmail(String email) async {
     try {
       final student = await supabase
           .from('Alumno')
@@ -116,11 +120,28 @@ class UserService {
           .maybeSingle();
 
       if (student == null || student.isEmpty) {
-        throw Exception(
-            'No se encontró un estudiante con el email proporcionado.');
+        return null;
       }
 
       return user.User.fromJson(student);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<user.User?> getTeacherByEmail(String email) async {
+    try {
+      final teacher = await supabase
+          .from('Profesor')
+          .select()
+          .eq('email', email)
+          .maybeSingle();
+
+      if (teacher == null || teacher.isEmpty) {
+        return null;
+      }
+
+      return user.User.fromJson(teacher);
     } catch (e) {
       rethrow;
     }
