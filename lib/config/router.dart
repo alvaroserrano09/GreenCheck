@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
 import 'package:green_check/presentation/screens/course_screen.dart';
 import 'package:green_check/presentation/screens/courses_screen.dart';
@@ -15,8 +17,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
+Future<bool> _checkIfUserIsAuthenticated(ProviderContainer container) async {
+  final auth = Supabase.instance.client.auth;
+  if (auth.currentUser != null) {
+    final user = auth.currentUser!;
+    await container.read(studentProvider.notifier).signInWithGoogle(user);
+    return true;
+  }
+  return false;
+}
+
 final appRouter = GoRouter(
-  initialLocation: '/', // Ruta inicial
+  initialLocation: '/',
   navigatorKey: navigatorKey,
   routes: [
     GoRoute(
@@ -56,10 +68,9 @@ final appRouter = GoRouter(
           const CoursesScreen(),
     ),
     GoRoute(
-      path: '/home/course-screen/:courseId', // Ruta dinámica
+      path: '/home/course-screen/:courseId',
       builder: (context, state) {
-        final int courseId =
-            int.parse(state.pathParameters['courseId']!); // Extrae el ID
+        final int courseId = int.parse(state.pathParameters['courseId']!);
         return CourseScreen(courseId: courseId);
       },
     ),
@@ -90,26 +101,21 @@ final appRouter = GoRouter(
       name: TestScreen.name,
       builder: (context, state) {
         final int testId = int.parse(state.pathParameters['testId']!);
-        return TestScreen(
-          testId: testId,
-        );
+        return TestScreen(testId: testId);
       },
     )
   ],
   redirect: (BuildContext context, GoRouterState state) async {
-    final isAuthenticated = await _checkIfUserIsAuthenticated();
+    try {
+      final container = ProviderScope.containerOf(context);
+      final isAuthenticated = await _checkIfUserIsAuthenticated(container);
 
-    if (isAuthenticated && state.uri.path == '/') {
-      return '/home/user';
+      if (isAuthenticated && state.uri.path == '/') {
+        return '/home/user';
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
-
-    return null;
   },
 );
-
-Future<bool> _checkIfUserIsAuthenticated() async {
-  if (Supabase.instance.client.auth.currentUser != null) {
-    return true;
-  }
-  return false;
-}
