@@ -87,7 +87,6 @@ class TestService {
 
   Future<List<Question>> getQuestions(int testId) async {
     try {
-      print(testId);
       final response =
           await supabase.from('Preguntas').select().eq('id_test', testId);
 

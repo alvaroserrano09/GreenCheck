@@ -40,13 +40,13 @@ class UserService {
 
       final student = await Supabase.instance.client
           .from("Alumno")
-          .select("nombre, email, apellidos,id,contrasena,rol")
+          .select("nombre, email, apellidos,id,rol")
           .eq('email', email)
           .maybeSingle();
       if (student == null || student.isEmpty) {
         final teacherUser = await Supabase.instance.client
             .from("Profesor")
-            .select("nombre, email, apellidos,id,contrasena,rol")
+            .select("nombre, email, apellidos,id,rol")
             .eq('email', email)
             .single();
         if (teacherUser.isEmpty) {
