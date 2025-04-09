@@ -20,17 +20,18 @@ void main() {
   group('AuthenticateStudentUseCase', () {
     final student = User(
       email: 'test@example.com',
-      password: 'password123',
       name: 'John',
       surname: 'Doe',
     );
 
     test('debería autenticar al estudiante correctamente', () async {
-      when(mockUserRepository.authStudent(student.email, student.password))
-          .thenAnswer((_) async => student);
+      when(mockUserRepository.authStudent(
+        student.email,
+      )).thenAnswer((_) async => student);
 
       final result = await authenticateStudentUseCase.execute(
-          email: student.email, password: student.password);
+        email: student.email,
+      );
 
       expect(result, equals(student));
       verify(mockUserRepository.authStudent(student.email, student.password))

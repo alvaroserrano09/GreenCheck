@@ -87,7 +87,6 @@ class StudentNotifier extends StateNotifier<UserState> {
         student: User(
           id: id,
           email: email,
-          password: "",
           name: name,
           surname: surname,
           role: role,
@@ -123,12 +122,13 @@ class StudentNotifier extends StateNotifier<UserState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final response = await saveStudentUseCase.execute(User(
-        email: email,
-        password: password,
-        name: name,
-        surname: surname,
-      ));
+      final response = await saveStudentUseCase.execute(
+          User(
+            email: email,
+            name: name,
+            surname: surname,
+          ),
+          password);
 
       await _saveUserState(response);
 
@@ -200,10 +200,8 @@ class StudentNotifier extends StateNotifier<UserState> {
           email: currentUser.email!,
           name: fullName.first,
           surname: fullName.length > 1 ? fullName.sublist(1).join(' ') : '',
-          password: '', // Google no proporciona contraseña
         );
 
-        // 4. Guardar en `Alumno` usando el caso de uso
         final response = await saveStudentGoogleUseCase.execute(user);
 
         state = state.copyWith(isLoading: false, student: response);
