@@ -7,7 +7,6 @@ class UserMapper {
       email: user.email,
       nombre: user.name,
       apellidos: user.surname,
-      contrasena: user.password,
       rol: user.role,
     );
   }
@@ -18,7 +17,6 @@ class UserMapper {
       id: user.id,
       name: user.nombre,
       surname: user.apellidos,
-      password: user.contrasena,
       role: user.rol,
     );
   }

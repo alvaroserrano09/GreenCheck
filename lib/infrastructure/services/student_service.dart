@@ -6,21 +6,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final SupabaseClient supabase = Supabase.instance.client;
 
 class UserService {
-  Future<user.User> saveStudent(user.User student) async {
+  Future<user.User> saveStudent(user.User student, password) async {
     try {
       final studentDatabase = await supabase.from("Alumno").insert({
         'nombre': student.name,
         'email': student.email,
         'apellidos': student.surname,
-        'contrasena': student.password,
       }).select();
       final studentSaved = user.User.fromJson(studentDatabase[0]);
-      if (student.password != "") {
-        studentSaved.password = student.password;
-
+      if (password != "") {
         await Supabase.instance.client.auth.signUp(
           email: student.email,
-          password: student.password,
+          password: password,
         );
       }
       return studentSaved;

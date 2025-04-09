@@ -84,11 +84,11 @@ class CourseService {
       return response.map<user.User>((studentData) {
         final student = studentData['Alumno'];
         return user.User(
-            id: student['id'],
-            name: student['nombre'],
-            email: student['email'],
-            surname: student['apellidos'],
-            password: '');
+          id: student['id'],
+          name: student['nombre'],
+          email: student['email'],
+          surname: student['apellidos'],
+        );
       }).toList();
     } catch (e) {
       throw Exception('Failed to fetch students: $e');
@@ -117,7 +117,6 @@ class CourseService {
         name: response['nombre'],
         email: response['email'],
         surname: response['apellidos'],
-        password: '',
       );
     } catch (e) {
       throw Exception('Failed to save student: $e');

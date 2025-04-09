@@ -3,7 +3,6 @@ class User {
   final String email;
   final String name;
   final String surname;
-  late final String password;
   final String? role;
 
   User(
@@ -11,7 +10,6 @@ class User {
       this.id,
       required this.name,
       required this.surname,
-      required this.password,
       this.role});
 
   factory User.create(
@@ -19,15 +17,8 @@ class User {
       required String name,
       required String surname,
       required String email,
-      required String password,
       String? role}) {
-    return User(
-        email: email,
-        id: id,
-        name: name,
-        surname: surname,
-        password: password,
-        role: role);
+    return User(email: email, id: id, name: name, surname: surname, role: role);
   }
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -35,7 +26,6 @@ class User {
         email: json['email'],
         name: json['nombre'],
         surname: json['apellidos'],
-        password: json['contrasena'],
         role: json['rol']);
   }
 }

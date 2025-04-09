@@ -3,7 +3,6 @@ class SupabaseStudent {
   final String nombre;
   final String apellidos;
   final String email;
-  final String contrasena;
   final String? rol;
 
   SupabaseStudent(
@@ -11,7 +10,6 @@ class SupabaseStudent {
       required this.email,
       required this.nombre,
       required this.apellidos,
-      required this.contrasena,
       required this.rol});
   Map<String, dynamic> toJson() {
     return {
@@ -19,7 +17,6 @@ class SupabaseStudent {
       "email": email,
       "nombre": nombre,
       "apellidos": apellidos,
-      "contrasena": contrasena,
       "rol": rol
     };
   }

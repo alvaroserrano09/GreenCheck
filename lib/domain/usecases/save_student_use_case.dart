@@ -5,8 +5,8 @@ class SaveStudentUseCase {
   final UserRepository userRepository;
   SaveStudentUseCase(this.userRepository);
 
-  Future<User> execute(User student) async {
-    User studentSaved = await userRepository.saveStudent(student);
+  Future<User> execute(User student, String passsword) async {
+    User studentSaved = await userRepository.saveStudent(student, passsword);
     return studentSaved;
   }
 }
