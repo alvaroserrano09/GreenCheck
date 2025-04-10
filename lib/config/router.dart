@@ -7,6 +7,7 @@ import 'package:green_check/presentation/screens/course_screen.dart';
 import 'package:green_check/presentation/screens/courses_screen.dart';
 import 'package:green_check/presentation/screens/home_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
+import 'package:green_check/presentation/screens/notices_screnn.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
 import 'package:green_check/presentation/screens/students_screen.dart';
@@ -103,7 +104,14 @@ final appRouter = GoRouter(
         final int testId = int.parse(state.pathParameters['testId']!);
         return TestScreen(testId: testId);
       },
-    )
+    ),
+    GoRoute(
+      path: '/home/notices-screen',
+      name: NoticesScrenn.name,
+      builder: (context, state) {
+        return const NoticesScrenn();
+      },
+    ),
   ],
   redirect: (BuildContext context, GoRouterState state) async {
     try {
