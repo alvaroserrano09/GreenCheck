@@ -107,9 +107,9 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/home/notices-screen',
-      name: NoticesScrenn.name,
+      name: NoticesScreen.name,
       builder: (context, state) {
-        return const NoticesScrenn();
+        return const NoticesScreen();
       },
     ),
   ],
