@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/screens/add_notice_screen.dart';
 import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
 import 'package:green_check/presentation/screens/course_screen.dart';
 import 'package:green_check/presentation/screens/courses_screen.dart';
@@ -110,6 +111,13 @@ final appRouter = GoRouter(
       name: NoticesScreen.name,
       builder: (context, state) {
         return const NoticesScreen();
+      },
+    ),
+    GoRoute(
+      path: '/home/notices-screen/add-notice-screen',
+      name: AddNoticeScreen.name,
+      builder: (context, state) {
+        return const AddNoticeScreen();
       },
     ),
   ],

@@ -1,53 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:green_check/presentation/providers/notice_provider.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
 
 class NoticesScreen extends ConsumerStatefulWidget {
   static const String name = 'notices-screen';
-  const NoticesScreen({super.key});
+  const NoticesScreen({
+    super.key,
+  });
 
   @override
   ConsumerState<NoticesScreen> createState() => _NoticesScreenState();
 }
 
 class _NoticesScreenState extends ConsumerState<NoticesScreen> {
-  final List<Map<String, String>> notices = [
-    {
-      'heading': 'Corrección de errores test 2',
-      'title': 'Curso: Acreditación B1',
-      'content':
-          'He realizado algunos cambios en el test 2 ya que contenía algunos errores de redacción',
-    },
-    {
-      'heading': 'Nuevos Tests!!',
-      'title': 'Curso: Oposiciones Bombero',
-      'content':
-          'Añadidos nuevos tests respecto al cambio de temario producido en la última reunión',
-    },
-  ];
-
   bool isLoading = false;
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _loadNotices();
+    Future.microtask(() => _loadNotices());
   }
 
   Future<void> _loadNotices() async {
-    setState(() => isLoading = true);
+    if (mounted) {
+      setState(() => isLoading = true);
+    }
     try {
-      await Future.delayed(const Duration(seconds: 1));
-      setState(() => isLoading = false);
+      final student = ref.read(studentProvider).student;
+
+      await ref.read(noticeProvider.notifier).fetchNotices(student?.id ?? 0);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-        errorMessage = 'Error al cargar los avisos';
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          errorMessage = 'Error al cargar los avisos';
+        });
+      }
     }
   }
 
@@ -55,10 +51,12 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
   Widget build(BuildContext context) {
     final studentState = ref.watch(studentProvider);
     final student = studentState.student;
-
     final role = student?.role;
-
     final isTeacher = role == 'profesor';
+
+    final noticesState = ref.watch(noticeProvider);
+    final notices = noticesState.notices ?? [];
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -78,20 +76,22 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
             else
               Padding(
                 padding: const EdgeInsets.only(top: 100.0),
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  itemCount: notices.length,
-                  itemBuilder: (context, index) {
-                    final notice = notices[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 16.0),
-                      child: _buildNoticeCard(
-                        heading: notice['heading']!,
-                        title: notice['title']!,
-                        content: notice['content']!,
-                      ),
-                    );
-                  },
+                child: RefreshIndicator(
+                  onRefresh: _loadNotices,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    itemCount: notices.length,
+                    itemBuilder: (context, index) {
+                      final notice = notices[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16.0),
+                        child: _buildNoticeCard(
+                            heading: notice.title,
+                            title: notice.title,
+                            content: notice.message),
+                      );
+                    },
+                  ),
                 ),
               ),
             if (isTeacher)
@@ -102,7 +102,8 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
                   width: 56,
                   height: 56,
                   child: FloatingActionButton(
-                    onPressed: () => context.push("/home/add-notice-screen"),
+                    onPressed: () =>
+                        context.push("/home/notices-screen/add-notice-screen"),
                     backgroundColor: const Color(0xFF8DC324),
                     child: const Icon(
                       Icons.add,
