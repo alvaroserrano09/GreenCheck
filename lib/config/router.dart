@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/screens/add_notice_screen.dart';
 import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
 import 'package:green_check/presentation/screens/course_screen.dart';
 import 'package:green_check/presentation/screens/courses_screen.dart';
 import 'package:green_check/presentation/screens/home_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
+import 'package:green_check/presentation/screens/notices_screnn.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
 import 'package:green_check/presentation/screens/students_screen.dart';
@@ -103,7 +105,21 @@ final appRouter = GoRouter(
         final int testId = int.parse(state.pathParameters['testId']!);
         return TestScreen(testId: testId);
       },
-    )
+    ),
+    GoRoute(
+      path: '/home/notices-screen',
+      name: NoticesScreen.name,
+      builder: (context, state) {
+        return const NoticesScreen();
+      },
+    ),
+    GoRoute(
+      path: '/home/notices-screen/add-notice-screen',
+      name: AddNoticeScreen.name,
+      builder: (context, state) {
+        return const AddNoticeScreen();
+      },
+    ),
   ],
   redirect: (BuildContext context, GoRouterState state) async {
     try {

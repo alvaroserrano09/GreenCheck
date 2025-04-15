@@ -7,6 +7,7 @@ import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
+import 'package:green_check/presentation/widgets/toolbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -252,6 +253,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const Toolbar(),
     );
   }
 }

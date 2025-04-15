@@ -122,7 +122,10 @@ class UserHomeScreen extends ConsumerWidget {
                               right: screenWidth * 0.1,
                               child: CustomButtonUser(
                                 text: 'Añadir aviso',
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.push(
+                                      "/home/notices-screen/add-notice-screen");
+                                },
                               ),
                             ),
                             Positioned(
