@@ -11,6 +11,7 @@ import 'package:green_check/presentation/screens/login_screen.dart';
 import 'package:green_check/presentation/screens/notices_screnn.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
+import 'package:green_check/presentation/screens/review_test_screen.dart';
 import 'package:green_check/presentation/screens/students_screen.dart';
 import 'package:green_check/presentation/screens/test_screen.dart';
 import 'package:green_check/presentation/screens/tests_screen.dart';
@@ -118,6 +119,22 @@ final appRouter = GoRouter(
       name: AddNoticeScreen.name,
       builder: (context, state) {
         return const AddNoticeScreen();
+      },
+    ),
+    GoRoute(
+      path: '/test-review',
+      name: TestReviewScreen.name,
+      builder: (context, state) {
+        final extra = state.extra;
+
+        if (extra is Map<String, dynamic>) {
+          return TestReviewScreen(
+            questions: extra['questions'],
+            selectedAnswers: extra['answers'],
+            score: extra['score'],
+          );
+        }
+        throw Exception('Invalid extra data for TestReviewScreen');
       },
     ),
   ],
