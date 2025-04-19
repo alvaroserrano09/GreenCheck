@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
@@ -44,7 +45,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error al cargar las preguntas: $e")),
       );
-      Navigator.pop(context);
+      context.pop();
     }
   }
 
@@ -73,6 +74,40 @@ class _TestScreenState extends ConsumerState<TestScreen> {
           CircularProgressIndicator(),
           SizedBox(height: 16),
           Text("Cargando preguntas..."),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResults() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Test completado!",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          Text(
+            "Puntuación: $_score/${_questions.length}",
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(height: 24),
+          CustomButton(
+            text: "Ver revisión",
+            onPressed: () {
+              context.replace(
+                "/test-review",
+                extra: {
+                  'questions': _questions,
+                  'answers': _selectedAnswers,
+                  'score': _score,
+                },
+              );
+            },
+            backgroundColor: const Color(0xFF8DC324),
+          ),
         ],
       ),
     );
@@ -132,31 +167,6 @@ class _TestScreenState extends ConsumerState<TestScreen> {
         ),
         onPressed: () => _selectAnswer(answer),
         child: Text(answer.text),
-      ),
-    );
-  }
-
-  Widget _buildResults() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Test completado!",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            "Puntuación: $_score de ${_questions.length}",
-            style: const TextStyle(fontSize: 20),
-          ),
-          const SizedBox(height: 32),
-          CustomButton(
-            text: "Volver",
-            onPressed: () => Navigator.pop(context),
-            backgroundColor: const Color(0xFF8DC324),
-          ),
-        ],
       ),
     );
   }
