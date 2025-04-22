@@ -102,7 +102,9 @@ class UserHomeScreen extends ConsumerWidget {
                               right: screenWidth * 0.1,
                               child: CustomButtonUser(
                                 text: 'Ver Últimos Resultados',
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.push("/home/results-screen");
+                                },
                               ),
                             ),
                             Positioned(

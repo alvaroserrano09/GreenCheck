@@ -14,16 +14,16 @@ final noticeRepositoryProvider = Provider<NoticeRepository>(
     return NoticeRepository(NoticeService());
   },
 );
-final CourseRepositoryProvider = Provider<CourseRepository>(
+final courseRepositoryProvider = Provider<CourseRepository>(
   (ref) {
     return CourseRepository(CourseService());
   },
 );
 final getStudentCoursesUseCaseProvider = Provider<GetCoursesStudentUseCase>(
-  (ref) => GetCoursesStudentUseCase(ref.watch(CourseRepositoryProvider)),
+  (ref) => GetCoursesStudentUseCase(ref.watch(courseRepositoryProvider)),
 );
 final getCoursesTeacherUseCaseProvider = Provider<GetCoursesTeacherUseCase>(
-  (ref) => GetCoursesTeacherUseCase(ref.watch(CourseRepositoryProvider)),
+  (ref) => GetCoursesTeacherUseCase(ref.watch(courseRepositoryProvider)),
 );
 final getNoticesProvider = Provider<GetNoticesUseCase>(
   (ref) {
@@ -93,7 +93,6 @@ class NoticeNotifier extends StateNotifier<NoticeState> {
       required String name,
       required int courseId}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-    print(courseId);
     try {
       final notice = Notice(
         message: description,

@@ -7,6 +7,7 @@ import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
 import 'package:green_check/presentation/screens/course_screen.dart';
 import 'package:green_check/presentation/screens/courses_screen.dart';
 import 'package:green_check/presentation/screens/home_screen.dart';
+import 'package:green_check/presentation/screens/lasts_results_tests_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
 import 'package:green_check/presentation/screens/notices_screnn.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
@@ -135,6 +136,13 @@ final appRouter = GoRouter(
           );
         }
         throw Exception('Invalid extra data for TestReviewScreen');
+      },
+    ),
+    GoRoute(
+      path: '/home/results-screen',
+      name: LastsResultsTestsScreen.name,
+      builder: (context, state) {
+        return const LastsResultsTestsScreen();
       },
     ),
   ],
