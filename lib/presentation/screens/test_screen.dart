@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:green_check/domain/models/result.dart';
 import 'package:green_check/domain/models/question.dart';
+import 'package:green_check/presentation/providers/results_provider.dart';
+import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 
@@ -19,9 +22,10 @@ class _TestScreenState extends ConsumerState<TestScreen> {
   int _currentQuestionIndex = 0;
   final List<Answer?> _selectedAnswers = [];
   bool _testCompleted = false;
-  int _score = 0;
+  double _score = 0;
   List<Question> _questions = [];
   bool _isLoading = true;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -94,20 +98,23 @@ class _TestScreenState extends ConsumerState<TestScreen> {
             style: TextStyle(fontSize: 20),
           ),
           SizedBox(height: 24),
-          CustomButton(
-            text: "Ver revisión",
-            onPressed: () {
-              context.replace(
-                "/test-review",
-                extra: {
-                  'questions': _questions,
-                  'answers': _selectedAnswers,
-                  'score': _score,
-                },
-              );
-            },
-            backgroundColor: const Color(0xFF8DC324),
-          ),
+          if (_isSaving)
+            const CircularProgressIndicator()
+          else
+            CustomButton(
+              text: "Ver revisión",
+              onPressed: () {
+                context.replace(
+                  "/test-review",
+                  extra: {
+                    'questions': _questions,
+                    'answers': _selectedAnswers,
+                    'score': _score,
+                  },
+                );
+              },
+              backgroundColor: const Color(0xFF8DC324),
+            ),
         ],
       ),
     );
@@ -194,7 +201,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
       setState(() => _currentQuestionIndex++);
     } else {
       _calculateScore();
-      setState(() => _testCompleted = true);
+      _saveResults();
     }
   }
 
@@ -203,7 +210,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
   }
 
   void _calculateScore() {
-    int score = 0;
+    double score = 0;
     for (int i = 0; i < _questions.length; i++) {
       final selectedAnswer = _selectedAnswers[i];
       if (selectedAnswer != null && selectedAnswer.isCorrect) {
@@ -211,5 +218,28 @@ class _TestScreenState extends ConsumerState<TestScreen> {
       }
     }
     setState(() => _score = score);
+  }
+
+  Future<void> _saveResults() async {
+    setState(() => _isSaving = true);
+
+    try {
+      final studentState = ref.read(studentProvider);
+      final result = Result(
+          idTest: widget.testId,
+          score: _score,
+          idStudent: studentState.student?.id ?? 0,
+          dateFinished: DateTime.now());
+
+      await ref.read(resultProvider.notifier).saveResult(result);
+
+      setState(() => _testCompleted = true);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error al guardar resultados: $e")),
+      );
+    } finally {
+      setState(() => _isSaving = false);
+    }
   }
 }
