@@ -22,7 +22,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
   int _currentQuestionIndex = 0;
   final List<Answer?> _selectedAnswers = [];
   bool _testCompleted = false;
-  double _score = 0;
+  int _score = 0;
   List<Question> _questions = [];
   bool _isLoading = true;
   bool _isSaving = false;
@@ -210,7 +210,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
   }
 
   void _calculateScore() {
-    double score = 0;
+    int score = 0;
     for (int i = 0; i < _questions.length; i++) {
       final selectedAnswer = _selectedAnswers[i];
       if (selectedAnswer != null && selectedAnswer.isCorrect) {

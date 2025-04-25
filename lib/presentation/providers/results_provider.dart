@@ -1,38 +1,46 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/domain/models/result.dart';
+import 'package:green_check/domain/usecases/get_last_results_use_case.dart';
 import 'package:green_check/domain/usecases/save_result_use_case.dart';
 import 'package:green_check/infrastructure/repositories/result_repository.dart';
 import 'package:green_check/infrastructure/services/result_service.dart';
+import 'package:green_check/presentation/providers/test_provider.dart';
 
-final resultRepositoryPrivder = Provider<ResultRepository>((ref) {
+final resultRepositoryProvider = Provider<ResultRepository>((ref) {
   return ResultRepository(ResultService());
 });
 
 final saveResultUseCaseProvider = Provider<SaveResultUseCase>((ref) {
-  final resultRepository = ref.watch(resultRepositoryPrivder);
+  final resultRepository = ref.read(resultRepositoryProvider);
   return SaveResultUseCase(resultRepository);
+});
+
+final getLastResultsUseCaseProvider = Provider<GetLastResultsUseCase>((ref) {
+  final resultRepository = ref.read(resultRepositoryProvider);
+  final testRepository = ref.read(testRepositoryProvider);
+  return GetLastResultsUseCase(resultRepository, testRepository);
 });
 
 class ResultState {
   final bool isLoading;
   final String? errorMessage;
-  final Result? result;
+  final List<Result>? results;
 
   ResultState({
     required this.isLoading,
     this.errorMessage,
-    this.result,
+    this.results,
   });
 
   ResultState copyWith({
     bool? isLoading,
     String? errorMessage,
-    Result? result,
+    List<Result>? results,
   }) {
     return ResultState(
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
-      result: result ?? this.result,
+      results: results ?? this.results,
     );
   }
 
@@ -41,23 +49,45 @@ class ResultState {
 
 class ResultNotifier extends StateNotifier<ResultState> {
   final SaveResultUseCase saveResultUseCase;
+  final GetLastResultsUseCase getLastResultsUseCase;
 
-  ResultNotifier(this.saveResultUseCase) : super(ResultState.initial());
+  ResultNotifier(
+    this.saveResultUseCase,
+    this.getLastResultsUseCase,
+  ) : super(ResultState.initial());
 
   Future<void> saveResult(Result result) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final newResult = await saveResultUseCase.saveResult(result);
-      state = state.copyWith(result: newResult, isLoading: false);
+      await saveResultUseCase.saveResult(result);
     } catch (e) {
       state = state.copyWith(
-          errorMessage: 'Failed to save result: $e', isLoading: false);
+        errorMessage: 'Failed to save result: ${e.toString()}',
+        isLoading: false,
+      );
+    }
+  }
+
+  Future<void> getLastResults(int studentId) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final results = await getLastResultsUseCase.execute(studentId);
+      state = state.copyWith(
+        results: results,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        errorMessage: 'Failed to get last results: ${e.toString()}',
+        isLoading: false,
+      );
     }
   }
 }
 
 final resultProvider = StateNotifierProvider<ResultNotifier, ResultState>(
   (ref) => ResultNotifier(
-    ref.watch(saveResultUseCaseProvider),
+    ref.read(saveResultUseCaseProvider),
+    ref.read(getLastResultsUseCaseProvider),
   ),
 );

@@ -7,4 +7,10 @@ class ResultRepository {
   Future<Result> saveResult(Result result) async {
     return datasource.saveResult(result);
   }
+
+  Future<List<Result>> getResultsByStudentId(int studentId) {
+    final aar = datasource.getResultsByStudentId(studentId);
+    print(aar);
+    return aar;
+  }
 }

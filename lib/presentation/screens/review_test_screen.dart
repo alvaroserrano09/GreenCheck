@@ -6,7 +6,7 @@ import 'package:green_check/presentation/widgets/background.dart';
 class TestReviewScreen extends StatelessWidget {
   final List<Question> questions;
   final List<Answer?> selectedAnswers;
-  final double score;
+  final int score;
 
   static const String name = 'test-review-screen';
 
