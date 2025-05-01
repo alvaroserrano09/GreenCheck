@@ -39,28 +39,32 @@ class CourseService {
   }
 
   Future<List<Course>> getCoursesForStudent(int studentId) async {
-    final response = await supabase.from('Alumno-curso').select('''
-          Curso: id_curso (id, nombre, descripcion, id_profesor, tipo)
-      ''').eq('id_alumno', studentId);
-    final List<Course> courses = response.map((courseData) {
-      final curso = courseData['Curso'];
+    try {
+      final response = await supabase.from('Alumno-curso').select('''
+          Curso: id_curso (id, nombre, descripcion, id_profesor, tipo),
+          favorito
+        ''').eq('id_alumno', studentId);
 
-      if (curso['nombre'] == null ||
-          curso['descripcion'] == null ||
-          curso['tipo'] == null) {
-        throw Exception('Datos incompletos para el curso');
+      final List<Course> courses = [];
+
+      for (final item in response) {
+        final curso = item['Curso'];
+        final isFavorite = item['favorito'];
+
+        courses.add(Course(
+          id: curso['id'] as int,
+          name: curso['nombre'] as String,
+          description: curso['descripcion'] as String,
+          idTeacher: curso['id_profesor'] as int,
+          type: curso['tipo'] as String,
+          isFavorite: isFavorite,
+        ));
       }
 
-      return Course(
-        id: curso['id'],
-        name: curso['nombre'],
-        description: curso['descripcion'],
-        idTeacher: curso['id_profesor'],
-        type: curso['tipo'],
-      );
-    }).toList();
-
-    return courses;
+      return courses;
+    } catch (e) {
+      throw Exception('No se pudieron cargar los cursos: ${e.toString()}');
+    }
   }
 
   Future<Course?> getCourse(int idStudent) async {
@@ -132,6 +136,20 @@ class CourseService {
           .eq('id_curso', idCourse);
     } catch (e) {
       throw Exception('Failed to delete student: $e');
+    }
+  }
+
+  Future<void> toggleFavorite(
+      int studentId, int courseId, bool isFavorite) async {
+    try {
+      await supabase
+          .from('Alumno-curso')
+          .update({'favorito': isFavorite})
+          .eq('id_alumno', studentId)
+          .eq('id_curso', courseId);
+    } catch (e) {
+      throw Exception(
+          'No se pudo actualizar el estado de favorito: ${e.toString()}');
     }
   }
 }

@@ -10,6 +10,7 @@ import 'package:green_check/domain/usecases/get_courses_student_use_case.dart';
 import 'package:green_check/domain/usecases/get_courses_teacher_use_case.dart';
 import 'package:green_check/domain/usecases/save_course_use_case.dart';
 import 'package:green_check/domain/usecases/save_student_course.dart';
+import 'package:green_check/domain/usecases/toggle_favorite_course_use_case.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
@@ -63,6 +64,12 @@ final deleteStudentCourseUseCaseProvider =
   return DeleteStudentCourseUseCase(courseRepository);
 });
 
+final toggleFavoriteCourseUseCaseProvider =
+    Provider<ToggleFavoriteCourseUseCase>((ref) {
+  final courseRepository = ref.watch(courseRepositoryProvider);
+  return ToggleFavoriteCourseUseCase(courseRepository);
+});
+
 class CourseState {
   final bool isLoading;
   final String? errorMessage;
@@ -104,6 +111,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
   final GetStudentsCourseUseCase gestStudentsUseCase;
   final SaveStudentCourseUseCase saveStudentCourseUseCase;
   final DeleteStudentCourseUseCase deleteStudentCourseUseCase;
+  final ToggleFavoriteCourseUseCase toggleFavoriteCourseUseCase;
 
   CourseNotifier(
     this.saveCourseUseCase,
@@ -113,6 +121,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
     this.gestStudentsUseCase,
     this.saveStudentCourseUseCase,
     this.deleteStudentCourseUseCase,
+    this.toggleFavoriteCourseUseCase,
   ) : super(CourseState.initial());
 
   Future<void> saveCourse({
@@ -263,16 +272,49 @@ class CourseNotifier extends StateNotifier<CourseState> {
       }
     }
   }
+
+  Future<void> toggleFavorite(int courseId, int idStudent) async {
+    try {
+      final currentCourse = state.courses.firstWhere(
+        (course) => course.id == courseId,
+      );
+
+      final newFavoriteStatus = !currentCourse.isFavorite;
+
+      state = state.copyWith(
+        courses: state.courses.map((course) {
+          return course.id == courseId
+              ? course.copyWith(isFavorite: newFavoriteStatus)
+              : course;
+        }).toList(),
+      );
+
+      await toggleFavoriteCourseUseCase.execute(
+          courseId, newFavoriteStatus, idStudent);
+    } catch (e) {
+      state = state.copyWith(
+        courses: state.courses.map((course) {
+          return course.id == courseId
+              ? course.copyWith(isFavorite: !course.isFavorite) // Revert
+              : course;
+        }).toList(),
+      );
+      state = state.copyWith(errorMessage: 'Failed to update favorite: $e');
+    }
+  }
 }
 
-final courseProvider = StateNotifierProvider<CourseNotifier, CourseState>(
-  (ref) => CourseNotifier(
-    ref.watch(saveCourseUseCaseProvider),
-    ref.watch(getCoursesTeacherUseCaseProvider),
-    ref.watch(getCoursesStudentUseCaseProvider),
-    ref.watch(getCourseStudentUseCaseProvider),
-    ref.watch(getStudentsUseCaseProvider),
-    ref.watch(saveStudentCourseUseCaseProvider),
-    ref.watch(deleteStudentCourseUseCaseProvider),
-  ),
-);
+final courseProvider =
+    StateNotifierProvider<CourseNotifier, CourseState>((ref) => CourseNotifier(
+              ref.watch(saveCourseUseCaseProvider),
+              ref.watch(getCoursesTeacherUseCaseProvider),
+              ref.watch(getCoursesStudentUseCaseProvider),
+              ref.watch(getCourseStudentUseCaseProvider),
+              ref.watch(getStudentsUseCaseProvider),
+              ref.watch(saveStudentCourseUseCaseProvider),
+              ref.watch(deleteStudentCourseUseCaseProvider),
+              ref.watch(toggleFavoriteCourseUseCaseProvider),
+            )
+
+        // ref.watch(toggleFavoriteCourseUseCaseProvider),
+        );

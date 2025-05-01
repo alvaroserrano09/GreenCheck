@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 class CourseCard extends StatelessWidget {
   final String title;
   final String teacher;
+  final bool isFavorite;
   final VoidCallback onTap;
+  final VoidCallback onFavoritePressed;
 
   const CourseCard({
     super.key,
     required this.title,
     required this.teacher,
     required this.onTap,
+    required this.isFavorite,
+    required this.onFavoritePressed,
   });
 
   @override
@@ -25,28 +29,43 @@ class CourseCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      teacher,
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8.0),
-                Text(
-                  teacher,
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey,
+              ),
+              Positioned(
+                top: 8.0,
+                right: 8.0,
+                child: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                    color: isFavorite ? Colors.black : Colors.black,
                   ),
+                  onPressed: onFavoritePressed,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

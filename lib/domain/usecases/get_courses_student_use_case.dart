@@ -24,6 +24,7 @@ class GetCoursesStudentUseCase {
           teacherName: teacher?.name,
           description: course.description,
           type: course.type,
+          isFavorite: course.isFavorite,
         ));
       }
 

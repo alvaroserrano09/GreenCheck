@@ -33,4 +33,8 @@ class CourseRepository {
   Future<void> deleteStudent(int idStudent, int idCourse) {
     return datasource.deleteStudent(idStudent, idCourse);
   }
+
+  Future<void> toggleFavorite(int courseId, bool isFavorite, int idStudent) {
+    return datasource.toggleFavorite(idStudent, courseId, isFavorite);
+  }
 }

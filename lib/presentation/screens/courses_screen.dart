@@ -19,9 +19,12 @@ class CoursesScreen extends ConsumerStatefulWidget {
 
 class _CourseScreenState extends ConsumerState<CoursesScreen> {
   @override
-  @override
   void initState() {
     super.initState();
+    _loadCourses();
+  }
+
+  void _loadCourses() {
     Future.microtask(() {
       final studentState = ref.read(studentProvider);
       final User? student = studentState.student;
@@ -39,7 +42,6 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
   Widget build(BuildContext context) {
     final courseState = ref.watch(courseProvider);
     final studentState = ref.watch(studentProvider);
-
     final bool isProfessor = studentState.student?.role == 'profesor';
     return Scaffold(
       body: SafeArea(
@@ -71,9 +73,16 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                         title: course.name,
                         teacher: course.teacherName != null
                             ? 'Profesor ${course.teacherName}'
-                            : 'Profesor ${studentState.student?.name} ',
+                            : 'Profesor ${studentState.student?.name}',
                         onTap: () =>
                             context.push('/home/course-screen/${course.id}'),
+                        isFavorite: course.isFavorite,
+                        onFavoritePressed: () {
+                          if (course.id != null) {
+                            ref.read(courseProvider.notifier).toggleFavorite(
+                                course.id!, studentState.student?.id ?? 0);
+                          }
+                        },
                       ),
                     );
                   },
@@ -87,14 +96,9 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                   width: 56,
                   height: 56,
                   child: FloatingActionButton(
-                    onPressed: () {
-                      context.push("/home/add-course-screen");
-                    },
+                    onPressed: () => context.push("/home/add-course-screen"),
                     backgroundColor: const Color(0xFF8DC324),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
+                    child: const Icon(Icons.add, color: Colors.white),
                   ),
                 ),
               ),
