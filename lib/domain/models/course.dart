@@ -3,6 +3,7 @@ class Course {
   final String name;
   final String description;
   final int idTeacher;
+  final String? teacherName;
   final String type;
 
   Course({
@@ -11,6 +12,7 @@ class Course {
     required this.description,
     required this.idTeacher,
     required this.type,
+    this.teacherName,
   });
 
   factory Course.create({
@@ -20,6 +22,7 @@ class Course {
     required DateTime createdAt,
     required int idTeacher,
     required String type,
+    String? teacherName,
   }) {
     return Course(
       id: id,
@@ -27,6 +30,7 @@ class Course {
       description: description,
       idTeacher: idTeacher,
       type: type,
+      teacherName: teacherName,
     );
   }
 

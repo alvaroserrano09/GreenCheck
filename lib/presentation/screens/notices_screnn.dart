@@ -86,9 +86,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
                         child: _buildNoticeCard(
-                            heading: notice.title,
-                            title: notice.title,
-                            content: notice.message),
+                            heading: notice.title, content: notice.message),
                       );
                     },
                   ),
@@ -121,7 +119,6 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
 
   Widget _buildNoticeCard({
     required String heading,
-    required String title,
     required String content,
   }) {
     return Card(
@@ -137,14 +134,6 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 8),

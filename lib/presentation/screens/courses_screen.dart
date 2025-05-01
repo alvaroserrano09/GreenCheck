@@ -69,7 +69,9 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                       margin: const EdgeInsets.only(bottom: 16.0),
                       child: CourseCard(
                         title: course.name,
-                        teacher: 'Profesor ${studentState.student?.name}',
+                        teacher: course.teacherName != null
+                            ? 'Profesor ${course.teacherName}'
+                            : 'Profesor ${studentState.student?.name} ',
                         onTap: () =>
                             context.push('/home/course-screen/${course.id}'),
                       ),

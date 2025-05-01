@@ -143,4 +143,19 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<user.User?> getTeacherById(int id) async {
+    try {
+      final teacher =
+          await supabase.from('Profesor').select().eq('id', id).maybeSingle();
+
+      if (teacher == null || teacher.isEmpty) {
+        return null;
+      }
+
+      return user.User.fromJson(teacher);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
