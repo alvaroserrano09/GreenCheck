@@ -113,7 +113,9 @@ class UserHomeScreen extends ConsumerWidget {
                               right: screenWidth * 0.1,
                               child: CustomButtonUser(
                                 text: 'Cursos favoritos',
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.push("/home/favorites-screen");
+                                },
                               ),
                             ),
                           ],

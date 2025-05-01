@@ -6,6 +6,7 @@ import 'package:green_check/presentation/screens/add_notice_screen.dart';
 import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
 import 'package:green_check/presentation/screens/course_screen.dart';
 import 'package:green_check/presentation/screens/courses_screen.dart';
+import 'package:green_check/presentation/screens/favourite_screen.dart';
 import 'package:green_check/presentation/screens/home_screen.dart';
 import 'package:green_check/presentation/screens/lasts_results_tests_screen.dart';
 import 'package:green_check/presentation/screens/login_screen.dart';
@@ -144,6 +145,11 @@ final appRouter = GoRouter(
       builder: (context, state) {
         return const LastsResultsTestsScreen();
       },
+    ),
+    GoRoute(
+      path: '/home/favorites-screen',
+      name: FavoritesScreen.name,
+      builder: (context, state) => const FavoritesScreen(),
     ),
   ],
   redirect: (BuildContext context, GoRouterState state) async {
