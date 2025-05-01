@@ -11,11 +11,15 @@ import 'package:green_check/domain/usecases/get_courses_teacher_use_case.dart';
 import 'package:green_check/domain/usecases/save_course_use_case.dart';
 import 'package:green_check/domain/usecases/save_student_course.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
+import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/infrastructure/services/student_service.dart';
 
 final courseRepositoryProvider = Provider<CourseRepository>((ref) {
   return CourseRepository(CourseService());
+});
+final userRepositoryProvider = Provider<UserRepository>((ref) {
+  return UserRepository(UserService());
 });
 
 final saveCourseUseCaseProvider = Provider<SaveCourseUseCase>((ref) {
@@ -32,7 +36,8 @@ final getCoursesTeacherUseCaseProvider =
 final getCoursesStudentUseCaseProvider =
     Provider<GetCoursesStudentUseCase>((ref) {
   final courseRepository = ref.watch(courseRepositoryProvider);
-  return GetCoursesStudentUseCase(courseRepository);
+  return GetCoursesStudentUseCase(
+      courseRepository, ref.watch(userRepositoryProvider));
 });
 
 final getCourseStudentUseCaseProvider =
