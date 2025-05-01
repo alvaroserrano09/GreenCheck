@@ -121,4 +121,24 @@ class TestService {
       rethrow;
     }
   }
+
+  Future<List<Test>> getTestsByIds(List<int> testIds) async {
+    print('Fetching tests with IDs: $testIds');
+    if (testIds.isEmpty) return [];
+
+    try {
+      final response =
+          await supabase.from('Test').select().inFilter('id', testIds);
+      print('Response: $response');
+      return (response as List<dynamic>).map<Test>((testData) {
+        return Test(
+          courseId: testData['id_curso'],
+          title: testData['titulo'],
+          id: testData['id'],
+        );
+      }).toList();
+    } catch (e) {
+      throw Exception('Error al obtener los tests: ${e.toString()}');
+    }
+  }
 }

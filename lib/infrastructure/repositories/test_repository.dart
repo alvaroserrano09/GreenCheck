@@ -26,4 +26,8 @@ class TestRepository {
   Future<List<Question>> getQuestions(int testId) {
     return datasource.getQuestions(testId);
   }
+
+  Future<List<Test>> getTestsByIds(testIds) {
+    return datasource.getTestsByIds(testIds);
+  }
 }

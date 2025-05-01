@@ -28,4 +28,18 @@ class ResultService {
       rethrow;
     }
   }
+
+  Future<List<Result>> getResultsByStudentId(int studentId) async {
+    try {
+      final response = await supabase
+          .from('Resultado')
+          .select()
+          .eq('id_alumno', studentId)
+          .order('fecha_realizacion', ascending: false);
+
+      return (response as List).map((json) => Result.fromJson(json)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
