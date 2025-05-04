@@ -39,16 +39,16 @@ class Toolbar extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-              context.push('/home/user');
+              context.replace('/home');
               break;
             case 1:
-              context.push('/home/courses-screen');
+              context.replace('/home/courses-screen');
               break;
             case 2:
-              context.push('/home/notices-screen');
+              context.replace('/home/notices-screen');
               break;
             case 3:
-              context.push('/home/profile-screen');
+              context.replace('/home/profile-screen');
               break;
           }
         },

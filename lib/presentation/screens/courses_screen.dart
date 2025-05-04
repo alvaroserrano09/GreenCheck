@@ -28,11 +28,11 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
     Future.microtask(() {
       final studentState = ref.read(studentProvider);
       final User? student = studentState.student;
-      if (student != null && student.id != null) {
+      if (student != null) {
         if (student.role == 'alumno') {
-          ref.read(courseProvider.notifier).loadCoursesForStudent(student.id!);
+          ref.read(courseProvider.notifier).loadCoursesForStudent(student.id);
         } else if (student.role == 'profesor') {
-          ref.read(courseProvider.notifier).loadCoursesForTeacher(student.id!);
+          ref.read(courseProvider.notifier).loadCoursesForTeacher(student.id);
         }
       }
     });
@@ -74,13 +74,13 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                         teacher: course.teacherName != null
                             ? 'Profesor ${course.teacherName}'
                             : 'Profesor ${studentState.student?.name}',
-                        onTap: () =>
-                            context.push('/home/course-screen/${course.id}'),
+                        onTap: () => context.push(
+                            '/home/courses-screen/course-screen/${course.id}'),
                         isFavorite: course.isFavorite,
                         onFavoritePressed: () {
                           if (course.id != null) {
                             ref.read(courseProvider.notifier).toggleFavorite(
-                                course.id!, studentState.student?.id ?? 0);
+                                course.id!, studentState.student!.id);
                           }
                         },
                       ),

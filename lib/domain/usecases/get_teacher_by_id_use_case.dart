@@ -6,7 +6,7 @@ class GetTeacherByIdUseCase {
 
   GetTeacherByIdUseCase(this._teacherRepository);
 
-  Future<User?> execute(int id) async {
+  Future<User?> execute(String id) async {
     return await _teacherRepository.getTeacherById(id);
   }
 }

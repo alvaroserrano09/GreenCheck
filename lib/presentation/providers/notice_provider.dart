@@ -86,7 +86,7 @@ class NoticeNotifier extends StateNotifier<NoticeState> {
   NoticeNotifier(this.getNotices, this.saveNoticeUseCase)
       : super(NoticeState.initial());
 
-  Future<void> fetchNotices(int idStudent) async {
+  Future<void> fetchNotices(String idStudent) async {
     state = state.copyWith(isLoading: true);
     try {
       final notices = await getNotices.execute(idStudent);

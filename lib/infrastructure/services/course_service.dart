@@ -19,7 +19,7 @@ class CourseService {
     }
   }
 
-  Future<List<Course>> getCourses(int id) async {
+  Future<List<Course>> getCourses(String id) async {
     try {
       final response =
           await supabase.from('Curso').select().eq('id_profesor', id);
@@ -38,7 +38,7 @@ class CourseService {
     }
   }
 
-  Future<List<Course>> getCoursesForStudent(int studentId) async {
+  Future<List<Course>> getCoursesForStudent(String studentId) async {
     try {
       final response = await supabase.from('Alumno-curso').select('''
           Curso: id_curso (id, nombre, descripcion, id_profesor, tipo),
@@ -55,7 +55,7 @@ class CourseService {
           id: curso['id'] as int,
           name: curso['nombre'] as String,
           description: curso['descripcion'] as String,
-          idTeacher: curso['id_profesor'] as int,
+          idTeacher: curso['id_profesor'] as String,
           type: curso['tipo'] as String,
           isFavorite: isFavorite,
         ));
@@ -99,7 +99,7 @@ class CourseService {
     }
   }
 
-  Future<user.User> saveStudent(int courseId, int idStudent) async {
+  Future<user.User> saveStudent(int courseId, String idStudent) async {
     try {
       await supabase.from('Alumno-curso').insert({
         'id_curso': courseId,
@@ -127,7 +127,7 @@ class CourseService {
     }
   }
 
-  Future<void> deleteStudent(int idStudent, int idCourse) async {
+  Future<void> deleteStudent(String idStudent, int idCourse) async {
     try {
       await supabase
           .from('Alumno-curso')
@@ -140,7 +140,7 @@ class CourseService {
   }
 
   Future<void> toggleFavorite(
-      int studentId, int courseId, bool isFavorite) async {
+      String studentId, int courseId, bool isFavorite) async {
     try {
       await supabase
           .from('Alumno-curso')

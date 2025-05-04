@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:green_check/domain/models/user.dart' as user;
+import 'package:green_check/infrastructure/entities/supabase_student.dart';
+import 'package:green_check/infrastructure/mappers/user_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final SupabaseClient supabase = Supabase.instance.client;
@@ -8,12 +10,14 @@ final SupabaseClient supabase = Supabase.instance.client;
 class UserService {
   Future<user.User> saveStudent(user.User student, password) async {
     try {
-      final studentDatabase = await supabase.from("Alumno").insert({
-        'nombre': student.name,
-        'email': student.email,
-        'apellidos': student.surname,
-      }).select();
-      final studentSaved = user.User.fromJson(studentDatabase[0]);
+      final studentDatabase = await supabase
+          .from("Alumno")
+          .insert(
+            UserMapper.toEntity(student).toJsonStudent(),
+          )
+          .select();
+      final studentEntity = SupabaseStudent.fromJson(studentDatabase[0]);
+      final studentSaved = UserMapper.toDomainStudent(studentEntity);
       if (password != "") {
         await Supabase.instance.client.auth.signUp(
           email: student.email,
@@ -33,29 +37,36 @@ class UserService {
         password: password,
       );
 
-      final userData = response.user;
-      if (userData == null) {
+      if (response.user == null) {
         throw Exception("No se pudo autenticar al usuario.");
       }
 
       final student = await Supabase.instance.client
           .from("Alumno")
-          .select("nombre, email, apellidos,id,rol")
+          .select("nombre, email, apellidos, id")
           .eq('email', email)
           .maybeSingle();
-      if (student == null || student.isEmpty) {
-        final teacherUser = await Supabase.instance.client
-            .from("Profesor")
-            .select("nombre, email, apellidos,id,rol")
-            .eq('email', email)
-            .single();
-        if (teacherUser.isEmpty) {
-          throw Exception("No se pudo autenticar al usuario.");
-        }
-        return user.User.fromJson(teacherUser);
+
+      if (student != null) {
+        final studentEntity = SupabaseStudent.fromJson(
+          student,
+        );
+        return UserMapper.toDomainStudent(studentEntity);
       }
 
-      return user.User.fromJson(student);
+      final teacherUser = await Supabase.instance.client
+          .from("Profesor")
+          .select("nombre, email, apellidos, id")
+          .eq('email', email)
+          .maybeSingle();
+      if (teacherUser != null) {
+        final teacherEntity = SupabaseStudent.fromJson(
+          teacherUser,
+        );
+        return UserMapper.toDomainTeacher(teacherEntity);
+      }
+
+      throw Exception("Usuario no encontrado como alumno ni como profesor");
     } catch (e) {
       rethrow;
     }
@@ -79,7 +90,9 @@ class UserService {
           })
           .eq('email', email)
           .select();
-      final response = user.User.fromJson(userUpdated[0]);
+      final response = UserMapper.toDomainTeacher(
+        SupabaseStudent.fromJson(userUpdated[0]),
+      );
       return response;
     } catch (e) {
       rethrow;
@@ -101,7 +114,9 @@ class UserService {
           })
           .eq('email', email)
           .select();
-      final response = user.User.fromJson(userUpdated[0]);
+      final response = UserMapper.toDomainStudent(
+        SupabaseStudent.fromJson(userUpdated[0]),
+      );
       return response;
     } catch (e) {
       rethrow;
@@ -120,7 +135,9 @@ class UserService {
         return null;
       }
 
-      return user.User.fromJson(student);
+      return UserMapper.toDomainStudent(
+        SupabaseStudent.fromJson(student),
+      );
     } catch (e) {
       rethrow;
     }
@@ -138,13 +155,15 @@ class UserService {
         return null;
       }
 
-      return user.User.fromJson(teacher);
+      return UserMapper.toDomainTeacher(
+        SupabaseStudent.fromJson(teacher),
+      );
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<user.User?> getTeacherById(int id) async {
+  Future<user.User?> getTeacherById(String id) async {
     try {
       final teacher =
           await supabase.from('Profesor').select().eq('id', id).maybeSingle();
@@ -153,7 +172,9 @@ class UserService {
         return null;
       }
 
-      return user.User.fromJson(teacher);
+      return UserMapper.toDomainTeacher(
+        SupabaseStudent.fromJson(teacher),
+      );
     } catch (e) {
       rethrow;
     }

@@ -27,7 +27,7 @@ class _LastsResultsTestsScreenState
       if (studentState.student?.id != null) {
         ref
             .read(resultProvider.notifier)
-            .getLastResults(studentState.student!.id!);
+            .getLastResults(studentState.student!.id);
       }
     });
   }

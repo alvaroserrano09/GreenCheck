@@ -76,7 +76,8 @@ class StudentNotifier extends StateNotifier<UserState> {
 
   Future<void> _loadUserState() async {
     final prefs = await SharedPreferences.getInstance();
-    final id = prefs.getInt('user_id');
+    print(prefs.getString('user_id'));
+    final id = prefs.getString('user_id');
     final email = prefs.getString('user_email');
     final name = prefs.getString('user_name');
     final surname = prefs.getString('user_surname');
@@ -85,11 +86,11 @@ class StudentNotifier extends StateNotifier<UserState> {
     if (email != null && name != null && surname != null && role != null) {
       state = state.copyWith(
         student: User(
-          id: id,
           email: email,
           name: name,
           surname: surname,
           role: role,
+          id: id ?? '',
         ),
       );
     }
@@ -97,7 +98,8 @@ class StudentNotifier extends StateNotifier<UserState> {
 
   Future<void> _saveUserState(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('user_id', user.id ?? 1);
+    print('Saving user state: ${user.id}');
+    await prefs.setString('user_id', user.id);
     await prefs.setString('user_email', user.email);
     await prefs.setString('user_name', user.name);
     await prefs.setString('user_surname', user.surname);
@@ -123,7 +125,7 @@ class StudentNotifier extends StateNotifier<UserState> {
 
     try {
       final response = await saveStudentUseCase.execute(
-          User(
+          User.create(
             email: email,
             name: name,
             surname: surname,
@@ -150,7 +152,7 @@ class StudentNotifier extends StateNotifier<UserState> {
         email: email,
         password: password,
       );
-
+      print('Login response: ${response.role}');
       await _saveUserState(response);
 
       state = state.copyWith(isLoading: false, student: response);
@@ -175,6 +177,7 @@ class StudentNotifier extends StateNotifier<UserState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
+      print('Updating personal info: $email, $name, $surname, $role');
       final response = await updatePersonalInfoUseCase.execute(
         email,
         name,
@@ -196,7 +199,7 @@ class StudentNotifier extends StateNotifier<UserState> {
       if (currentUser != null) {
         final fullName =
             currentUser.userMetadata?['full_name']?.split(' ') ?? ['', ''];
-        final user = User(
+        final user = User.create(
           email: currentUser.email!,
           name: fullName.first,
           surname: fullName.length > 1 ? fullName.sublist(1).join(' ') : '',

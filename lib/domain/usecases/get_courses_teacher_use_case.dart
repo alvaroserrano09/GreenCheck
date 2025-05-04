@@ -6,7 +6,7 @@ class GetCoursesTeacherUseCase {
 
   GetCoursesTeacherUseCase(this.courseRepository);
 
-  Future<List<Course>> execute(int idTeacher) async {
+  Future<List<Course>> execute(String idTeacher) async {
     return await courseRepository.getCourses(idTeacher);
   }
 }

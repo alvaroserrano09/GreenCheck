@@ -1,23 +1,30 @@
 class SupabaseStudent {
-  final int? id;
+  final String id;
   final String nombre;
   final String apellidos;
   final String email;
-  final String? rol;
 
-  SupabaseStudent(
-      {this.id,
-      required this.email,
-      required this.nombre,
-      required this.apellidos,
-      required this.rol});
-  Map<String, dynamic> toJson() {
+  SupabaseStudent({
+    required this.id,
+    required this.email,
+    required this.nombre,
+    required this.apellidos,
+  });
+  Map<String, dynamic> toJsonStudent() {
     return {
       "id": id,
       "email": email,
       "nombre": nombre,
       "apellidos": apellidos,
-      "rol": rol
     };
+  }
+
+  factory SupabaseStudent.fromJson(Map<String, dynamic> json) {
+    return SupabaseStudent(
+      id: json['id'],
+      email: json['email'],
+      nombre: json['nombre'],
+      apellidos: json['apellidos'],
+    );
   }
 }

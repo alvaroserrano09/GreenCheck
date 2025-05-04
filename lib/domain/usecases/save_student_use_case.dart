@@ -6,6 +6,7 @@ class SaveStudentUseCase {
   SaveStudentUseCase(this.userRepository);
 
   Future<User> execute(User student, String passsword) async {
+    print("SaveStudentUseCase: ${student.id}");
     User studentSaved = await userRepository.saveStudent(student, passsword);
     return studentSaved;
   }

@@ -94,8 +94,9 @@ Widget _buildStudentsList(WidgetRef ref, List<User> students, int courseId) {
                 icon:
                     const Icon(Icons.remove_circle_outline, color: Colors.red),
                 onPressed: () async {
-                  ref.read(courseProvider.notifier).deleteStudent(
-                      idStudent: student.id!, idCourse: courseId);
+                  ref
+                      .read(courseProvider.notifier)
+                      .deleteStudent(idStudent: student.id, idCourse: courseId);
                 },
               ),
               title: Text('${student.name} ${student.surname}'),

@@ -68,7 +68,7 @@ class ResultNotifier extends StateNotifier<ResultState> {
     }
   }
 
-  Future<void> getLastResults(int studentId) async {
+  Future<void> getLastResults(String studentId) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final results = await getLastResultsUseCase.execute(studentId);

@@ -3,7 +3,6 @@ import 'package:green_check/domain/models/question.dart';
 class QuestionBuilder {
   final List<String> _lines = [];
   String? _generalFeedback;
-  List<String> _tags = [];
 
   void addLine(String line) {
     if (line.startsWith('::')) {
@@ -17,13 +16,6 @@ class QuestionBuilder {
     if (feedbackMatch != null) {
       _generalFeedback = feedbackMatch.group(1)?.trim();
       line = line.substring(0, feedbackMatch.start).trim();
-    }
-
-    final tagsMatch = RegExp(r'\[([^\]]+)\]').firstMatch(line);
-    if (tagsMatch != null) {
-      _tags =
-          tagsMatch.group(1)?.split(',').map((t) => t.trim()).toList() ?? [];
-      line = line.substring(0, tagsMatch.start).trim();
     }
 
     _lines.add(line.trim());
@@ -51,9 +43,7 @@ class QuestionBuilder {
       answers: answers,
       correctAnswers:
           answers.where((o) => o.isCorrect).map((o) => o.text).toList(),
-      questionType: type,
       feedback: _generalFeedback,
-      tags: _tags,
     );
   }
 

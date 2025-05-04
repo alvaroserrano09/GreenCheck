@@ -8,6 +8,7 @@ class AuthenticateStudentUseCase {
   Future<User> execute(
       {required String email, required String password}) async {
     User authStudent = await userRepository.authStudent(email, password);
+    print("authStudent: ${authStudent.id}");
     return authStudent;
   }
 }

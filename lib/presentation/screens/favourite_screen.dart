@@ -28,8 +28,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     Future.microtask(() {
       final studentState = ref.read(studentProvider);
       final User? student = studentState.student;
-      if (student != null && student.id != null) {
-        ref.read(courseProvider.notifier).loadCoursesForStudent(student.id!);
+      if (student != null) {
+        ref.read(courseProvider.notifier).loadCoursesForStudent(student.id);
       }
     });
   }
@@ -78,13 +78,13 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                         teacher: course.teacherName != null
                             ? 'Profesor ${course.teacherName}'
                             : 'Profesor ${studentState.student?.name}',
-                        onTap: () =>
-                            context.push('/home/course-screen/${course.id}'),
+                        onTap: () => context.push(
+                            '/home/courses-screen/course-screen/${course.id}'),
                         isFavorite: course.isFavorite,
                         onFavoritePressed: () {
                           if (course.id != null) {
                             ref.read(courseProvider.notifier).toggleFavorite(
-                                course.id!, studentState.student?.id ?? 0);
+                                course.id!, studentState.student!.id);
                           }
                         },
                       ),

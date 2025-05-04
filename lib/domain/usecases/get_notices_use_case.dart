@@ -15,7 +15,7 @@ class GetNoticesUseCase {
     required this.getCoursesTeacherUseCase,
   });
 
-  Future<List<Notice>> execute(int idStudent) async {
+  Future<List<Notice>> execute(String idStudent) async {
     List<Course> courses = await getStudentCoursesUseCase.execute(idStudent);
     if (courses.isEmpty) {
       courses = await getCoursesTeacherUseCase.execute(idStudent);

@@ -6,18 +6,18 @@ class GetCoursesStudentUseCase {
   final CourseRepository courseRepository;
   final UserRepository studentRepository;
   GetCoursesStudentUseCase(this.courseRepository, this.studentRepository);
-  Future<List<Course>> execute(int idStudent) async {
+  Future<List<Course>> execute(String idStudent) async {
     try {
       final List<Course> courses =
           await courseRepository.getCoursesForStudent(idStudent);
 
-      final List<Course> updatedCourses = [];
+      final List<Course> newCourses = [];
 
       for (final course in courses) {
         final teacher =
             await studentRepository.getTeacherById(course.idTeacher);
 
-        updatedCourses.add(Course(
+        newCourses.add(Course(
           id: course.id,
           name: course.name,
           idTeacher: course.idTeacher,
@@ -28,7 +28,7 @@ class GetCoursesStudentUseCase {
         ));
       }
 
-      return updatedCourses;
+      return newCourses;
     } catch (e) {
       throw Exception('Error al obtener cursos: $e');
     }

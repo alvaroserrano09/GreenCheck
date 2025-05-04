@@ -228,7 +228,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
       final result = Result(
           idTest: widget.testId,
           score: _score,
-          idStudent: studentState.student?.id ?? 0,
+          idStudent: studentState.student!.id,
           dateFinished: DateTime.now());
 
       await ref.read(resultProvider.notifier).saveResult(result);

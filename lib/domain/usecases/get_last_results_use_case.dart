@@ -11,7 +11,7 @@ class GetLastResultsUseCase {
     this.testRepository,
   );
 
-  Future<List<Result>> execute(int studentId) async {
+  Future<List<Result>> execute(String studentId) async {
     try {
       final results = await resultRepository.getResultsByStudentId(studentId);
       if (results.isEmpty) return [];

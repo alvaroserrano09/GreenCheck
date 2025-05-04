@@ -47,7 +47,7 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
       try {
         await ref
             .read(courseProvider.notifier)
-            .loadCoursesForTeacher(student.id!);
+            .loadCoursesForTeacher(student.id);
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

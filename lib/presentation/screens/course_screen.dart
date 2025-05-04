@@ -25,7 +25,7 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
     final studentState = ref.read(studentProvider);
     final User? student = studentState.student;
     Future.microtask(() {
-      if (student != null && student.id != null) {
+      if (student != null) {
         ref.read(courseProvider.notifier).loadCourse(widget.courseId);
       }
     });
@@ -90,7 +90,9 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
                         title: 'Tests',
                         onTap: () {
                           context.push(
-                              "/home/tests-screen/${courseState.course!.id}");
+                            "/home/courses-screen/course-screen/${courseState.course!.id}/tests-screen",
+                            extra: {'courseId': courseState.course!.id},
+                          );
                         },
                       ),
                       const SizedBox(height: 16),

@@ -24,12 +24,11 @@ class ResultService {
         dateFinished: DateTime.parse(response['fecha_realizacion']),
       );
     } catch (e) {
-      print('Error saving result: $e');
       rethrow;
     }
   }
 
-  Future<List<Result>> getResultsByStudentId(int studentId) async {
+  Future<List<Result>> getResultsByStudentId(String studentId) async {
     try {
       final response = await supabase
           .from('Resultado')

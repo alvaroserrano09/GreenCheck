@@ -172,7 +172,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                                   .saveCourse(
                                     description: descriptionController.text,
                                     name: titleController.text,
-                                    idTeacher: student.id!,
+                                    idTeacher: student.id,
                                     type: typeController.text,
                                   );
 

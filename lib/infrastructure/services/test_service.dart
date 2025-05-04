@@ -112,7 +112,6 @@ class TestService {
           title: questionData['titulo'] as String,
           answers: answers,
           correctAnswers: correctAnswers,
-          questionType: 'Test',
         );
       }).toList();
 

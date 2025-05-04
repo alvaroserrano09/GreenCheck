@@ -31,7 +31,7 @@ class UserRepository {
     return datasource.getTeacherByEmail(email);
   }
 
-  Future<User?> getTeacherById(int id) {
+  Future<User?> getTeacherById(String id) {
     return datasource.getTeacherById(id);
   }
 }

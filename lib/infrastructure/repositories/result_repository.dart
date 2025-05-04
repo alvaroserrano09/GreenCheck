@@ -8,9 +8,8 @@ class ResultRepository {
     return datasource.saveResult(result);
   }
 
-  Future<List<Result>> getResultsByStudentId(int studentId) {
+  Future<List<Result>> getResultsByStudentId(String studentId) {
     final aar = datasource.getResultsByStudentId(studentId);
-    print(aar);
     return aar;
   }
 }

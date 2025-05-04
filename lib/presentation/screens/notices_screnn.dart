@@ -33,7 +33,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
     try {
       final student = ref.read(studentProvider).student;
 
-      await ref.read(noticeProvider.notifier).fetchNotices(student?.id ?? 0);
+      await ref.read(noticeProvider.notifier).fetchNotices(student!.id);
       if (mounted) {
         setState(() => isLoading = false);
       }

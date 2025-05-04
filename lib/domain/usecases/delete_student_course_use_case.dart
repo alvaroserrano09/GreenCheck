@@ -4,7 +4,7 @@ class DeleteStudentCourseUseCase {
   final CourseRepository courseRepository;
   DeleteStudentCourseUseCase(this.courseRepository);
 
-  Future<void> execute(int idStudent, int idCourse) async {
+  Future<void> execute(String idStudent, int idCourse) async {
     courseRepository.deleteStudent(idStudent, idCourse);
   }
 }

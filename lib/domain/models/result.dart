@@ -2,7 +2,7 @@ class Result {
   final int? id;
   final DateTime dateFinished;
   final int score;
-  final int idStudent;
+  final String idStudent;
   final int idTest;
   final String? testName;
 
@@ -18,7 +18,7 @@ class Result {
   factory Result.create({
     required DateTime dateFinished,
     required int score,
-    required int idStudent,
+    required String idStudent,
     required int idTest,
     required String testName,
   }) {

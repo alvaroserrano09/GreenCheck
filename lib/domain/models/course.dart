@@ -2,7 +2,7 @@ class Course {
   final int? id;
   final String name;
   final String description;
-  final int idTeacher;
+  final String idTeacher;
   final String? teacherName;
   final String type;
   final bool isFavorite;
@@ -20,7 +20,7 @@ class Course {
     int? id,
     required String name,
     required String description,
-    required int idTeacher,
+    required String idTeacher,
     required String type,
     String? teacherName,
     required bool isFavorite,
@@ -62,7 +62,7 @@ class Course {
     int? id,
     String? name,
     String? description,
-    int? idTeacher,
+    String? idTeacher,
     String? type,
     String? teacherName,
     bool? isFavorite,

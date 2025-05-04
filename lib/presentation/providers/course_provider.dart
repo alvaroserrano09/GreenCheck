@@ -127,12 +127,13 @@ class CourseNotifier extends StateNotifier<CourseState> {
   Future<void> saveCourse({
     required String name,
     required String description,
-    required int idTeacher,
+    required String idTeacher,
     required String type,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
+      print(idTeacher);
       final newCourse = Course(
         name: name,
         description: description,
@@ -148,10 +149,11 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> loadCoursesForTeacher(int idTeacher) async {
+  Future<void> loadCoursesForTeacher(String idTeacher) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
+      print(idTeacher);
       final courses = await getCoursesTeacherUseCase.execute(idTeacher);
 
       if (mounted) {
@@ -167,7 +169,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> loadCoursesForStudent(int idTeacher) async {
+  Future<void> loadCoursesForStudent(String idTeacher) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final courses = await getCoursesStudentUseCase.execute(idTeacher);
@@ -248,7 +250,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
 
   Future<void> deleteStudent({
     required int idCourse,
-    required int idStudent,
+    required String idStudent,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
@@ -273,7 +275,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> toggleFavorite(int courseId, int idStudent) async {
+  Future<void> toggleFavorite(int courseId, String idStudent) async {
     try {
       final currentCourse = state.courses.firstWhere(
         (course) => course.id == courseId,

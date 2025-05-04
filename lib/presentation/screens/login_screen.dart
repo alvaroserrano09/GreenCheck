@@ -120,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               content: Text('Inicio de sesión exitoso')),
                         );
 
-                        context.replace('/home/user');
+                        context.replace('/home');
                       } catch (e) {
                         scaffoldMessengerKey.currentState?.showSnackBar(
                           SnackBar(content: Text('Error: $e')),

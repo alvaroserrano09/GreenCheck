@@ -39,8 +39,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/',
       name: HomeScreen.name,
-      builder: (BuildContext context, GoRouterState state) =>
-          const HomeScreen(),
+      builder: (BuildContext context, GoRouterState state) => HomeScreen(),
     ),
     GoRoute(
       path: '/Register',
@@ -55,43 +54,62 @@ final appRouter = GoRouter(
           const LoginScreen(),
     ),
     GoRoute(
-      path: '/home/user',
+      path: '/home',
       name: UserHomeScreen.name,
       builder: (BuildContext context, GoRouterState state) =>
           const UserHomeScreen(),
-    ),
-    GoRoute(
-      path: '/home/add-course-screen',
-      name: AddCourseScreen.name,
-      builder: (BuildContext context, GoRouterState state) =>
-          const AddCourseScreen(),
-    ),
-    GoRoute(
-      path: '/home/courses-screen',
-      name: CoursesScreen.name,
-      builder: (BuildContext context, GoRouterState state) =>
-          const CoursesScreen(),
-    ),
-    GoRoute(
-      path: '/home/course-screen/:courseId',
-      builder: (context, state) {
-        final int courseId = int.parse(state.pathParameters['courseId']!);
-        return CourseScreen(courseId: courseId);
-      },
-    ),
-    GoRoute(
-      path: '/home/profile-screen',
-      name: ProfileScreen.name,
-      builder: (BuildContext context, GoRouterState state) =>
-          const ProfileScreen(),
-    ),
-    GoRoute(
-      path: '/home/tests-screen/:courseId',
-      name: TestsScreen.name,
-      builder: (context, state) {
-        final int courseId = int.parse(state.pathParameters['courseId']!);
-        return TestsScreen(courseId: courseId);
-      },
+      routes: [
+        GoRoute(
+          path: 'add-course-screen',
+          name: AddCourseScreen.name,
+          builder: (BuildContext context, GoRouterState state) =>
+              const AddCourseScreen(),
+        ),
+        GoRoute(
+          path: 'courses-screen',
+          name: CoursesScreen.name,
+          builder: (BuildContext context, GoRouterState state) =>
+              const CoursesScreen(),
+          routes: [
+            GoRoute(
+              path: 'course-screen/:courseId',
+              builder: (context, state) {
+                final int courseId =
+                    int.parse(state.pathParameters['courseId']!);
+                return CourseScreen(courseId: courseId);
+              },
+              routes: [
+                GoRoute(
+                  path: 'tests-screen',
+                  name: TestsScreen.name,
+                  builder: (context, state) {
+                    final extra = state.extra;
+                    if (extra is Map<String, dynamic>) {
+                      return TestsScreen(
+                        courseId: extra['courseId'],
+                      );
+                    }
+                    throw Exception('Invalid extra data for TestsScreen');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: 'profile-screen',
+          name: ProfileScreen.name,
+          builder: (BuildContext context, GoRouterState state) =>
+              ProfileScreen(),
+        ),
+        GoRoute(
+          path: 'notices-screen',
+          name: NoticesScreen.name,
+          builder: (context, state) {
+            return const NoticesScreen();
+          },
+        ),
+      ],
     ),
     GoRoute(
       path: '/home/course-creen/students-screen/:courseId',
@@ -107,13 +125,6 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final int testId = int.parse(state.pathParameters['testId']!);
         return TestScreen(testId: testId);
-      },
-    ),
-    GoRoute(
-      path: '/home/notices-screen',
-      name: NoticesScreen.name,
-      builder: (context, state) {
-        return const NoticesScreen();
       },
     ),
     GoRoute(
@@ -158,7 +169,7 @@ final appRouter = GoRouter(
       final isAuthenticated = await _checkIfUserIsAuthenticated(container);
 
       if (isAuthenticated && state.uri.path == '/') {
-        return '/home/user';
+        return '/home';
       }
       return null;
     } catch (e) {

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:green_check/domain/models/user.dart' as user;
+import 'package:green_check/infrastructure/services/google_service.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  ProfileScreen({super.key});
   static const String name = 'profile-screen';
+  final GoogleService googleService = GoogleService();
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreen();
@@ -132,11 +132,23 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                             ),
                                             const SizedBox(height: 30),
                                             CustomButton(
-                                              text: "Modificar Cambios",
+                                              text: "Realizar Cambios",
                                               backgroundColor:
                                                   const Color(0xFF8DC324),
                                               onPressed: () async {
                                                 try {
+                                                  if (mounted) {
+                                                    // ✅ Verificación crucial
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                            'Actualizando...'),
+                                                      ),
+                                                    );
+                                                    Navigator.pop(context);
+                                                  }
                                                   await studentNotifier
                                                       .updatePersonalInfo(
                                                     email: student.email,
@@ -161,6 +173,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
 
                                                   nameController.clear();
                                                   surnameController.clear();
+
                                                   Navigator.pop(context);
                                                 } catch (e) {
                                                   ScaffoldMessenger.of(context)
@@ -190,32 +203,10 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                       TextButton(
                                         onPressed: () async {
                                           try {
-                                            final overlay = OverlayEntry(
-                                              builder: (context) => const Center(
-                                                  child:
-                                                      CircularProgressIndicator()),
-                                            );
-                                            Overlay.of(context).insert(overlay);
-
-                                            await Supabase.instance.client.auth
-                                                .signOut();
-
-                                            try {
-                                              final googleSignIn =
-                                                  GoogleSignIn();
-                                              if (await googleSignIn
-                                                  .isSignedIn()) {
-                                                await googleSignIn.disconnect();
-                                                await googleSignIn.signOut();
-                                              }
-                                            } catch (e) {
-                                              debugPrint(
-                                                  'Error al cerrar Google: $e');
-                                            }
+                                            widget.googleService.signOut();
 
                                             studentNotifier.logoutStudent();
 
-                                            overlay.remove();
                                             if (mounted) context.go("/");
                                           } catch (e) {
                                             // Manejo de errores

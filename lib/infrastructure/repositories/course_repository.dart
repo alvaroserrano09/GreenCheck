@@ -10,11 +10,11 @@ class CourseRepository {
     return datasource.saveCourse(student);
   }
 
-  getCourses(int idTeacher) {
+  getCourses(String idTeacher) {
     return datasource.getCourses(idTeacher);
   }
 
-  getCoursesForStudent(int idStudent) {
+  getCoursesForStudent(String idStudent) {
     return datasource.getCoursesForStudent(idStudent);
   }
 
@@ -26,15 +26,15 @@ class CourseRepository {
     return datasource.getStudents(courseId);
   }
 
-  Future<User> saveStudent(int courseId, int idStudent) {
+  Future<User> saveStudent(int courseId, String idStudent) {
     return datasource.saveStudent(courseId, idStudent);
   }
 
-  Future<void> deleteStudent(int idStudent, int idCourse) {
+  Future<void> deleteStudent(String idStudent, int idCourse) {
     return datasource.deleteStudent(idStudent, idCourse);
   }
 
-  Future<void> toggleFavorite(int courseId, bool isFavorite, int idStudent) {
+  Future<void> toggleFavorite(int courseId, bool isFavorite, String idStudent) {
     return datasource.toggleFavorite(idStudent, courseId, isFavorite);
   }
 }

@@ -1,31 +1,28 @@
+import 'package:uuid/uuid.dart';
+
 class User {
-  final int? id;
+  final String id;
   final String email;
   final String name;
   final String surname;
   final String? role;
 
-  User(
-      {required this.email,
-      this.id,
-      required this.name,
-      required this.surname,
-      this.role});
+  User({
+    required this.email,
+    required this.id,
+    required this.name,
+    required this.surname,
+    this.role,
+  });
 
-  factory User.create(
-      {int? id,
-      required String name,
-      required String surname,
-      required String email,
-      String? role}) {
-    return User(email: email, id: id, name: name, surname: surname, role: role);
-  }
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.create({
+    required String name,
+    required String surname,
+    required String email,
+    String? role,
+  }) {
+    final uuid = const Uuid().v4();
     return User(
-        id: json['id'],
-        email: json['email'],
-        name: json['nombre'],
-        surname: json['apellidos'],
-        role: json['rol']);
+        email: email, id: uuid, name: name, surname: surname, role: role);
   }
 }
