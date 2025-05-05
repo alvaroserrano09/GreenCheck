@@ -91,6 +91,46 @@ final appRouter = GoRouter(
                     }
                     throw Exception('Invalid extra data for TestsScreen');
                   },
+                  routes: [
+                    GoRoute(
+                        path: 'test-screen/:testId',
+                        name: TestScreen.name,
+                        builder: (context, state) {
+                          final int testId =
+                              int.parse(state.pathParameters['testId']!);
+                          return TestScreen(testId: testId);
+                        },
+                        routes: [
+                          GoRoute(
+                            path: 'test-review',
+                            name: TestReviewScreen.name,
+                            builder: (context, state) {
+                              final extra = state.extra;
+
+                              if (extra is Map<String, dynamic>) {
+                                return TestReviewScreen(
+                                  questions: extra['questions'],
+                                  selectedAnswers: extra['answers'],
+                                  score: extra['score'],
+                                );
+                              }
+                              throw Exception(
+                                  'Invalid extra data for TestReviewScreen');
+                            },
+                          ),
+                        ]),
+                  ],
+                ),
+                // Cambiado para no repetir el courseId en el path
+                GoRoute(
+                  path: 'students-screen',
+                  name: StudentsScreen.name,
+                  builder: (context, state) {
+                    // Obtener courseId del padre
+                    final courseId =
+                        int.parse(state.pathParameters['courseId']!);
+                    return StudentsScreen(courseId: courseId);
+                  },
                 ),
               ],
             ),
@@ -103,64 +143,33 @@ final appRouter = GoRouter(
               ProfileScreen(),
         ),
         GoRoute(
-          path: 'notices-screen',
-          name: NoticesScreen.name,
+            path: 'notices-screen',
+            name: NoticesScreen.name,
+            builder: (context, state) {
+              return const NoticesScreen();
+            },
+            routes: [
+              GoRoute(
+                path: 'add-notice-screen',
+                name: AddNoticeScreen.name,
+                builder: (context, state) {
+                  return const AddNoticeScreen();
+                },
+              ),
+            ]),
+        GoRoute(
+          path: 'results-screen',
+          name: LastsResultsTestsScreen.name,
           builder: (context, state) {
-            return const NoticesScreen();
+            return const LastsResultsTestsScreen();
           },
         ),
+        GoRoute(
+          path: 'favorites-screen',
+          name: FavoritesScreen.name,
+          builder: (context, state) => const FavoritesScreen(),
+        ),
       ],
-    ),
-    GoRoute(
-      path: '/home/course-creen/students-screen/:courseId',
-      name: StudentsScreen.name,
-      builder: (context, state) {
-        final int courseId = int.parse(state.pathParameters['courseId']!);
-        return StudentsScreen(courseId: courseId);
-      },
-    ),
-    GoRoute(
-      path: '/home/course-screen/tests-screen/test-screen/:testId',
-      name: TestScreen.name,
-      builder: (context, state) {
-        final int testId = int.parse(state.pathParameters['testId']!);
-        return TestScreen(testId: testId);
-      },
-    ),
-    GoRoute(
-      path: '/home/notices-screen/add-notice-screen',
-      name: AddNoticeScreen.name,
-      builder: (context, state) {
-        return const AddNoticeScreen();
-      },
-    ),
-    GoRoute(
-      path: '/test-review',
-      name: TestReviewScreen.name,
-      builder: (context, state) {
-        final extra = state.extra;
-
-        if (extra is Map<String, dynamic>) {
-          return TestReviewScreen(
-            questions: extra['questions'],
-            selectedAnswers: extra['answers'],
-            score: extra['score'],
-          );
-        }
-        throw Exception('Invalid extra data for TestReviewScreen');
-      },
-    ),
-    GoRoute(
-      path: '/home/results-screen',
-      name: LastsResultsTestsScreen.name,
-      builder: (context, state) {
-        return const LastsResultsTestsScreen();
-      },
-    ),
-    GoRoute(
-      path: '/home/favorites-screen',
-      name: FavoritesScreen.name,
-      builder: (context, state) => const FavoritesScreen(),
     ),
   ],
   redirect: (BuildContext context, GoRouterState state) async {
