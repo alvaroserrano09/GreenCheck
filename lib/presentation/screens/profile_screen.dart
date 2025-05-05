@@ -123,15 +123,6 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         const SizedBox(height: 20),
-                                        const Text(
-                                          "Mis datos",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
                                         Container(
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
@@ -202,18 +193,38 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                     padding: const EdgeInsets.only(bottom: 20),
                                     child: Column(
                                       children: [
-                                        const Divider(color: Colors.grey),
-                                        TextButton(
-                                          onPressed: _signOut,
-                                          child: const Text(
-                                            'Cerrar sesión',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          width: double.infinity,
+                                          child: ElevatedButton.icon(
+                                            onPressed: _signOut,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: Colors.red,
+                                              elevation: 2,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                side: const BorderSide(
+                                                    color: Colors.red,
+                                                    width: 1),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 16),
+                                            ),
+                                            icon: const Icon(Icons.logout,
+                                                size: 20),
+                                            label: const Text(
+                                              'Cerrar sesión',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        const Divider(color: Colors.grey),
                                       ],
                                     ),
                                   ),
