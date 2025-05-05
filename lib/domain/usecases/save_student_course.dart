@@ -4,7 +4,7 @@ import 'package:green_check/infrastructure/repositories/student_repository.dart'
 
 class SaveStudentCourseUseCase {
   final CourseRepository courseRepository;
-  final UserRepository studentRepositoy;
+  final StudentRepository studentRepositoy;
 
   SaveStudentCourseUseCase(this.courseRepository, this.studentRepositoy);
 

@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/domain/usecases/save_student_google_use_case.dart';
+import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
+import 'package:green_check/infrastructure/services/teacher_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/domain/usecases/authenticate_student_use_case.dart';
@@ -8,29 +10,34 @@ import 'package:green_check/domain/usecases/update_personal_info_use_case.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
 
-final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return UserRepository(UserService());
+final studentRepositoryProvider = Provider<StudentRepository>((ref) {
+  return StudentRepository(StudentService());
+});
+final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
+  return TeacherRepository(TeacherService());
 });
 
 final authenticatUseCaseProvider = Provider<AuthenticateStudentUseCase>((ref) {
-  final userRepository = ref.watch(userRepositoryProvider);
-  return AuthenticateStudentUseCase(userRepository);
+  final studentRepository = ref.watch(studentRepositoryProvider);
+  return AuthenticateStudentUseCase(studentRepository);
 });
 
 final saveStudentUseCaseProvider = Provider<SaveStudentUseCase>((ref) {
-  final userRepository = ref.watch(userRepositoryProvider);
-  return SaveStudentUseCase(userRepository);
+  final studentRepository = ref.watch(studentRepositoryProvider);
+  return SaveStudentUseCase(studentRepository);
 });
 
 final updatePersonalInfoUseCaseProvider =
     Provider<UpdatePersonalInfoUseCase>((ref) {
-  final userRepository = ref.watch(userRepositoryProvider);
-  return UpdatePersonalInfoUseCase(userRepository);
+  final studentRepository = ref.watch(studentRepositoryProvider);
+  return UpdatePersonalInfoUseCase(
+      studentRepository, ref.watch(teacherRepositoryProvider));
 });
 final saveStudentGoogleUseCaseProvider =
     Provider<SaveStudentGoogleUseCase>((ref) {
-  final userRepository = ref.watch(userRepositoryProvider);
-  return SaveStudentGoogleUseCase(userRepository);
+  final studentRepository = ref.watch(studentRepositoryProvider);
+  return SaveStudentGoogleUseCase(
+      studentRepository, ref.watch(teacherRepositoryProvider));
 });
 
 class UserState {
@@ -76,7 +83,6 @@ class StudentNotifier extends StateNotifier<UserState> {
 
   Future<void> _loadUserState() async {
     final prefs = await SharedPreferences.getInstance();
-    print(prefs.getString('user_id'));
     final id = prefs.getString('user_id');
     final email = prefs.getString('user_email');
     final name = prefs.getString('user_name');
@@ -98,7 +104,6 @@ class StudentNotifier extends StateNotifier<UserState> {
 
   Future<void> _saveUserState(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    print('Saving user state: ${user.id}');
     await prefs.setString('user_id', user.id);
     await prefs.setString('user_email', user.email);
     await prefs.setString('user_name', user.name);
@@ -152,7 +157,6 @@ class StudentNotifier extends StateNotifier<UserState> {
         email: email,
         password: password,
       );
-      print('Login response: ${response.role}');
       await _saveUserState(response);
 
       state = state.copyWith(isLoading: false, student: response);
@@ -177,7 +181,6 @@ class StudentNotifier extends StateNotifier<UserState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      print('Updating personal info: $email, $name, $surname, $role');
       final response = await updatePersonalInfoUseCase.execute(
         email,
         name,

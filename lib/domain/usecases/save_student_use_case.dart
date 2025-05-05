@@ -2,12 +2,11 @@ import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 
 class SaveStudentUseCase {
-  final UserRepository userRepository;
-  SaveStudentUseCase(this.userRepository);
+  final StudentRepository studentRepository;
+  SaveStudentUseCase(this.studentRepository);
 
   Future<User> execute(User student, String passsword) async {
-    print("SaveStudentUseCase: ${student.id}");
-    User studentSaved = await userRepository.saveStudent(student, passsword);
+    User studentSaved = await studentRepository.saveStudent(student, passsword);
     return studentSaved;
   }
 }

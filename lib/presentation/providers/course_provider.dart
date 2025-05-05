@@ -13,14 +13,19 @@ import 'package:green_check/domain/usecases/save_student_course.dart';
 import 'package:green_check/domain/usecases/toggle_favorite_course_use_case.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
+import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
+import 'package:green_check/infrastructure/services/teacher_service.dart';
 
 final courseRepositoryProvider = Provider<CourseRepository>((ref) {
   return CourseRepository(CourseService());
 });
-final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return UserRepository(UserService());
+final studentRepositoryProvider = Provider<StudentRepository>((ref) {
+  return StudentRepository(StudentService());
+});
+final TeacherRepositoryProvider = Provider<TeacherRepository>((ref) {
+  return TeacherRepository(TeacherService());
 });
 
 final saveCourseUseCaseProvider = Provider<SaveCourseUseCase>((ref) {
@@ -38,7 +43,9 @@ final getCoursesStudentUseCaseProvider =
     Provider<GetCoursesStudentUseCase>((ref) {
   final courseRepository = ref.watch(courseRepositoryProvider);
   return GetCoursesStudentUseCase(
-      courseRepository, ref.watch(userRepositoryProvider));
+      courseRepository,
+      ref.watch(studentRepositoryProvider),
+      ref.watch(TeacherRepositoryProvider));
 });
 
 final getCourseStudentUseCaseProvider =
@@ -54,8 +61,8 @@ final getStudentsUseCaseProvider = Provider<GetStudentsCourseUseCase>((ref) {
 final saveStudentCourseUseCaseProvider =
     Provider<SaveStudentCourseUseCase>((ref) {
   final courseRepository = ref.watch(courseRepositoryProvider);
-  final userRepository = ref.watch(userRepositoryProvider);
-  return SaveStudentCourseUseCase(courseRepository, userRepository);
+  final studentRepository = ref.watch(studentRepositoryProvider);
+  return SaveStudentCourseUseCase(courseRepository, studentRepository);
 });
 
 final deleteStudentCourseUseCaseProvider =
@@ -133,7 +140,6 @@ class CourseNotifier extends StateNotifier<CourseState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      print(idTeacher);
       final newCourse = Course(
         name: name,
         description: description,

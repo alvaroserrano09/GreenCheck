@@ -2,11 +2,11 @@ import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 
 class GetStudentUseCase {
-  final UserRepository repository;
+  final StudentRepository studentRepository;
 
-  GetStudentUseCase(this.repository);
+  GetStudentUseCase(this.studentRepository);
 
   Future<User?> execute(String email) async {
-    return await repository.getStudentByEmail(email);
+    return await studentRepository.getStudentByEmail(email);
   }
 }

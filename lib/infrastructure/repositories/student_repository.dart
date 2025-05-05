@@ -1,9 +1,9 @@
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
 
-class UserRepository {
-  final UserService datasource;
-  UserRepository(this.datasource);
+class StudentRepository {
+  final StudentService datasource;
+  StudentRepository(this.datasource);
 
   Future<User> saveStudent(User student, String password) {
     return datasource.saveStudent(student, password);
@@ -13,11 +13,6 @@ class UserRepository {
     return datasource.authStudent(email, password);
   }
 
-  Future<User> updatePersonalInfoTeacher(
-      String email, String name, String surname) {
-    return datasource.updatePersonalInfoTeacher(email, name, surname);
-  }
-
   Future<User> updatePersonalInfoStudent(
       String email, String name, String surname) {
     return datasource.updatePersonalInfoStudent(email, name, surname);
@@ -25,13 +20,5 @@ class UserRepository {
 
   Future<User?> getStudentByEmail(String email) {
     return datasource.getStudentByEmail(email);
-  }
-
-  Future<User?> getTeacherByEmail(String email) {
-    return datasource.getTeacherByEmail(email);
-  }
-
-  Future<User?> getTeacherById(String id) {
-    return datasource.getTeacherById(id);
   }
 }

@@ -1,8 +1,8 @@
 import 'package:green_check/domain/models/user.dart';
-import 'package:green_check/infrastructure/repositories/student_repository.dart';
+import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 
 class GetTeacherUseCase {
-  final UserRepository teacherRepository;
+  final TeacherRepository teacherRepository;
 
   GetTeacherUseCase(this.teacherRepository);
 

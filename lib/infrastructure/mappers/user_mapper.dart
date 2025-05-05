@@ -1,5 +1,6 @@
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/infrastructure/entities/supabase_student.dart';
+import 'package:green_check/infrastructure/entities/supabase_teacher.dart';
 
 class UserMapper {
   static SupabaseStudent toEntity(User user) {
@@ -21,7 +22,7 @@ class UserMapper {
     );
   }
 
-  static User toDomainTeacher(SupabaseStudent user) {
+  static User toDomainTeacher(SupabaseTeacher user) {
     return User(
       email: user.email,
       name: user.nombre,

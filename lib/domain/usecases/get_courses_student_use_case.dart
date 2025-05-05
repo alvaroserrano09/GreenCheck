@@ -1,11 +1,14 @@
 import 'package:green_check/domain/models/course.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
+import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 
 class GetCoursesStudentUseCase {
   final CourseRepository courseRepository;
-  final UserRepository studentRepository;
-  GetCoursesStudentUseCase(this.courseRepository, this.studentRepository);
+  final StudentRepository studentRepository;
+  final TeacherRepository teacherRepository;
+  GetCoursesStudentUseCase(
+      this.courseRepository, this.studentRepository, this.teacherRepository);
   Future<List<Course>> execute(String idStudent) async {
     try {
       final List<Course> courses =
@@ -15,7 +18,7 @@ class GetCoursesStudentUseCase {
 
       for (final course in courses) {
         final teacher =
-            await studentRepository.getTeacherById(course.idTeacher);
+            await teacherRepository.getTeacherById(course.idTeacher);
 
         newCourses.add(Course(
           id: course.id,

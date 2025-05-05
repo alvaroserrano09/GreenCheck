@@ -7,9 +7,11 @@ import 'package:green_check/domain/usecases/save_notice_use_case.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
 import 'package:green_check/infrastructure/repositories/notice_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
+import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
 import 'package:green_check/infrastructure/services/notice_service.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
+import 'package:green_check/infrastructure/services/teacher_service.dart';
 
 final noticeRepositoryProvider = Provider<NoticeRepository>(
   (ref) {
@@ -21,13 +23,17 @@ final courseRepositoryProvider = Provider<CourseRepository>(
     return CourseRepository(CourseService());
   },
 );
-final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return UserRepository(UserService());
+final studentRepositoryProvider = Provider<StudentRepository>((ref) {
+  return StudentRepository(StudentService());
+});
+final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
+  return TeacherRepository(TeacherService());
 });
 final getStudentCoursesUseCaseProvider = Provider<GetCoursesStudentUseCase>(
   (ref) => GetCoursesStudentUseCase(
     ref.watch(courseRepositoryProvider),
-    ref.watch(userRepositoryProvider),
+    ref.watch(studentRepositoryProvider),
+    ref.watch(teacherRepositoryProvider),
   ),
 );
 final getCoursesTeacherUseCaseProvider = Provider<GetCoursesTeacherUseCase>(
