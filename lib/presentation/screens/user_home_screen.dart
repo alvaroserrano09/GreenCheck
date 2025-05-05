@@ -17,8 +17,6 @@ class UserHomeScreen extends ConsumerWidget {
 
     final userName = student?.name ?? "Usuario";
     final role = student?.role;
-    print("Rol: $role");
-    print("id: ${student?.id}");
 
     final isTeacher = role == 'profesor';
 

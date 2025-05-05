@@ -21,6 +21,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreen extends ConsumerState<ProfileScreen> {
   late TextEditingController nameController;
   late TextEditingController surnameController;
+  final GlobalKey<ScaffoldMessengerState> scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -36,215 +37,198 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
     super.dispose();
   }
 
+  Future<void> _updateProfile() async {
+    final student = ref.read(studentProvider).student;
+    if (student == null) return;
+
+    try {
+      await ref.read(studentProvider.notifier).updatePersonalInfo(
+            email: student.email,
+            name: nameController.text.isNotEmpty
+                ? nameController.text
+                : student.name,
+            surname: surnameController.text.isNotEmpty
+                ? surnameController.text
+                : student.surname,
+            role: student.role ?? '',
+          );
+
+      if (!mounted) return;
+
+      scaffoldKey.currentState?.showSnackBar(
+        const SnackBar(content: Text('Perfil actualizado con éxito')),
+      );
+
+      if (!mounted) return;
+      context.go('/home');
+    } catch (e) {
+      if (!mounted) return;
+      scaffoldKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text('Error al actualizar: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _signOut() async {
+    try {
+      await widget.googleService.signOut();
+      ref.read(studentProvider.notifier).logoutStudent();
+      if (!mounted) return;
+      context.go('/');
+    } catch (e) {
+      if (!mounted) return;
+      scaffoldKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text('Error al cerrar sesión: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final studentState = ref.watch(studentProvider);
-    final studentNotifier = ref.read(studentProvider.notifier);
     final user.User? student = studentState.student;
     final isLoading = studentState.isLoading;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            const BackGround(title: "Editar Perfil"),
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : LayoutBuilder(
-                      builder: (context, constraints) {
-                        return SingleChildScrollView(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 20),
-                                      const Text(
-                                        "Mis datos",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Container(
-                                        padding: const EdgeInsets.all(16),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              "Nombre",
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            CustomTextField(
-                                              labelText: student!.name,
-                                              controller: nameController,
-                                            ),
-                                            const SizedBox(height: 20),
-                                            const Text(
-                                              "Apellidos",
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            CustomTextField(
-                                              labelText: student.surname,
-                                              controller: surnameController,
-                                            ),
-                                            const SizedBox(height: 20),
-                                            const Text(
-                                              "Correo Electrónico",
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            CustomTextField(
-                                              labelText: student.email,
-                                              enabled: false,
-                                            ),
-                                            const SizedBox(height: 30),
-                                            CustomButton(
-                                              text: "Realizar Cambios",
-                                              backgroundColor:
-                                                  const Color(0xFF8DC324),
-                                              onPressed: () async {
-                                                try {
-                                                  if (mounted) {
-                                                    // ✅ Verificación crucial
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            'Actualizando...'),
-                                                      ),
-                                                    );
-                                                    Navigator.pop(context);
-                                                  }
-                                                  await studentNotifier
-                                                      .updatePersonalInfo(
-                                                    email: student.email,
-                                                    name: nameController
-                                                            .text.isNotEmpty
-                                                        ? nameController.text
-                                                        : student.name,
-                                                    surname: surnameController
-                                                            .text.isNotEmpty
-                                                        ? surnameController.text
-                                                        : student.surname,
-                                                    role: student.role!,
-                                                  );
-
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'Información actualizada'),
-                                                    ),
-                                                  );
-
-                                                  nameController.clear();
-                                                  surnameController.clear();
-
-                                                  Navigator.pop(context);
-                                                } catch (e) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content:
-                                                          Text('Error: $e'),
-                                                      backgroundColor:
-                                                          Colors.red,
-                                                    ),
-                                                  );
-                                                }
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
-                                  child: Column(
-                                    children: [
-                                      const Divider(color: Colors.grey),
-                                      TextButton(
-                                        onPressed: () async {
-                                          try {
-                                            widget.googleService.signOut();
-
-                                            studentNotifier.logoutStudent();
-
-                                            if (mounted) context.go("/");
-                                          } catch (e) {
-                                            // Manejo de errores
-                                            if (mounted) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Error al cerrar sesión: ${e.toString()}'),
-                                                  backgroundColor: Colors.red,
-                                                ),
-                                              );
-                                            }
-                                          }
-                                        },
-                                        child: const Text(
-                                          'Cerrar sesión',
+    return ScaffoldMessenger(
+      key: scaffoldKey,
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              const BackGround(title: "Editar Perfil"),
+              Padding(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        const Text(
+                                          "Mis datos",
                                           style: TextStyle(
-                                            color: Colors.red,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
                                         ),
-                                      ),
-                                      const Divider(color: Colors.grey),
-                                    ],
+                                        const SizedBox(height: 20),
+                                        Container(
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "Nombre",
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              CustomTextField(
+                                                labelText: student!.name,
+                                                controller: nameController,
+                                              ),
+                                              const SizedBox(height: 20),
+                                              const Text(
+                                                "Apellidos",
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              CustomTextField(
+                                                labelText: student.surname,
+                                                controller: surnameController,
+                                              ),
+                                              const SizedBox(height: 20),
+                                              const Text(
+                                                "Correo Electrónico",
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              CustomTextField(
+                                                labelText: student.email,
+                                                enabled: false,
+                                              ),
+                                              const SizedBox(height: 30),
+                                              CustomButton(
+                                                text: "Realizar Cambios",
+                                                backgroundColor:
+                                                    const Color(0xFF8DC324),
+                                                onPressed: _updateProfile,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 20),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: Column(
+                                      children: [
+                                        const Divider(color: Colors.grey),
+                                        TextButton(
+                                          onPressed: _signOut,
+                                          child: const Text(
+                                            'Cerrar sesión',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const Divider(color: Colors.grey),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
+        bottomNavigationBar: const Toolbar(),
       ),
-      bottomNavigationBar: const Toolbar(),
     );
   }
 }
