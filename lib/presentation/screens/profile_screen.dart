@@ -215,7 +215,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                                                       vertical: 16),
                                             ),
                                             icon: const Icon(Icons.logout,
-                                                size: 20),
+                                                size: 20, color: Colors.red),
                                             label: const Text(
                                               'Cerrar sesión',
                                               style: TextStyle(

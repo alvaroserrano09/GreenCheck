@@ -12,7 +12,7 @@ class UploadTestUseCase {
   UploadTestUseCase(this._repository, this._fileReader, this._testParser);
 
   Future<Test> execute({
-    required int courseId,
+    required String courseId,
     required String title,
     required PlatformFile file,
     required void Function(double progress) onProgress,

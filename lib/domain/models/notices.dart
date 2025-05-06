@@ -2,7 +2,7 @@ class Notice {
   final int? id;
   final String title;
   final String message;
-  final int idCourse;
+  final String idCourse;
 
   Notice({
     this.id,
@@ -15,7 +15,7 @@ class Notice {
     int? id,
     required String title,
     required String message,
-    required int idCourse,
+    required String idCourse,
   }) {
     return Notice(
       id: id,

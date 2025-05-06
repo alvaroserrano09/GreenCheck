@@ -82,10 +82,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                             '/home/courses-screen/course-screen/${course.id}'),
                         isFavorite: course.isFavorite,
                         onFavoritePressed: () {
-                          if (course.id != null) {
-                            ref.read(courseProvider.notifier).toggleFavorite(
-                                course.id!, studentState.student!.id);
-                          }
+                          ref.read(courseProvider.notifier).toggleFavorite(
+                              course.id, studentState.student!.id);
                         },
                       ),
                     );

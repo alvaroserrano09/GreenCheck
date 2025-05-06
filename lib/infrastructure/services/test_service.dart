@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final SupabaseClient supabase = Supabase.instance.client;
 
 class TestService {
-  Future<List<Test>> getTests(int idCourse) async {
+  Future<List<Test>> getTests(String idCourse) async {
     try {
       final response =
           await supabase.from('Test').select().eq("id_curso", idCourse);
@@ -22,7 +22,7 @@ class TestService {
     }
   }
 
-  Future<Test> saveTest(String title, int idCurso) async {
+  Future<Test> saveTest(String title, String idCurso) async {
     try {
       final response = await supabase
           .from('Test')
@@ -65,15 +65,12 @@ class TestService {
       if (response.isEmpty) {
         throw Exception('No se guardaron las preguntas');
       }
-
-      print('✅ Preguntas guardadas: ${response.length}');
     } catch (e) {
-      print('❌ Error al guardar preguntas: $e');
       rethrow;
     }
   }
 
-  void deleteTest(int idTest, int idCourse) async {
+  void deleteTest(int idTest, String idCourse) async {
     try {
       await supabase
           .from('Test')

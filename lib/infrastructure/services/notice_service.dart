@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NoticeService {
   final SupabaseClient supabase = Supabase.instance.client;
-  Future<List<Notice>> getNotices(List<int?> courseIds) async {
+  Future<List<Notice>> getNotices(List<String?> courseIds) async {
     if (courseIds.isEmpty) {
       return [];
     }

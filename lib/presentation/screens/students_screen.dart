@@ -9,7 +9,7 @@ import 'package:green_check/presentation/widgets/custom_text_field.dart';
 
 class StudentsScreen extends ConsumerStatefulWidget {
   static const String name = 'students-screen';
-  final int courseId;
+  final String courseId;
 
   const StudentsScreen({super.key, required this.courseId});
 
@@ -83,7 +83,7 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
   }
 }
 
-Widget _buildStudentsList(WidgetRef ref, List<User> students, int courseId) {
+Widget _buildStudentsList(WidgetRef ref, List<User> students, String courseId) {
   return ExpansionTile(
     title: const Text('Mis Alumnos',
         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -106,7 +106,7 @@ Widget _buildStudentsList(WidgetRef ref, List<User> students, int courseId) {
   );
 }
 
-Widget _buildNewStudentForm(WidgetRef ref, int courseId) {
+Widget _buildNewStudentForm(WidgetRef ref, String courseId) {
   final TextEditingController emailController = TextEditingController();
 
   return Padding(

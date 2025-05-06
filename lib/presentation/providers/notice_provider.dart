@@ -105,7 +105,7 @@ class NoticeNotifier extends StateNotifier<NoticeState> {
   saveNotice(
       {required String description,
       required String name,
-      required int courseId}) async {
+      required String courseId}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final notice = Notice(

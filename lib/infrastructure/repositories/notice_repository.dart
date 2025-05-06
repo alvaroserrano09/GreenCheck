@@ -5,7 +5,7 @@ class NoticeRepository {
   final NoticeService datasource;
   NoticeRepository(this.datasource);
 
-  Future<List<Notice>> getNotices(List<int?> ids) {
+  Future<List<Notice>> getNotices(List<String?> ids) {
     return datasource.getNotices(ids);
   }
 

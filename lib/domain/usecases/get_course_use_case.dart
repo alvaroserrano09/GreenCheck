@@ -6,7 +6,7 @@ class GetCourseStudentUseCase {
 
   GetCourseStudentUseCase(this.courseRepository);
 
-  Future<Course> execute(int idStudent) async {
+  Future<Course> execute(String idStudent) async {
     final response = await courseRepository.getCourse(idStudent);
     return response;
   }

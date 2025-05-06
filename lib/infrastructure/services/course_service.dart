@@ -1,4 +1,8 @@
 import 'package:green_check/domain/models/course.dart';
+import 'package:green_check/infrastructure/entities/supabase_course.dart';
+import 'package:green_check/infrastructure/entities/supabase_student.dart';
+import 'package:green_check/infrastructure/mappers/course_mapper.dart';
+import 'package:green_check/infrastructure/mappers/user_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:green_check/domain/models/user.dart' as user;
 
@@ -7,12 +11,9 @@ final SupabaseClient supabase = Supabase.instance.client;
 class CourseService {
   Future<Course> saveCourse(Course course) async {
     try {
-      await supabase.from("Curso").insert({
-        'nombre': course.name,
-        'descripcion': course.description,
-        'id_profesor': course.idTeacher,
-        'tipo': course.type,
-      });
+      await supabase.from("Curso").insert(
+            CourseMapper.toEntity(course).toJson(),
+          );
       return course;
     } catch (e) {
       rethrow;
@@ -25,12 +26,8 @@ class CourseService {
           await supabase.from('Curso').select().eq('id_profesor', id);
 
       return response
-          .map((courseData) => Course(
-                id: courseData['id'],
-                name: courseData['nombre'],
-                description: courseData['descripcion'],
-                idTeacher: courseData['id_profesor'],
-                type: courseData['tipo'],
+          .map((courseData) => CourseMapper.toDomain(
+                SupabaseCourse.fromJson(courseData),
               ))
           .toList();
     } catch (e) {
@@ -52,7 +49,7 @@ class CourseService {
         final isFavorite = item['favorito'];
 
         courses.add(Course(
-          id: curso['id'] as int,
+          id: curso['id'] as String,
           name: curso['nombre'] as String,
           description: curso['descripcion'] as String,
           idTeacher: curso['id_profesor'] as String,
@@ -67,39 +64,42 @@ class CourseService {
     }
   }
 
-  Future<Course?> getCourse(int idStudent) async {
+  Future<Course?> getCourse(String idStudent) async {
     try {
       final response = await supabase
           .from('Curso')
           .select()
           .eq('id', idStudent)
           .maybeSingle();
-      return Course.fromJson(response!);
+      if (response != null) {
+        final courseEntity = SupabaseCourse.fromJson(response);
+
+        return CourseMapper.toDomain(courseEntity);
+      } else {
+        return null;
+      }
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<user.User>> getStudents(int courseId) async {
+  Future<List<user.User>> getStudents(String courseId) async {
     try {
       final response = await supabase.from('Alumno-curso').select('''
           Alumno: id_alumno (id, nombre, email,apellidos)
       ''').eq('id_curso', courseId);
       return response.map<user.User>((studentData) {
         final student = studentData['Alumno'];
-        return user.User(
-          id: student['id'],
-          name: student['nombre'],
-          email: student['email'],
-          surname: student['apellidos'],
-        );
+        final studentEntity = SupabaseStudent.fromJson(student);
+
+        return UserMapper.toDomainStudent(studentEntity);
       }).toList();
     } catch (e) {
       throw Exception('Failed to fetch students: $e');
     }
   }
 
-  Future<user.User> saveStudent(int courseId, String idStudent) async {
+  Future<user.User> saveStudent(String courseId, String idStudent) async {
     try {
       await supabase.from('Alumno-curso').insert({
         'id_curso': courseId,
@@ -127,7 +127,7 @@ class CourseService {
     }
   }
 
-  Future<void> deleteStudent(String idStudent, int idCourse) async {
+  Future<void> deleteStudent(String idStudent, String idCourse) async {
     try {
       await supabase
           .from('Alumno-curso')
@@ -140,7 +140,7 @@ class CourseService {
   }
 
   Future<void> toggleFavorite(
-      String studentId, int courseId, bool isFavorite) async {
+      String studentId, String courseId, bool isFavorite) async {
     try {
       await supabase
           .from('Alumno-curso')

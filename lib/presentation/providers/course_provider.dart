@@ -140,11 +140,12 @@ class CourseNotifier extends StateNotifier<CourseState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final newCourse = Course(
+      final newCourse = Course.create(
         name: name,
         description: description,
         idTeacher: idTeacher,
         type: type,
+        isFavorite: false,
       );
 
       final response = await saveCourseUseCase.execute(newCourse);
@@ -193,7 +194,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> loadCourse(int idCourse) async {
+  Future<void> loadCourse(String idCourse) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
@@ -212,7 +213,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> loadStudentsForCourse({required int idCourse}) async {
+  Future<void> loadStudentsForCourse({required String idCourse}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final students = await gestStudentsUseCase.execute(idCourse);
@@ -231,7 +232,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
   }
 
   Future<void> saveStudentCourse({
-    required int idCourse,
+    required String idCourse,
     required String email,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
@@ -255,7 +256,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
   }
 
   Future<void> deleteStudent({
-    required int idCourse,
+    required String idCourse,
     required String idStudent,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
@@ -281,33 +282,45 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> toggleFavorite(int courseId, String idStudent) async {
+  Future<void> toggleFavorite(String courseId, String idStudent) async {
     try {
-      final currentCourse = state.courses.firstWhere(
-        (course) => course.id == courseId,
-      );
+      final courses = [
+        ...state.courses
+      ]; // Copia para trabajar sin mutar la original
+      final index = courses.indexWhere((course) => course.id == courseId);
 
+      if (index == -1) return;
+
+      final currentCourse = courses[index];
       final newFavoriteStatus = !currentCourse.isFavorite;
 
+      // Crear nueva lista con el curso actualizado
+      courses[index] = Course(
+        id: currentCourse.id,
+        name: currentCourse.name,
+        isFavorite: newFavoriteStatus,
+        description: currentCourse.description,
+        idTeacher: currentCourse.idTeacher,
+        type: currentCourse.type,
+      );
+
       state = state.copyWith(
-        courses: state.courses.map((course) {
-          return course.id == courseId
-              ? course.copyWith(isFavorite: newFavoriteStatus)
-              : course;
-        }).toList(),
+        courses: courses,
+        errorMessage: null,
       );
 
       await toggleFavoriteCourseUseCase.execute(
-          courseId, newFavoriteStatus, idStudent);
-    } catch (e) {
-      state = state.copyWith(
-        courses: state.courses.map((course) {
-          return course.id == courseId
-              ? course.copyWith(isFavorite: !course.isFavorite) // Revert
-              : course;
-        }).toList(),
+        courseId,
+        newFavoriteStatus,
+        idStudent,
       );
-      state = state.copyWith(errorMessage: 'Failed to update favorite: $e');
+    } catch (e) {
+      if (mounted) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: e.toString(),
+        );
+      }
     }
   }
 }

@@ -5,7 +5,8 @@ class ToggleFavoriteCourseUseCase {
 
   ToggleFavoriteCourseUseCase(this.courseRepository);
 
-  Future<void> execute(int courseId, bool isFavorite, String idStudent) async {
+  Future<void> execute(
+      String courseId, bool isFavorite, String idStudent) async {
     try {
       await courseRepository.toggleFavorite(courseId, isFavorite, idStudent);
     } catch (e) {

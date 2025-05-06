@@ -10,7 +10,7 @@ import 'package:green_check/presentation/widgets/toolbar.dart';
 
 class CourseScreen extends ConsumerStatefulWidget {
   static const String name = "course-screen";
-  final int courseId;
+  final String courseId;
 
   const CourseScreen({super.key, required this.courseId});
 
@@ -100,8 +100,8 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
                         _buildClickableCard(
                           title: 'Alumnos',
                           onTap: () {
-                            context.push(
-                                '/home/course-creen/students-screen/${courseState.course!.id}');
+                            context.go(
+                                '/home/courses-screen/course-screen/${courseState.course!.id}/students-screen');
                           },
                         ),
                         const SizedBox(height: 80),

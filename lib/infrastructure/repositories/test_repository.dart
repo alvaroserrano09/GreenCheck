@@ -7,11 +7,11 @@ class TestRepository {
 
   TestRepository(this.datasource);
 
-  Future<List<Test>> getTests(int idCourse) {
+  Future<List<Test>> getTests(String idCourse) {
     return datasource.getTests(idCourse);
   }
 
-  Future createTest<Test>(String title, int idCourse) {
+  Future createTest<Test>(String title, String idCourse) {
     return datasource.saveTest(title, idCourse);
   }
 
@@ -19,7 +19,7 @@ class TestRepository {
     return datasource.saveQuestions(questionsToSave, id);
   }
 
-  void deleteTest(int idTest, int idCourse) {
+  void deleteTest(int idTest, String idCourse) {
     return datasource.deleteTest(idTest, idCourse);
   }
 

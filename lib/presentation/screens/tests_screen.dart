@@ -13,7 +13,7 @@ import 'package:green_check/presentation/widgets/custom_text_field.dart';
 
 class TestsScreen extends ConsumerStatefulWidget {
   static const String name = 'tests-screen';
-  final int courseId;
+  final String courseId;
 
   const TestsScreen({super.key, required this.courseId});
 
@@ -197,12 +197,11 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
       children: tests.map((test) {
         return ListTile(
           leading: IconButton(
-            icon: Icon(Icons.play_arrow, color: Colors.green),
-            onPressed: () {
-              context.push(
-                  '/home/course-screen/tests-screen/test-screen/${test.id}');
-            },
-          ),
+              icon: Icon(Icons.play_arrow, color: Colors.green),
+              onPressed: () {
+                context.push(
+                    '/home/courses-screen/course-screen/${test.courseId}/tests-screen/test-screen/${test.id}');
+              }),
           trailing: studentState.student?.role == "profesor"
               ? IconButton(
                   icon: const Icon(Icons.remove_circle_outline,

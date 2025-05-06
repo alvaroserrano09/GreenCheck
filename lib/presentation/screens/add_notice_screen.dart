@@ -23,7 +23,7 @@ class AddNoticeScreen extends ConsumerStatefulWidget {
 class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
-  int? selectedCourse; // Changed from String? to int?
+  String? selectedCourse; // Aquí es String? porque course.id es String
   bool _isLoadingCourses = false;
 
   Map<String, String?> errorMessages = {
@@ -86,7 +86,6 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
     final studentState = ref.watch(studentProvider);
     final User? student = studentState.student;
     final courseState = ref.watch(courseProvider);
-
     final courses = courseState.courses;
 
     return Scaffold(
@@ -111,7 +110,6 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
                         ),
                         CustomTextField(
                           labelText: 'Ingrese el título del aviso',
-                          icon: Icons.title,
                           controller: titleController,
                         ),
                         if (errorMessages['title'] != null)
@@ -176,27 +174,24 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
                                   color: const Color(0xFFD9D9D9),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<int?>(
-                                    value:
-                                        selectedCourse, // This should be int? now
-                                    hint: const Text("Selecciona un curso"),
-                                    icon: const Icon(Icons.arrow_drop_down),
-                                    isExpanded: true,
-                                    onChanged: (int? newValue) {
-                                      setState(() {
-                                        selectedCourse = newValue;
-                                        errorMessages['course'] = null;
-                                      });
-                                    },
-                                    items: courses.map<DropdownMenuItem<int?>>(
-                                        (Course course) {
-                                      return DropdownMenuItem<int?>(
-                                        value: course.id, // This is now int
-                                        child: Text(course.name),
-                                      );
-                                    }).toList(),
-                                  ),
+                                child: DropdownButton<String?>(
+                                  value: selectedCourse,
+                                  hint: const Text("Selecciona un curso"),
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  isExpanded: true,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedCourse = newValue;
+                                      errorMessages['course'] = null;
+                                    });
+                                  },
+                                  items: courses.map<DropdownMenuItem<String?>>(
+                                      (Course course) {
+                                    return DropdownMenuItem<String?>(
+                                      value: course.id,
+                                      child: Text(course.name),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                         if (errorMessages['course'] != null)

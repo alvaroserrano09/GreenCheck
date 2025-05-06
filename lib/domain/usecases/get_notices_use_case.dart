@@ -24,7 +24,7 @@ class GetNoticesUseCase {
       return [];
     }
 
-    final List<int?> courseIds = courses.map((course) => course.id).toList();
+    final List<String?> courseIds = courses.map((course) => course.id).toList();
 
     final notices = await noticeRepository.getNotices(courseIds);
 

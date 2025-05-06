@@ -4,7 +4,7 @@ class DeleteTestUseCase {
   final TestRepository testRepository;
   DeleteTestUseCase(this.testRepository);
 
-  Future<void> execute(int idTest, int idCourse) async {
+  Future<void> execute(int idTest, String idCourse) async {
     testRepository.deleteTest(idTest, idCourse);
   }
 }

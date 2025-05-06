@@ -1,7 +1,7 @@
 class Test {
   final int? id;
   final String title;
-  final int courseId;
+  final String courseId;
 
   Test({
     this.id,
@@ -12,7 +12,7 @@ class Test {
   factory Test.create({
     int? id,
     required String title,
-    required int courseId,
+    required String courseId,
   }) {
     return Test(
       id: id,
@@ -40,7 +40,7 @@ class Test {
   Test copyWith({
     int? id,
     String? title,
-    int? courseId,
+    String? courseId,
   }) {
     return Test(
       id: id ?? this.id,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/result.dart';
 import 'package:green_check/domain/models/question.dart';
+import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/results_provider.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
@@ -20,6 +21,7 @@ class TestScreen extends ConsumerStatefulWidget {
 
 class _TestScreenState extends ConsumerState<TestScreen> {
   int _currentQuestionIndex = 0;
+
   final List<Answer?> _selectedAnswers = [];
   bool _testCompleted = false;
   int _score = 0;
@@ -55,6 +57,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final courseState = ref.watch(courseProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Test"),
@@ -64,7 +67,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
         child: _isLoading
             ? _buildLoadingIndicator()
             : _testCompleted
-                ? _buildResults()
+                ? _buildResults(courseState.course!.id)
                 : _buildQuestion(),
       ),
     );
@@ -83,7 +86,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     );
   }
 
-  Widget _buildResults() {
+  Widget _buildResults(String courseId) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +108,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
               text: "Ver revisión",
               onPressed: () {
                 context.replace(
-                  "/test-review",
+                  "/home/courses-screen/course-screen/${courseId}/tests-screen/test-screen/${widget.testId}/test-review",
                   extra: {
                     'questions': _questions,
                     'answers': _selectedAnswers,

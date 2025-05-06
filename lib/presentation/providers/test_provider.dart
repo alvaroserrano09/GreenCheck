@@ -100,7 +100,7 @@ class TestNotifier extends StateNotifier<TestState> {
         _getQuestionsTestUseCase = getQuestionsTestUseCase,
         super(const TestState());
 
-  Future<void> getTests({required int idCourse}) async {
+  Future<void> getTests({required String idCourse}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final tests = await _getTestsUseCase.execute(idCourse);
@@ -118,7 +118,7 @@ class TestNotifier extends StateNotifier<TestState> {
   }
 
   Future<void> uploadTest({
-    required int courseId,
+    required String courseId,
     required String title,
     required PlatformFile file,
   }) async {
@@ -160,7 +160,7 @@ class TestNotifier extends StateNotifier<TestState> {
   }
 
   Future<void> deleteTest({
-    required int courseId,
+    required String courseId,
     required int testId,
   }) async {
     state = state.copyWith(
