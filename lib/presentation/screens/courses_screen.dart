@@ -70,17 +70,27 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 16.0),
                       child: CourseCard(
-                          title: course.name,
-                          teacher: course.teacherName != null
-                              ? 'Profesor ${course.teacherName}'
-                              : 'Profesor ${studentState.student?.name}',
-                          onTap: () => context.push(
-                              '/home/courses-screen/course-screen/${course.id}'),
-                          isFavorite: course.isFavorite,
-                          onFavoritePressed: () {
+                        rol: studentState.student?.role,
+                        title: course.name,
+                        teacher: course.teacherName != null
+                            ? 'Profesor ${course.teacherName}'
+                            : 'Profesor ${studentState.student?.name}',
+                        onTap: () => context.push(
+                            '/home/courses-screen/course-screen/${course.id}'),
+                        isFavorite: course.isFavorite,
+                        onPressed: () {
+                          if (studentState.student!.role == 'profesor') {
+                            ref
+                                .read(courseProvider.notifier)
+                                .deleteCourse(course.id);
+                          } else {
                             ref.read(courseProvider.notifier).toggleFavorite(
-                                course.id, studentState.student!.id);
-                          }),
+                                  course.id,
+                                  studentState.student!.id,
+                                );
+                          }
+                        },
+                      ),
                     );
                   },
                 ),

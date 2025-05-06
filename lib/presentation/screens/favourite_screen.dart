@@ -74,6 +74,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 16.0),
                       child: CourseCard(
+                        rol: studentState.student?.role,
                         title: course.name,
                         teacher: course.teacherName != null
                             ? 'Profesor ${course.teacherName}'
@@ -81,7 +82,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                         onTap: () => context.push(
                             '/home/courses-screen/course-screen/${course.id}'),
                         isFavorite: course.isFavorite,
-                        onFavoritePressed: () {
+                        onPressed: () {
                           ref.read(courseProvider.notifier).toggleFavorite(
                               course.id, studentState.student!.id);
                         },

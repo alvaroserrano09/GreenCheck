@@ -5,7 +5,8 @@ class CourseCard extends StatelessWidget {
   final String teacher;
   final bool isFavorite;
   final VoidCallback onTap;
-  final VoidCallback onFavoritePressed;
+  final String? rol;
+  final VoidCallback onPressed;
 
   const CourseCard({
     super.key,
@@ -13,7 +14,8 @@ class CourseCard extends StatelessWidget {
     required this.teacher,
     required this.onTap,
     required this.isFavorite,
-    required this.onFavoritePressed,
+    required this.onPressed,
+    required this.rol,
   });
 
   @override
@@ -59,10 +61,14 @@ class CourseCard extends StatelessWidget {
                 right: 8.0,
                 child: IconButton(
                   icon: Icon(
-                    isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color: isFavorite ? Colors.black : Colors.black,
+                    rol == 'profesor'
+                        ? Icons.delete
+                        : isFavorite
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                    color: Colors.black,
                   ),
-                  onPressed: onFavoritePressed,
+                  onPressed: onPressed,
                 ),
               ),
             ],

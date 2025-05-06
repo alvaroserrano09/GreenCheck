@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:green_check/domain/models/course.dart';
 import 'package:green_check/domain/models/user.dart';
+import 'package:green_check/domain/usecases/delete_course_use_case.dart';
 import 'package:green_check/domain/usecases/delete_student_course_use_case.dart';
 import 'package:green_check/domain/usecases/get_students_course_use_case.dart';
 import 'package:green_check/domain/usecases/get_course_use_case.dart';
@@ -76,6 +77,10 @@ final toggleFavoriteCourseUseCaseProvider =
   final courseRepository = ref.watch(courseRepositoryProvider);
   return ToggleFavoriteCourseUseCase(courseRepository);
 });
+final deleteCourseUseCaseProvider = Provider<DeleteCourseUseCase>((ref) {
+  final courseRepository = ref.watch(courseRepositoryProvider);
+  return DeleteCourseUseCase(courseRepository);
+});
 
 class CourseState {
   final bool isLoading;
@@ -119,6 +124,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
   final SaveStudentCourseUseCase saveStudentCourseUseCase;
   final DeleteStudentCourseUseCase deleteStudentCourseUseCase;
   final ToggleFavoriteCourseUseCase toggleFavoriteCourseUseCase;
+  final DeleteCourseUseCase deleteCourseUseCase;
 
   CourseNotifier(
     this.saveCourseUseCase,
@@ -129,6 +135,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
     this.saveStudentCourseUseCase,
     this.deleteStudentCourseUseCase,
     this.toggleFavoriteCourseUseCase,
+    this.deleteCourseUseCase,
   ) : super(CourseState.initial());
 
   Future<void> saveCourse({
@@ -284,9 +291,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
 
   Future<void> toggleFavorite(String courseId, String idStudent) async {
     try {
-      final courses = [
-        ...state.courses
-      ]; // Copia para trabajar sin mutar la original
+      final courses = [...state.courses];
       final index = courses.indexWhere((course) => course.id == courseId);
 
       if (index == -1) return;
@@ -294,7 +299,6 @@ class CourseNotifier extends StateNotifier<CourseState> {
       final currentCourse = courses[index];
       final newFavoriteStatus = !currentCourse.isFavorite;
 
-      // Crear nueva lista con el curso actualizado
       courses[index] = Course(
         id: currentCourse.id,
         name: currentCourse.name,
@@ -323,19 +327,49 @@ class CourseNotifier extends StateNotifier<CourseState> {
       }
     }
   }
+
+  Future<void> deleteCourse(String id) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      await deleteCourseUseCase.execute(id);
+
+      final courses = [...state.courses];
+      final index = courses.indexWhere((course) => course.id == id);
+
+      if (index == -1) {
+        state = state.copyWith(isLoading: false);
+        return;
+      }
+
+      courses.removeAt(index);
+
+      state = state.copyWith(
+        isLoading: false,
+        courses: courses,
+        errorMessage: null,
+      );
+    } catch (e) {
+      if (mounted) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: e.toString(),
+        );
+      }
+    } finally {
+      return;
+    }
+  }
 }
 
 final courseProvider =
     StateNotifierProvider<CourseNotifier, CourseState>((ref) => CourseNotifier(
-              ref.watch(saveCourseUseCaseProvider),
-              ref.watch(getCoursesTeacherUseCaseProvider),
-              ref.watch(getCoursesStudentUseCaseProvider),
-              ref.watch(getCourseStudentUseCaseProvider),
-              ref.watch(getStudentsUseCaseProvider),
-              ref.watch(saveStudentCourseUseCaseProvider),
-              ref.watch(deleteStudentCourseUseCaseProvider),
-              ref.watch(toggleFavoriteCourseUseCaseProvider),
-            )
-
-        // ref.watch(toggleFavoriteCourseUseCaseProvider),
-        );
+          ref.watch(saveCourseUseCaseProvider),
+          ref.watch(getCoursesTeacherUseCaseProvider),
+          ref.watch(getCoursesStudentUseCaseProvider),
+          ref.watch(getCourseStudentUseCaseProvider),
+          ref.watch(getStudentsUseCaseProvider),
+          ref.watch(saveStudentCourseUseCaseProvider),
+          ref.watch(deleteStudentCourseUseCaseProvider),
+          ref.watch(toggleFavoriteCourseUseCaseProvider),
+          ref.watch(deleteCourseUseCaseProvider),
+        ));

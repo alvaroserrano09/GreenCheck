@@ -152,4 +152,12 @@ class CourseService {
           'No se pudo actualizar el estado de favorito: ${e.toString()}');
     }
   }
+
+  Future<void> deleteCourse(String courseId) {
+    try {
+      return supabase.from('Curso').delete().eq('id', courseId);
+    } catch (e) {
+      throw Exception('No se pudo eliminar el curso: ${e.toString()}');
+    }
+  }
 }

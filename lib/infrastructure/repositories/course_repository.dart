@@ -38,4 +38,8 @@ class CourseRepository {
       String courseId, bool isFavorite, String idStudent) {
     return datasource.toggleFavorite(idStudent, courseId, isFavorite);
   }
+
+  Future<void> deleteCourse(String courseId) {
+    return datasource.deleteCourse(courseId);
+  }
 }
