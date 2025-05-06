@@ -25,7 +25,7 @@ final courseRepositoryProvider = Provider<CourseRepository>((ref) {
 final studentRepositoryProvider = Provider<StudentRepository>((ref) {
   return StudentRepository(StudentService());
 });
-final TeacherRepositoryProvider = Provider<TeacherRepository>((ref) {
+final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
   return TeacherRepository(TeacherService());
 });
 
@@ -46,13 +46,14 @@ final getCoursesStudentUseCaseProvider =
   return GetCoursesStudentUseCase(
       courseRepository,
       ref.watch(studentRepositoryProvider),
-      ref.watch(TeacherRepositoryProvider));
+      ref.watch(teacherRepositoryProvider));
 });
 
 final getCourseStudentUseCaseProvider =
     Provider<GetCourseStudentUseCase>((ref) {
   final courseRepository = ref.watch(courseRepositoryProvider);
-  return GetCourseStudentUseCase(courseRepository);
+  return GetCourseStudentUseCase(
+      courseRepository, ref.watch(teacherRepositoryProvider));
 });
 
 final getStudentsUseCaseProvider = Provider<GetStudentsCourseUseCase>((ref) {
@@ -167,7 +168,6 @@ class CourseNotifier extends StateNotifier<CourseState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      print(idTeacher);
       final courses = await getCoursesTeacherUseCase.execute(idTeacher);
 
       if (mounted) {

@@ -64,7 +64,8 @@ class _CourseScreenState extends ConsumerState<CourseScreen> {
                       ),
                       const SizedBox(height: 8),
                       AutoSizeText(
-                        "Profesor David caceres",
+                        courseState.course!.teacherName ??
+                            'Profesor desconocido',
                         style: const TextStyle(
                           fontSize: 17,
                           color: Color(0xFF808080),
