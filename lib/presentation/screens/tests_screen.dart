@@ -10,6 +10,7 @@ import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
+import 'package:green_check/presentation/widgets/toolbar.dart';
 
 class TestsScreen extends ConsumerStatefulWidget {
   static const String name = 'tests-screen';
@@ -146,6 +147,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const Toolbar(),
     );
   }
 
@@ -162,7 +164,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
           ),
           const SizedBox(height: 16),
           CustomTextField(
-            labelText: 'Ingrese el titulo',
+            labelText: 'Ingrese el título',
             controller: _titleController,
           ),
           const SizedBox(height: 16),
@@ -180,13 +182,35 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
             alignment: Alignment.centerRight,
             child: CustomButton(
               text: 'Subir Test',
-              onPressed: _submitNewTest,
+              onPressed: () {
+                if (_validateForm()) {
+                  _submitNewTest();
+                }
+              },
               backgroundColor: const Color(0xFF8DC324),
             ),
           ),
         ],
       ),
     );
+  }
+
+  bool _validateForm() {
+    if (_titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor ingrese un título')),
+      );
+      return false;
+    }
+
+    if (_selectedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor seleccione un archivo')),
+      );
+      return false;
+    }
+
+    return true;
   }
 
   Widget _buildTestsList(List<Test> tests, dynamic studentState) {
