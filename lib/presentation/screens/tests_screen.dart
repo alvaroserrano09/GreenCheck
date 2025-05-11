@@ -196,12 +196,15 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
       initiallyExpanded: true,
       children: tests.map((test) {
         return ListTile(
-          leading: IconButton(
+          leading: InkWell(
+            borderRadius:
+                BorderRadius.circular(24), // Radio del efecto de ripple
+            onTap: () => _navigateToTest(test),
+            child: IconButton(
               icon: Icon(Icons.play_arrow, color: Colors.green),
-              onPressed: () {
-                context.push(
-                    '/home/courses-screen/course-screen/${test.courseId}/tests-screen/test-screen/${test.id}');
-              }),
+              onPressed: () => _navigateToTest(test),
+            ),
+          ),
           trailing: studentState.student?.role == "profesor"
               ? IconButton(
                   icon: const Icon(Icons.remove_circle_outline,
@@ -212,10 +215,21 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
                   },
                 )
               : null,
-          title: Text(test.title),
-          onTap: () {},
+          title: InkWell(
+            onTap: () => _navigateToTest(test),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: 12), // Ajusta el padding para mejor tap
+              child: Text(test.title),
+            ),
+          ),
         );
       }).toList(),
     );
+  }
+
+  void _navigateToTest(Test test) {
+    context.push(
+        '/home/courses-screen/course-screen/${test.courseId}/tests-screen/test-screen/${test.id}');
   }
 }
