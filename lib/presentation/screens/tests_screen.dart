@@ -197,8 +197,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
       children: tests.map((test) {
         return ListTile(
           leading: InkWell(
-            borderRadius:
-                BorderRadius.circular(24), // Radio del efecto de ripple
+            borderRadius: BorderRadius.circular(24),
             onTap: () => _navigateToTest(test),
             child: IconButton(
               icon: Icon(Icons.play_arrow, color: Colors.green),
@@ -218,8 +217,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
           title: InkWell(
             onTap: () => _navigateToTest(test),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: 12), // Ajusta el padding para mejor tap
+              padding: EdgeInsets.symmetric(vertical: 12),
               child: Text(test.title),
             ),
           ),
