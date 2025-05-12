@@ -319,6 +319,7 @@ class CourseNotifier extends StateNotifier<CourseState> {
         description: currentCourse.description,
         idTeacher: currentCourse.idTeacher,
         type: currentCourse.type,
+        teacherName: currentCourse.teacherName,
       );
 
       state = state.copyWith(
