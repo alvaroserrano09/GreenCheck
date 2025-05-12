@@ -6,10 +6,12 @@ import 'package:green_check/domain/usecases/get_notices_use_case.dart';
 import 'package:green_check/domain/usecases/save_notice_use_case.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
 import 'package:green_check/infrastructure/repositories/notice_repository.dart';
+import 'package:green_check/infrastructure/repositories/student_course_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
 import 'package:green_check/infrastructure/services/notice_service.dart';
+import 'package:green_check/infrastructure/services/student_course_service.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
 import 'package:green_check/infrastructure/services/teacher_service.dart';
 
@@ -23,6 +25,11 @@ final courseRepositoryProvider = Provider<CourseRepository>(
     return CourseRepository(CourseService());
   },
 );
+final studentCourseRepositoryProvider = Provider<StudentCourseRepository>(
+  (ref) {
+    return StudentCourseRepository(StudentCourseService());
+  },
+);
 final studentRepositoryProvider = Provider<StudentRepository>((ref) {
   return StudentRepository(StudentService());
 });
@@ -31,7 +38,7 @@ final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
 });
 final getStudentCoursesUseCaseProvider = Provider<GetCoursesStudentUseCase>(
   (ref) => GetCoursesStudentUseCase(
-    ref.watch(courseRepositoryProvider),
+    ref.watch(studentCourseRepositoryProvider),
     ref.watch(studentRepositoryProvider),
     ref.watch(teacherRepositoryProvider),
   ),

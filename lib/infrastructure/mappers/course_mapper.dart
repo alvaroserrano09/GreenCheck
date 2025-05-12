@@ -12,14 +12,13 @@ class CourseMapper {
     );
   }
 
-  static Course toDomain(SupabaseCourse course) {
+  static Course toDomain(SupabaseCourse course, {bool isFavorite = false}) {
     return Course(
-      id: course.id,
-      name: course.nombre,
-      idTeacher: course.idProfesor,
-      description: course.descripcion,
-      type: course.tipo,
-      isFavorite: false,
-    );
+        id: course.id,
+        name: course.nombre,
+        idTeacher: course.idProfesor,
+        description: course.descripcion,
+        type: course.tipo,
+        isFavorite: isFavorite);
   }
 }

@@ -1,18 +1,18 @@
 import 'package:green_check/domain/models/course.dart';
-import 'package:green_check/infrastructure/repositories/course_repository.dart';
+import 'package:green_check/infrastructure/repositories/student_course_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 
 class GetCoursesStudentUseCase {
-  final CourseRepository courseRepository;
+  final StudentCourseRepository studentCourseRepository;
   final StudentRepository studentRepository;
   final TeacherRepository teacherRepository;
-  GetCoursesStudentUseCase(
-      this.courseRepository, this.studentRepository, this.teacherRepository);
+  GetCoursesStudentUseCase(this.studentCourseRepository, this.studentRepository,
+      this.teacherRepository);
   Future<List<Course>> execute(String idStudent) async {
     try {
       final List<Course> courses =
-          await courseRepository.getCoursesForStudent(idStudent);
+          await studentCourseRepository.getCoursesForStudent(idStudent);
 
       final List<Course> newCourses = [];
 

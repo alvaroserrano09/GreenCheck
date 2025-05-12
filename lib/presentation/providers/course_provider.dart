@@ -13,9 +13,11 @@ import 'package:green_check/domain/usecases/save_course_use_case.dart';
 import 'package:green_check/domain/usecases/save_student_course.dart';
 import 'package:green_check/domain/usecases/toggle_favorite_course_use_case.dart';
 import 'package:green_check/infrastructure/repositories/course_repository.dart';
+import 'package:green_check/infrastructure/repositories/student_course_repository.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
 import 'package:green_check/infrastructure/services/course_service.dart';
+import 'package:green_check/infrastructure/services/student_course_service.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
 import 'package:green_check/infrastructure/services/teacher_service.dart';
 
@@ -27,6 +29,10 @@ final studentRepositoryProvider = Provider<StudentRepository>((ref) {
 });
 final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
   return TeacherRepository(TeacherService());
+});
+final studentCourseRepositoryProvider =
+    Provider<StudentCourseRepository>((ref) {
+  return StudentCourseRepository(StudentCourseService());
 });
 
 final saveCourseUseCaseProvider = Provider<SaveCourseUseCase>((ref) {
@@ -42,9 +48,9 @@ final getCoursesTeacherUseCaseProvider =
 
 final getCoursesStudentUseCaseProvider =
     Provider<GetCoursesStudentUseCase>((ref) {
-  final courseRepository = ref.watch(courseRepositoryProvider);
+  final studentCourseRepository = ref.watch(studentCourseRepositoryProvider);
   return GetCoursesStudentUseCase(
-      courseRepository,
+      studentCourseRepository,
       ref.watch(studentRepositoryProvider),
       ref.watch(teacherRepositoryProvider));
 });
@@ -57,26 +63,26 @@ final getCourseStudentUseCaseProvider =
 });
 
 final getStudentsUseCaseProvider = Provider<GetStudentsCourseUseCase>((ref) {
-  final courseRepository = ref.watch(courseRepositoryProvider);
-  return GetStudentsCourseUseCase(courseRepository);
+  final studentCourseRepository = ref.watch(studentCourseRepositoryProvider);
+  return GetStudentsCourseUseCase(studentCourseRepository);
 });
 final saveStudentCourseUseCaseProvider =
     Provider<SaveStudentCourseUseCase>((ref) {
-  final courseRepository = ref.watch(courseRepositoryProvider);
+  final studentCourseRepository = ref.watch(studentCourseRepositoryProvider);
   final studentRepository = ref.watch(studentRepositoryProvider);
-  return SaveStudentCourseUseCase(courseRepository, studentRepository);
+  return SaveStudentCourseUseCase(studentCourseRepository, studentRepository);
 });
 
 final deleteStudentCourseUseCaseProvider =
     Provider<DeleteStudentCourseUseCase>((ref) {
-  final courseRepository = ref.watch(courseRepositoryProvider);
-  return DeleteStudentCourseUseCase(courseRepository);
+  final studentCourseRepository = ref.watch(studentCourseRepositoryProvider);
+  return DeleteStudentCourseUseCase(studentCourseRepository);
 });
 
 final toggleFavoriteCourseUseCaseProvider =
     Provider<ToggleFavoriteCourseUseCase>((ref) {
-  final courseRepository = ref.watch(courseRepositoryProvider);
-  return ToggleFavoriteCourseUseCase(courseRepository);
+  final studentCourseRepository = ref.watch(studentCourseRepositoryProvider);
+  return ToggleFavoriteCourseUseCase(studentCourseRepository);
 });
 final deleteCourseUseCaseProvider = Provider<DeleteCourseUseCase>((ref) {
   final courseRepository = ref.watch(courseRepositoryProvider);
@@ -290,16 +296,23 @@ class CourseNotifier extends StateNotifier<CourseState> {
   }
 
   Future<void> toggleFavorite(String courseId, String idStudent) async {
+    if (!mounted) return;
+
     try {
       final courses = [...state.courses];
       final index = courses.indexWhere((course) => course.id == courseId);
-
       if (index == -1) return;
 
       final currentCourse = courses[index];
       final newFavoriteStatus = !currentCourse.isFavorite;
 
-      courses[index] = Course(
+      await toggleFavoriteCourseUseCase.execute(
+        courseId,
+        newFavoriteStatus,
+        idStudent,
+      );
+
+      final updatedCourse = Course(
         id: currentCourse.id,
         name: currentCourse.name,
         isFavorite: newFavoriteStatus,
@@ -309,22 +322,16 @@ class CourseNotifier extends StateNotifier<CourseState> {
       );
 
       state = state.copyWith(
-        courses: courses,
+        courses: [...state.courses]..[index] = updatedCourse,
         errorMessage: null,
-      );
-
-      await toggleFavoriteCourseUseCase.execute(
-        courseId,
-        newFavoriteStatus,
-        idStudent,
       );
     } catch (e) {
       if (mounted) {
         state = state.copyWith(
-          isLoading: false,
-          errorMessage: e.toString(),
+          errorMessage: "Error al actualizar favorito: ${e.toString()}",
         );
       }
+      rethrow;
     }
   }
 

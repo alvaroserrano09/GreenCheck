@@ -1,10 +1,10 @@
-import 'package:green_check/infrastructure/repositories/course_repository.dart';
+import 'package:green_check/infrastructure/repositories/student_course_repository.dart';
 
 class DeleteStudentCourseUseCase {
-  final CourseRepository courseRepository;
-  DeleteStudentCourseUseCase(this.courseRepository);
+  final StudentCourseRepository studentCourseRepository;
+  DeleteStudentCourseUseCase(this.studentCourseRepository);
 
   Future<void> execute(String idStudent, String idCourse) async {
-    courseRepository.deleteStudent(idStudent, idCourse);
+    studentCourseRepository.deleteStudent(idStudent, idCourse);
   }
 }

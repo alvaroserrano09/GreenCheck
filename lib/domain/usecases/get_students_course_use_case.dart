@@ -1,13 +1,13 @@
 import 'package:green_check/domain/models/user.dart';
-import 'package:green_check/infrastructure/repositories/course_repository.dart';
+import 'package:green_check/infrastructure/repositories/student_course_repository.dart';
 
 class GetStudentsCourseUseCase {
-  final CourseRepository courseRepository;
+  final StudentCourseRepository studentCourseRepository;
 
-  GetStudentsCourseUseCase(this.courseRepository);
+  GetStudentsCourseUseCase(this.studentCourseRepository);
 
   Future<List<User>> execute(String courseId) async {
-    final response = await courseRepository.getStudents(courseId);
+    final response = await studentCourseRepository.getStudents(courseId);
     return response;
   }
 }
