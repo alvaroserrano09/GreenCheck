@@ -111,7 +111,8 @@ class _LastsResultsTestsScreenState
                   child: IconButton(
                     icon: const Icon(Icons.play_arrow, color: Colors.green),
                     onPressed: () => context.push(
-                        '/home/course-screen/tests-screen/test-screen/${result.idTest}'),
+                      '/home/results-screen/test-screen/${result.idTest}',
+                    ),
                   ),
                 ),
               ],

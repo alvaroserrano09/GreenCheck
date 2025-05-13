@@ -125,7 +125,6 @@ class TestService {
     try {
       final response =
           await supabase.from('Test').select().inFilter('id', testIds);
-      print('Response: $response');
       return (response as List<dynamic>).map<Test>((testData) {
         return Test(
           courseId: testData['id_curso'],

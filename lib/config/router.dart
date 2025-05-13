@@ -146,10 +146,19 @@ final appRouter = GoRouter(
           ],
         ),
         GoRoute(
-          path: 'results-screen',
-          name: LastsResultsTestsScreen.name,
-          builder: (context, state) => const LastsResultsTestsScreen(),
-        ),
+            path: 'results-screen',
+            name: LastsResultsTestsScreen.name,
+            builder: (context, state) => const LastsResultsTestsScreen(),
+            routes: [
+              GoRoute(
+                path: 'test-screen/:testId',
+                name: 'results-test-screen',
+                builder: (context, state) {
+                  final testId = int.parse(state.pathParameters['testId']!);
+                  return TestScreen(testId: testId);
+                },
+              ),
+            ]),
         GoRoute(
           path: 'favorites-screen',
           name: FavoritesScreen.name,

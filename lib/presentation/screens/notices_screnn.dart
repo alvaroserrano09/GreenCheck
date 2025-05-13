@@ -86,7 +86,10 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16.0),
                         child: _buildNoticeCard(
-                            heading: notice.title, content: notice.message),
+                          heading: notice.title,
+                          content: notice.message,
+                          courseName: "oposición ",
+                        ),
                       );
                     },
                   ),
@@ -120,6 +123,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
   Widget _buildNoticeCard({
     required String heading,
     required String content,
+    required String courseName, // Nuevo parámetro para el nombre del curso
   }) {
     return Card(
       elevation: 4,
@@ -129,6 +133,15 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              courseName,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.blue.shade700,
+              ),
+            ),
+            const SizedBox(height: 4),
             Text(
               heading,
               style: const TextStyle(
