@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/domain/models/test.dart';
+import 'package:green_check/infrastructure/entities/supabase_question.dart';
 import 'package:green_check/infrastructure/entities/supabase_test.dart';
+import 'package:green_check/infrastructure/mappers/question_mapper.dart';
 import 'package:green_check/infrastructure/mappers/test_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -44,19 +48,20 @@ class TestService {
     try {
       final List<Map<String, dynamic>> questionsData =
           questionsToSave.map((question) {
+        final createdQuestion = Question.create(
+          title: question.title,
+          answers: question.answers,
+          correctAnswers: question.correctAnswers,
+          feedback: question.feedback,
+        );
+
+        final json = createdQuestion.toJson();
+
         return {
+          'id': createdQuestion.id,
           'id_test': testId,
-          'titulo': question.title,
-          'respuestas': {
-            'respuestas': question.answers
-                .map((option) => {
-                      'respuesta': option.text,
-                      'correcta': option.isCorrect,
-                      if (option.feedback != null) 'feedback': option.feedback,
-                    })
-                .toList(),
-            'respuestas_correctas': question.correctAnswers,
-          }
+          'titulo': json['pregunta'],
+          'respuestas': jsonEncode(json['respuestas']),
         };
       }).toList();
 
@@ -85,32 +90,14 @@ class TestService {
 
   Future<List<Question>> getQuestions(String testId) async {
     try {
-      final response =
-          await supabase.from('Preguntas').select().eq('id_test', testId);
+      final response = await supabase
+          .from('Preguntas')
+          .select()
+          .eq('id_test', testId) as List<dynamic>;
 
-      final List<Question> questions = response.map<Question>((questionData) {
-        final List<dynamic> answersData =
-            questionData['respuestas']['respuestas'] ?? [];
-
-        final List<Answer> answers = answersData.map<Answer>((answerData) {
-          return Answer(
-            text: answerData['respuesta'] as String,
-            isCorrect: answerData['correcta'] as bool,
-            feedback: answerData['feedback'] as String?,
-          );
-        }).toList();
-
-        final List<String> correctAnswers = (questionData['respuestas']
-                    ['respuestas_correctas'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            [];
-
-        return Question(
-          title: questionData['titulo'] as String,
-          answers: answers,
-          correctAnswers: correctAnswers,
-        );
+      final questions = response.map<Question>((questionData) {
+        final supabaseQuestion = SupabaseQuestion.fromJson(questionData);
+        return QuestionMapper.toDomain(supabaseQuestion);
       }).toList();
 
       return questions;

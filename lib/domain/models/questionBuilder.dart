@@ -1,3 +1,4 @@
+import 'package:green_check/domain/models/answer.dart';
 import 'package:green_check/domain/models/question.dart';
 
 class QuestionBuilder {
@@ -38,7 +39,7 @@ class QuestionBuilder {
     final type = _determineQuestionType(title, answersText);
     final answers = _parseAnswers(answersText, type);
 
-    return Question(
+    return Question.create(
       title: title,
       answers: answers,
       correctAnswers:

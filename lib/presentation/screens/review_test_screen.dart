@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:green_check/domain/models/answer.dart';
 import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 
