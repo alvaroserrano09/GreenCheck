@@ -28,6 +28,47 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
     });
   }
 
+  Future<void> _showDeleteConfirmation(User student) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: Text(
+            '¿Estás seguro de que quieres eliminar a ${student.name} ${student.surname} del curso?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        await ref
+            .read(courseProvider.notifier)
+            .deleteStudent(idStudent: student.id, idCourse: widget.courseId);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${student.name} eliminado del curso')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al eliminar: ${e.toString()}')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final courseState = ref.watch(courseProvider);
@@ -61,14 +102,13 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
                           if (courseState.errorMessage != null)
                             Text('Error: ${courseState.errorMessage}'),
                           if (courseState.students.isNotEmpty)
-                            _buildStudentsList(
-                                ref, courseState.students, widget.courseId)
+                            _buildStudentsList(courseState.students)
                           else if (!courseState.isLoading &&
                               courseState.errorMessage == null)
                             const Center(
                               child: Text('No hay Alumnos'),
                             ),
-                          _buildNewStudentForm(ref, widget.courseId),
+                          _buildNewStudentForm(),
                         ],
                       ),
                     ),
@@ -81,63 +121,80 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
       ),
     );
   }
-}
 
-Widget _buildStudentsList(WidgetRef ref, List<User> students, String courseId) {
-  return ExpansionTile(
-    title: const Text('Mis Alumnos',
-        style: TextStyle(fontWeight: FontWeight.bold)),
-    initiallyExpanded: true,
-    children: students
-        .map((student) => ListTile(
-              trailing: IconButton(
-                icon:
-                    const Icon(Icons.remove_circle_outline, color: Colors.red),
-                onPressed: () async {
-                  ref
-                      .read(courseProvider.notifier)
-                      .deleteStudent(idStudent: student.id, idCourse: courseId);
-                },
-              ),
-              title: Text('${student.name} ${student.surname}'),
-              onTap: null,
-            ))
-        .toList(),
-  );
-}
+  Widget _buildStudentsList(List<User> students) {
+    return ExpansionTile(
+      title: const Text('Mis Alumnos',
+          style: TextStyle(fontWeight: FontWeight.bold)),
+      initiallyExpanded: true,
+      children: students
+          .map((student) => ListTile(
+                trailing: IconButton(
+                  icon: const Icon(Icons.remove_circle_outline,
+                      color: Colors.red),
+                  onPressed: () async {
+                    await _showDeleteConfirmation(student);
+                  },
+                ),
+                title: Text('${student.name} ${student.surname}'),
+                onTap: null,
+              ))
+          .toList(),
+    );
+  }
 
-Widget _buildNewStudentForm(WidgetRef ref, String courseId) {
-  final TextEditingController emailController = TextEditingController();
+  Widget _buildNewStudentForm() {
+    final TextEditingController emailController = TextEditingController();
 
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text(
-          'Nuevo Alumno',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        CustomTextField(
-          labelText: 'Ingrese el email del usuario',
-          controller: emailController,
-        ),
-        const SizedBox(height: 16),
-        Align(
-          alignment: Alignment.centerRight,
-          child: CustomButton(
-            text: 'Añadir Alumno',
-            onPressed: () async {
-              ref.read(courseProvider.notifier).saveStudentCourse(
-                  email: emailController.text, idCourse: courseId);
-              emailController.clear();
-            },
-            backgroundColor: const Color(0xFF8DC324),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Nuevo Alumno',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 16),
+          CustomTextField(
+            labelText: 'Ingrese el email del usuario',
+            controller: emailController,
+          ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: CustomButton(
+              text: 'Añadir Alumno',
+              onPressed: () async {
+                if (emailController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Por favor ingrese un email')),
+                  );
+                  return;
+                }
+
+                try {
+                  await ref.read(courseProvider.notifier).saveStudentCourse(
+                      email: emailController.text, idCourse: widget.courseId);
+                  emailController.clear();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Alumno añadido al curso')),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                            Text('Error al añadir alumno: ${e.toString()}')),
+                  );
+                }
+              },
+              backgroundColor: const Color(0xFF8DC324),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

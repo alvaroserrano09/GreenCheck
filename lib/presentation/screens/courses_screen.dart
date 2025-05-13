@@ -38,11 +38,43 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
     });
   }
 
+  Future<void> _showDeleteConfirmation(
+      BuildContext context, String courseId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: const Text(
+            '¿Estás seguro de que quieres eliminar este curso? Esta acción no se puede deshacer.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await ref.read(courseProvider.notifier).deleteCourse(courseId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Curso eliminado correctamente')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final courseState = ref.watch(courseProvider);
     final studentState = ref.watch(studentProvider);
     final bool isProfessor = studentState.student?.role == 'profesor';
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -78,13 +110,13 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
                         onTap: () => context.push(
                             '/home/courses-screen/course-screen/${course.id}'),
                         isFavorite: course.isFavorite,
-                        onPressed: () {
+                        onPressed: () async {
                           if (studentState.student!.role == 'profesor') {
-                            ref
-                                .read(courseProvider.notifier)
-                                .deleteCourse(course.id);
+                            await _showDeleteConfirmation(context, course.id);
                           } else {
-                            ref.read(courseProvider.notifier).toggleFavorite(
+                            await ref
+                                .read(courseProvider.notifier)
+                                .toggleFavorite(
                                   course.id,
                                   studentState.student!.id,
                                 );

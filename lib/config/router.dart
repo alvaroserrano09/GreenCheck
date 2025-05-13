@@ -56,8 +56,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/home',
       name: UserHomeScreen.name,
-      builder: (BuildContext context, GoRouterState state) =>
-          const UserHomeScreen(),
+      builder: (BuildContext context, GoRouterState state) => UserHomeScreen(),
       routes: [
         GoRoute(
           path: 'add-course-screen',

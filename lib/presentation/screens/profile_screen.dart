@@ -72,7 +72,31 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
     }
   }
 
+  Future<bool> _showLogoutConfirmation() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('¿Cerrar sesión?'),
+            content: const Text('¿Estás seguro que deseas cerrar tu sesión?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Sí, cerrar sesión'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   Future<void> _signOut() async {
+    final confirm = await _showLogoutConfirmation();
+    if (!confirm) return;
+
     try {
       await widget.googleService.signOut();
       ref.read(studentProvider.notifier).logoutStudent();

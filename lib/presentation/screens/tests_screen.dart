@@ -96,7 +96,53 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Test creado exitosamente')),
       );
-    } catch (e) {}
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al crear el test: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _showDeleteConfirmation(Test test) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: const Text(
+            '¿Estás seguro de que quieres eliminar este test? Esta acción no se puede deshacer.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        await ref
+            .read(testProvider.notifier)
+            .deleteTest(courseId: widget.courseId, testId: test.id);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Test eliminado correctamente')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Error al eliminar el test: ${e.toString()}')),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -233,9 +279,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
                   icon: const Icon(Icons.remove_circle_outline,
                       color: Colors.red),
                   onPressed: () async {
-                    ref
-                        .read(testProvider.notifier)
-                        .deleteTest(courseId: widget.courseId, testId: test.id);
+                    await _showDeleteConfirmation(test);
                   },
                 )
               : null,

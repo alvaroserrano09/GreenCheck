@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/answer.dart';
 import 'package:green_check/domain/models/result.dart';
 import 'package:green_check/domain/models/question.dart';
-import 'package:green_check/domain/models/test.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/results_provider.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
@@ -23,12 +22,10 @@ class TestScreen extends ConsumerStatefulWidget {
 
 class _TestScreenState extends ConsumerState<TestScreen> {
   int _currentQuestionIndex = 0;
-
   final List<Answer?> _selectedAnswers = [];
   bool _testCompleted = false;
   int _score = 0;
   List<Question> _questions = [];
-  late Test _test;
   bool _isLoading = true;
   bool _isSaving = false;
 
@@ -44,13 +41,9 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     try {
       final questions =
           await ref.read(testRepositoryProvider).getQuestions(widget.testId);
-      final test =
-          await ref.read(testRepositoryProvider).getTest(widget.testId);
-
       setState(() {
         _questions = questions;
         _isLoading = false;
-        _test = test;
       });
     } catch (e) {
       setState(() => _isLoading = false);
@@ -61,20 +54,65 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     }
   }
 
+  Future<bool> _showExitDialog() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("¿Salir del test?"),
+            content: const Text("Si sales, no podrás volver a realizarlo."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("No"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Sí"),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final courseState = ref.watch(courseProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Test"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _isLoading
-            ? _buildLoadingIndicator()
-            : _testCompleted
-                ? _buildResults(courseState.course!.id)
-                : _buildQuestion(),
+    return PopScope(
+      canPop: _testCompleted,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (!_testCompleted && !didPop) {
+          final shouldPop = await _showExitDialog();
+          if (shouldPop && mounted) {
+            context.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Test"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () async {
+              if (_testCompleted) {
+                if (mounted) context.pop();
+              } else {
+                final shouldPop = await _showExitDialog();
+                if (shouldPop && mounted) {
+                  context.pop();
+                }
+              }
+            },
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _isLoading
+              ? _buildLoadingIndicator()
+              : _testCompleted
+                  ? _buildResults(courseState.course!.id)
+                  : _buildQuestion(),
+        ),
       ),
     );
   }
@@ -114,7 +152,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
               text: "Ver revisión",
               onPressed: () {
                 context.replace(
-                  "/home/courses-screen/course-screen/${courseId}/tests-screen/test-screen/${widget.testId}/test-review",
+                  "/home/courses-screen/course-screen/$courseId/tests-screen/test-screen/${widget.testId}/test-review",
                   extra: {
                     'questions': _questions,
                     'answers': _selectedAnswers,
@@ -235,11 +273,11 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     try {
       final studentState = ref.read(studentProvider);
       final result = Result.create(
-          idTest: widget.testId,
-          score: _score,
-          idStudent: studentState.student!.id,
-          dateFinished: DateTime.now(),
-          testName: _test.title);
+        idTest: widget.testId,
+        score: _score,
+        idStudent: studentState.student!.id,
+        dateFinished: DateTime.now(),
+      );
 
       await ref.read(resultProvider.notifier).saveResult(result);
 

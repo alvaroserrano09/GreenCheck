@@ -23,7 +23,7 @@ class AddNoticeScreen extends ConsumerStatefulWidget {
 class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
-  String? selectedCourse; // Aquí es String? porque course.id es String
+  String? selectedCourse;
   bool _isLoadingCourses = false;
 
   Map<String, String?> errorMessages = {
@@ -96,7 +96,7 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
               child: Stack(
                 children: [
                   const BackGround(title: "Añadir Aviso"),
-                  Padding(
+                  SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -113,11 +113,14 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
                           controller: titleController,
                         ),
                         if (errorMessages['title'] != null)
-                          Text(
-                            errorMessages['title']!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              errorMessages['title']!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         const SizedBox(height: 20),
@@ -150,11 +153,14 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
                           ),
                         ),
                         if (errorMessages['description'] != null)
-                          Text(
-                            errorMessages['description']!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              errorMessages['description']!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         const SizedBox(height: 20),
@@ -166,7 +172,7 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
                           ),
                         ),
                         _isLoadingCourses
-                            ? const CircularProgressIndicator()
+                            ? const Center(child: CircularProgressIndicator())
                             : Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 12),
@@ -195,14 +201,17 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
                                 ),
                               ),
                         if (errorMessages['course'] != null)
-                          Text(
-                            errorMessages['course']!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              errorMessages['course']!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                        const Spacer(),
+                        const SizedBox(height: 30),
                         CustomButton(
                           text: "Añadir Aviso",
                           backgroundColor: const Color(0xFF8DC324),

@@ -23,7 +23,11 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
   late TextEditingController descriptionController;
   late TextEditingController typeController;
 
-  Map<String, String?> errorMessages = {'title': null, 'description': null};
+  Map<String, String?> errorMessages = {
+    'title': null,
+    'description': null,
+    'type': null
+  };
 
   @override
   void initState() {
@@ -44,11 +48,11 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
   void validateFields() {
     setState(() {
       errorMessages['title'] =
-          titleController.text.isEmpty ? 'El titulo es obligatorio.' : null;
+          titleController.text.isEmpty ? 'El título es obligatorio.' : null;
       errorMessages['type'] =
           typeController.text.isEmpty ? 'El tipo es obligatorio.' : null;
       errorMessages['description'] = descriptionController.text.isEmpty
-          ? 'la descripción es obligatoria.'
+          ? 'La descripción es obligatoria.'
           : null;
     });
   }
@@ -66,7 +70,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               child: Stack(
                 children: [
                   const BackGround(title: "Añadir Curso"),
-                  Padding(
+                  SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -74,7 +78,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                       children: [
                         const SizedBox(height: 70),
                         const Text(
-                          "Titulo",
+                          "Título",
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -83,14 +87,17 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                           controller: titleController,
                         ),
                         if (errorMessages['title'] != null)
-                          Text(
-                            errorMessages['title']!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              errorMessages['title']!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 20),
                         const Text(
                           "Tipo",
                           style: TextStyle(
@@ -101,14 +108,17 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                           controller: typeController,
                         ),
                         if (errorMessages['type'] != null)
-                          Text(
-                            errorMessages['type']!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              errorMessages['type']!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 20),
                         const Text(
                           "Descripción",
                           style: TextStyle(
@@ -138,14 +148,17 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                           ),
                         ),
                         if (errorMessages['description'] != null)
-                          Text(
-                            errorMessages['description']!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              errorMessages['description']!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                        const Spacer(),
+                        const SizedBox(height: 30),
                         CustomButton(
                           text: "Añadir Curso",
                           backgroundColor: const Color(0xFF8DC324),
@@ -186,12 +199,14 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                               descriptionController.clear();
                               typeController.clear();
 
-                              context.push('/home/courses-screen');
+                              if (mounted) {
+                                context.push('/home/courses-screen');
+                              }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Error al crear el curso: $e'),
-                                  backgroundColor: Colors.red, // Color de error
+                                  backgroundColor: Colors.red,
                                 ),
                               );
                             }
