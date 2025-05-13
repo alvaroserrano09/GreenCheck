@@ -1,5 +1,7 @@
+import 'package:uuid/uuid.dart';
+
 class Result {
-  final int? id;
+  final String id;
   final DateTime dateFinished;
   final int score;
   final String idStudent;
@@ -7,7 +9,7 @@ class Result {
   final String? testName;
 
   Result({
-    this.id,
+    required this.id,
     required this.dateFinished,
     required this.score,
     required this.idStudent,
@@ -20,9 +22,11 @@ class Result {
     required int score,
     required String idStudent,
     required String idTest,
-    required String testName,
+    String? testName,
   }) {
+    final uuid = const Uuid().v4();
     return Result(
+      id: uuid,
       dateFinished: dateFinished,
       score: score,
       idStudent: idStudent,

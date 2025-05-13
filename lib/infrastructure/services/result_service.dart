@@ -1,4 +1,5 @@
 import 'package:green_check/domain/models/result.dart';
+import 'package:green_check/infrastructure/mappers/result_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResultService {
@@ -8,11 +9,7 @@ class ResultService {
     try {
       final response = await supabase
           .from('Resultado')
-          .insert({
-            'id_alumno': result.idStudent,
-            'id_test': result.idTest,
-            'puntuacion': result.score,
-          })
+          .insert(ResultMapper.toEntity(result).toJson())
           .select()
           .single();
 
@@ -38,6 +35,7 @@ class ResultService {
 
       return (response as List).map((json) => Result.fromJson(json)).toList();
     } catch (e) {
+      print(e);
       rethrow;
     }
   }

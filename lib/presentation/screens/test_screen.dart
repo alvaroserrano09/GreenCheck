@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/result.dart';
 import 'package:green_check/domain/models/question.dart';
+import 'package:green_check/domain/models/test.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/results_provider.dart';
 import 'package:green_check/presentation/providers/student_provider.dart';
@@ -26,6 +27,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
   bool _testCompleted = false;
   int _score = 0;
   List<Question> _questions = [];
+  late Test _test;
   bool _isLoading = true;
   bool _isSaving = false;
 
@@ -41,10 +43,13 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     try {
       final questions =
           await ref.read(testRepositoryProvider).getQuestions(widget.testId);
+      final test =
+          await ref.read(testRepositoryProvider).getTest(widget.testId);
 
       setState(() {
         _questions = questions;
         _isLoading = false;
+        _test = test;
       });
     } catch (e) {
       setState(() => _isLoading = false);
@@ -228,11 +233,13 @@ class _TestScreenState extends ConsumerState<TestScreen> {
 
     try {
       final studentState = ref.read(studentProvider);
-      final result = Result(
+      print(_test.title);
+      final result = Result.create(
           idTest: widget.testId,
           score: _score,
           idStudent: studentState.student!.id,
-          dateFinished: DateTime.now());
+          dateFinished: DateTime.now(),
+          testName: _test.title);
 
       await ref.read(resultProvider.notifier).saveResult(result);
 

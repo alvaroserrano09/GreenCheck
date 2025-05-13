@@ -16,8 +16,11 @@ class GetLastResultsUseCase {
       final results = await resultRepository.getResultsByStudentId(studentId);
       if (results.isEmpty) return [];
 
-      final testIds =
-          results.map((test) => test.idTest).whereType<int>().toSet().toList();
+      final testIds = results
+          .map((test) => test.idTest)
+          .whereType<String>()
+          .toSet()
+          .toList();
       if (testIds.isEmpty) return results;
       final tests = await testRepository.getTestsByIds(testIds);
 

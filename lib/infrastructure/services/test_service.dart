@@ -119,7 +119,7 @@ class TestService {
     }
   }
 
-  Future<List<Test>> getTestsByIds(List<int> testIds) async {
+  Future<List<Test>> getTestsByIds(List<String> testIds) async {
     if (testIds.isEmpty) return [];
 
     try {
@@ -133,6 +133,19 @@ class TestService {
       return tests;
     } catch (e) {
       throw Exception('Error al obtener los tests: ${e.toString()}');
+    }
+  }
+
+  Future<Test> getTest(String testId) async {
+    try {
+      final response =
+          await supabase.from('Test').select().eq('id', testId).maybeSingle();
+      if (response == null || response.isEmpty) {
+        throw Exception('Test no encontrado');
+      }
+      return TestMapper.toDomain(SupabaseTest.fromJson(response));
+    } catch (e) {
+      throw Exception('Error al obtener el test: ${e.toString()}');
     }
   }
 }
