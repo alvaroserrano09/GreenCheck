@@ -1,4 +1,5 @@
 import 'package:green_check/domain/models/result.dart';
+import 'package:green_check/infrastructure/entities/supabase_result.dart';
 import 'package:green_check/infrastructure/mappers/result_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -12,14 +13,9 @@ class ResultService {
           .insert(ResultMapper.toEntity(result).toJson())
           .select()
           .single();
-
-      return Result(
-        id: response['id'],
-        idStudent: response['id_alumno'],
-        idTest: response['id_test'],
-        score: response['puntuacion'],
-        dateFinished: DateTime.parse(response['fecha_realizacion']),
-      );
+      final resultEntity = SupabaseResult.fromJson(response);
+      final resultDomain = ResultMapper.toDomain(resultEntity);
+      return resultDomain;
     } catch (e) {
       rethrow;
     }
@@ -35,7 +31,6 @@ class ResultService {
 
       return (response as List).map((json) => Result.fromJson(json)).toList();
     } catch (e) {
-      print(e);
       rethrow;
     }
   }

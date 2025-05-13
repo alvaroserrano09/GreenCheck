@@ -55,12 +55,13 @@ class TestService {
           feedback: question.feedback,
         );
 
-        final json = createdQuestion.toJson();
+        final supabaseQuestion = QuestionMapper.toEntity(createdQuestion);
+        final json = supabaseQuestion.toJson();
 
         return {
-          'id': createdQuestion.id,
+          'id': supabaseQuestion.id,
           'id_test': testId,
-          'titulo': json['pregunta'],
+          'titulo': json['titulo'],
           'respuestas': jsonEncode(json['respuestas']),
         };
       }).toList();
@@ -72,6 +73,7 @@ class TestService {
         throw Exception('No se guardaron las preguntas');
       }
     } catch (e) {
+      print('Error al guardar las preguntas: $e');
       rethrow;
     }
   }

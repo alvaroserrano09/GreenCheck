@@ -67,13 +67,12 @@ class StudentCourseService {
   Future<void> toggleFavorite(
       String studentId, String courseId, bool isFavorite) async {
     try {
-      final response = await supabase
+      await supabase
           .from('Alumno-curso')
           .update({'favorito': isFavorite})
           .eq('id_alumno', studentId)
           .eq('id_curso', courseId)
           .select(); // <-- Esto fuerza a Supabase a devolver los datos actualizados
-      print(response);
     } catch (e) {
       throw Exception(
           'No se pudo actualizar el estado de favorito: ${e.toString()}');

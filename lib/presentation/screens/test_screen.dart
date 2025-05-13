@@ -234,7 +234,6 @@ class _TestScreenState extends ConsumerState<TestScreen> {
 
     try {
       final studentState = ref.read(studentProvider);
-      print(_test.title);
       final result = Result.create(
           idTest: widget.testId,
           score: _score,

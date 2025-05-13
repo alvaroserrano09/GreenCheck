@@ -8,10 +8,15 @@ final SupabaseClient supabase = Supabase.instance.client;
 class CourseService {
   Future<Course> saveCourse(Course course) async {
     try {
-      await supabase.from("Curso").insert(
+      final newCourse = await supabase
+          .from("Curso")
+          .insert(
             CourseMapper.toEntity(course).toJson(),
-          );
-      return course;
+          )
+          .select();
+      final courseEntity = SupabaseCourse.fromJson(newCourse[0]);
+      final newCourseDomain = CourseMapper.toDomain(courseEntity);
+      return newCourseDomain;
     } catch (e) {
       rethrow;
     }
