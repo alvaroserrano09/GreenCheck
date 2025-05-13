@@ -1,22 +1,24 @@
+import 'package:uuid/uuid.dart';
+
 class Notice {
-  final int? id;
+  final String id;
   final String title;
   final String message;
   final String idCourse;
 
   Notice({
-    this.id,
+    required this.id,
     required this.title,
     required this.message,
     required this.idCourse,
   });
 
   factory Notice.create({
-    int? id,
     required String title,
     required String message,
     required String idCourse,
   }) {
+    final id = const Uuid().v4();
     return Notice(
       id: id,
       title: title,
