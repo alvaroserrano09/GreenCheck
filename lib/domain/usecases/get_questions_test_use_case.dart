@@ -6,7 +6,7 @@ class GetQuestionsTestUseCase {
 
   GetQuestionsTestUseCase(this.testRepository);
 
-  Future<List<Question>> execute(int testId) async {
+  Future<List<Question>> execute(String testId) async {
     final questions = await testRepository.getQuestions(testId);
     return questions;
   }

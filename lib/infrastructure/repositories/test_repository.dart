@@ -15,15 +15,15 @@ class TestRepository {
     return datasource.saveTest(title, idCourse);
   }
 
-  saveQuestions(List<Question> questionsToSave, id) {
+  saveQuestions(List<Question> questionsToSave, String id) {
     return datasource.saveQuestions(questionsToSave, id);
   }
 
-  void deleteTest(int idTest, String idCourse) {
+  void deleteTest(String idTest, String idCourse) {
     return datasource.deleteTest(idTest, idCourse);
   }
 
-  Future<List<Question>> getQuestions(int testId) {
+  Future<List<Question>> getQuestions(String testId) {
     return datasource.getQuestions(testId);
   }
 

@@ -1,5 +1,7 @@
 import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/domain/models/test.dart';
+import 'package:green_check/infrastructure/entities/supabase_test.dart';
+import 'package:green_check/infrastructure/mappers/test_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final SupabaseClient supabase = Supabase.instance.client;
@@ -10,10 +12,9 @@ class TestService {
       final response =
           await supabase.from('Test').select().eq("id_curso", idCourse);
       final List<Test> tests = response.map((testData) {
-        return Test(
-            courseId: testData['id_curso'],
-            title: testData['titulo'],
-            id: testData['id']);
+        return TestMapper.toDomain(
+          SupabaseTest.fromJson(testData),
+        );
       }).toList();
 
       return tests;
@@ -24,22 +25,22 @@ class TestService {
 
   Future<Test> saveTest(String title, String idCurso) async {
     try {
+      final test = Test.create(title: title, courseId: idCurso);
       final response = await supabase
           .from('Test')
-          .insert({'titulo': title, 'id_curso': idCurso})
+          .insert(TestMapper.toEntity(test))
           .select()
           .single();
-      return Test(
-        courseId: response['id_curso'],
-        title: response['titulo'],
-        id: response['id'],
-      );
+      final testEntity = SupabaseTest.fromJson(response);
+      final testDomain = TestMapper.toDomain(testEntity);
+      return testDomain;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> saveQuestions(List<Question> questionsToSave, int testId) async {
+  Future<void> saveQuestions(
+      List<Question> questionsToSave, String testId) async {
     try {
       final List<Map<String, dynamic>> questionsData =
           questionsToSave.map((question) {
@@ -70,7 +71,7 @@ class TestService {
     }
   }
 
-  void deleteTest(int idTest, String idCourse) async {
+  void deleteTest(String idTest, String idCourse) async {
     try {
       await supabase
           .from('Test')
@@ -82,7 +83,7 @@ class TestService {
     }
   }
 
-  Future<List<Question>> getQuestions(int testId) async {
+  Future<List<Question>> getQuestions(String testId) async {
     try {
       final response =
           await supabase.from('Preguntas').select().eq('id_test', testId);
@@ -119,19 +120,17 @@ class TestService {
   }
 
   Future<List<Test>> getTestsByIds(List<int> testIds) async {
-    print('Fetching tests with IDs: $testIds');
     if (testIds.isEmpty) return [];
 
     try {
       final response =
           await supabase.from('Test').select().inFilter('id', testIds);
-      return (response as List<dynamic>).map<Test>((testData) {
-        return Test(
-          courseId: testData['id_curso'],
-          title: testData['titulo'],
-          id: testData['id'],
+      final List<Test> tests = response.map((testData) {
+        return TestMapper.toDomain(
+          SupabaseTest.fromJson(testData),
         );
       }).toList();
+      return tests;
     } catch (e) {
       throw Exception('Error al obtener los tests: ${e.toString()}');
     }

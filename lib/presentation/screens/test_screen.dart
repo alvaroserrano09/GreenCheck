@@ -10,7 +10,7 @@ import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 
 class TestScreen extends ConsumerStatefulWidget {
-  final int testId;
+  final String testId;
   static const String name = 'test-screen';
 
   const TestScreen({super.key, required this.testId});

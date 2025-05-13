@@ -1,21 +1,23 @@
+import 'package:uuid/uuid.dart';
+
 class Test {
-  final int? id;
+  final String id;
   final String title;
   final String courseId;
 
   Test({
-    this.id,
+    required this.id,
     required this.title,
     required this.courseId,
   });
 
   factory Test.create({
-    int? id,
     required String title,
     required String courseId,
   }) {
+    final uuid = const Uuid().v4();
     return Test(
-      id: id,
+      id: uuid,
       title: title,
       courseId: courseId,
     );
@@ -35,17 +37,5 @@ class Test {
       'titulo': title,
       'id_curso': courseId,
     };
-  }
-
-  Test copyWith({
-    int? id,
-    String? title,
-    String? courseId,
-  }) {
-    return Test(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      courseId: courseId ?? this.courseId,
-    );
   }
 }

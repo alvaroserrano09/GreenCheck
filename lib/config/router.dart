@@ -90,8 +90,7 @@ final appRouter = GoRouter(
                       path: 'test-screen/:testId',
                       name: TestScreen.name,
                       builder: (context, state) {
-                        final testId =
-                            int.parse(state.pathParameters['testId']!);
+                        final testId = state.pathParameters['testId']!;
                         return TestScreen(testId: testId);
                       },
                       routes: [
@@ -154,7 +153,7 @@ final appRouter = GoRouter(
                 path: 'test-screen/:testId',
                 name: 'results-test-screen',
                 builder: (context, state) {
-                  final testId = int.parse(state.pathParameters['testId']!);
+                  final testId = state.pathParameters['testId']!;
                   return TestScreen(testId: testId);
                 },
               ),

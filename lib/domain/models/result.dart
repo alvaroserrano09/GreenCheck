@@ -3,7 +3,7 @@ class Result {
   final DateTime dateFinished;
   final int score;
   final String idStudent;
-  final int idTest;
+  final String idTest;
   final String? testName;
 
   Result({
@@ -19,7 +19,7 @@ class Result {
     required DateTime dateFinished,
     required int score,
     required String idStudent,
-    required int idTest,
+    required String idTest,
     required String testName,
   }) {
     return Result(

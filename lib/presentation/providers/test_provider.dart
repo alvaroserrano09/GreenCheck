@@ -161,7 +161,7 @@ class TestNotifier extends StateNotifier<TestState> {
 
   Future<void> deleteTest({
     required String courseId,
-    required int testId,
+    required String testId,
   }) async {
     state = state.copyWith(
       isUploading: true,
@@ -191,7 +191,7 @@ class TestNotifier extends StateNotifier<TestState> {
     state = state.copyWith(errorMessage: null);
   }
 
-  Future<List<Question>> getTestQuestions(int testId) async {
+  Future<List<Question>> getTestQuestions(String testId) async {
     state = state.copyWith(isLoading: true, errorMessage: null, questions: []);
 
     try {

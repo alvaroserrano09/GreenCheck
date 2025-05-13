@@ -233,8 +233,9 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
                   icon: const Icon(Icons.remove_circle_outline,
                       color: Colors.red),
                   onPressed: () async {
-                    ref.read(testProvider.notifier).deleteTest(
-                        courseId: widget.courseId, testId: test.id!);
+                    ref
+                        .read(testProvider.notifier)
+                        .deleteTest(courseId: widget.courseId, testId: test.id);
                   },
                 )
               : null,
