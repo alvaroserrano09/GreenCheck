@@ -23,7 +23,7 @@ class SaveStudentGoogleUseCase {
         return existingTeacher;
       }
 
-      return await studentRepository.saveStudent(user, "");
+      return await studentRepository.saveStudent(user, "", "student");
     } catch (e) {
       throw Exception("Error al procesar usuario de Google: $e");
     }

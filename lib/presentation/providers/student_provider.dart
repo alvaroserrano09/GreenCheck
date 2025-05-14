@@ -125,6 +125,7 @@ class StudentNotifier extends StateNotifier<UserState> {
     required String password,
     required String name,
     required String surname,
+    required String role,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
@@ -135,7 +136,8 @@ class StudentNotifier extends StateNotifier<UserState> {
             name: name,
             surname: surname,
           ),
-          password);
+          password,
+          role);
 
       await _saveUserState(response);
 

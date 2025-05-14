@@ -20,6 +20,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   late TextEditingController lastNameController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
+  late TextEditingController teacherCodeController;
+
+  String selectedRole = 'student';
+  bool showteacherCodeField = false;
+  final String validteacherCode = 'PROF2023';
 
   Map<String, String?> errorMessages = {
     'email': null,
@@ -27,6 +32,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     'lastName': null,
     'password': null,
     'confirmPassword': null,
+    'teacherCode': null,
   };
 
   @override
@@ -37,6 +43,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     lastNameController = TextEditingController();
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
+    teacherCodeController = TextEditingController();
   }
 
   @override
@@ -46,26 +53,54 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     lastNameController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    teacherCodeController.dispose();
     super.dispose();
   }
 
-  void validateFields() {
+  bool validateFields() {
+    bool isValid = true;
+
     setState(() {
       errorMessages['email'] = emailController.text.isEmpty
           ? 'El correo electrónico es obligatorio.'
           : null;
+
       errorMessages['name'] =
           nameController.text.isEmpty ? 'El nombre es obligatorio.' : null;
+
       errorMessages['lastName'] = lastNameController.text.isEmpty
           ? 'Los apellidos son obligatorios.'
           : null;
+
       errorMessages['password'] = passwordController.text.isEmpty
           ? 'La contraseña es obligatoria.'
           : null;
+
       errorMessages['confirmPassword'] = confirmPasswordController.text.isEmpty
           ? 'Debes repetir la contraseña.'
           : null;
+
+      if (selectedRole == 'teacher') {
+        if (teacherCodeController.text.isEmpty) {
+          errorMessages['teacherCode'] =
+              'El código de profesor es obligatorio.';
+          isValid = false;
+        } else if (teacherCodeController.text != validteacherCode) {
+          errorMessages['teacherCode'] = 'Código de profesor incorrecto.';
+          isValid = false;
+        } else {
+          errorMessages['teacherCode'] = null;
+        }
+      } else {
+        errorMessages['teacherCode'] = null;
+      }
+
+      if (errorMessages.values.any((message) => message != null)) {
+        isValid = false;
+      }
     });
+
+    return isValid;
   }
 
   @override
@@ -92,6 +127,56 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         : Column(
                             children: [
                               const SizedBox(height: 100),
+                              DropdownButtonFormField<String>(
+                                value: selectedRole,
+                                decoration: InputDecoration(
+                                  labelText: 'Rol',
+                                  prefixIcon: const Icon(Icons.people),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: 'student',
+                                    child: Text('Alumno'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'teacher',
+                                    child: Text('Profesor'),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedRole = value!;
+                                    showteacherCodeField = value == 'teacher';
+                                    if (!showteacherCodeField) {
+                                      teacherCodeController.clear();
+                                      errorMessages['teacherCode'] = null;
+                                    }
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              if (showteacherCodeField) ...[
+                                CustomTextField(
+                                  labelText: 'Código de Profesor',
+                                  icon: Icons.lock,
+                                  controller: teacherCodeController,
+                                  isPasswordField: false,
+                                ),
+                                if (errorMessages['teacherCode'] != null)
+                                  Text(
+                                    errorMessages['teacherCode']!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                const SizedBox(height: 16),
+                              ],
                               CustomTextField(
                                 labelText: 'Correo electrónico',
                                 icon: Icons.email,
@@ -124,6 +209,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 labelText: 'Apellidos',
                                 icon: Icons.person,
                                 controller: lastNameController,
+                                isPasswordField: false,
                               ),
                               if (errorMessages['lastName'] != null)
                                 Text(
@@ -137,7 +223,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
                                 labelText: 'Contraseña',
-                                obscureText: true,
                                 controller: passwordController,
                                 isPasswordField: true,
                               ),
@@ -153,7 +238,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
                                 labelText: 'Repetir Contraseña',
-                                obscureText: true,
                                 controller: confirmPasswordController,
                                 isPasswordField: true,
                               ),
@@ -193,8 +277,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 text: "Registrarse",
                 backgroundColor: const Color(0xFF8DC324),
                 onPressed: () async {
-                  validateFields();
-                  if (errorMessages.values.any((message) => message != null)) {
+                  if (!validateFields()) {
                     return;
                   }
 
@@ -214,22 +297,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           password: passwordController.text,
                           name: nameController.text,
                           surname: lastNameController.text,
+                          role: selectedRole,
                         );
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Registrado con éxito')),
                     );
 
-                    // Limpia los controladores
                     emailController.clear();
                     passwordController.clear();
                     nameController.clear();
                     lastNameController.clear();
+                    teacherCodeController.clear();
 
-                    // Navega a la ruta principal
                     context.push('/');
                   } catch (e) {
-                    throw Exception(e);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${e.toString()}')),
+                    );
                   }
                 },
               ),

@@ -5,8 +5,8 @@ class StudentRepository {
   final StudentService datasource;
   StudentRepository(this.datasource);
 
-  Future<User> saveStudent(User student, String password) {
-    return datasource.saveStudent(student, password);
+  Future<User> saveStudent(User student, String password, String role) {
+    return datasource.saveStudent(student, password, role);
   }
 
   Future<User> authStudent(String email, String password) {

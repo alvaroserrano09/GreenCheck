@@ -46,12 +46,11 @@ class _UserHomeScreenState extends ConsumerState<UserHomeScreen> {
 
   Future<void> _signOut() async {
     try {
-      print("Cerrando sesión...");
       await widget.googleService.signOut();
 
       await ref.read(studentProvider.notifier).logoutStudent();
       if (!mounted) return;
-      context.go('/'); // Redirige a la pantalla de inicio
+      context.go('/');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -65,9 +64,7 @@ class _UserHomeScreenState extends ConsumerState<UserHomeScreen> {
   }
 
   double buttonTopPosition(int buttonNumber) {
-    return isTeacher
-        ? screenHeight * (0.55 + (buttonNumber - 1) * 0.2)
-        : screenHeight * (0.55 + (buttonNumber - 1) * 0.13);
+    return screenHeight * (0.55 + (buttonNumber - 1) * 0.2);
   }
 
   Positioned _buildButton(int position, String text, VoidCallback onPressed) {
@@ -156,11 +153,9 @@ class _UserHomeScreenState extends ConsumerState<UserHomeScreen> {
                               ),
                             ),
                             if (!isTeacher) ...[
-                              _buildButton(1, 'Realizar Últimos Tests',
-                                  () => context.push("/")),
-                              _buildButton(2, 'Ver Últimos Resultados',
+                              _buildButton(1, 'Ver Últimos Resultados',
                                   () => context.push("/home/results-screen")),
-                              _buildButton(3, 'Cursos favoritos',
+                              _buildButton(2, 'Cursos favoritos',
                                   () => context.push("/home/favorites-screen")),
                             ] else ...[
                               _buildButton(

@@ -82,7 +82,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
                                 labelText: 'Contraseña',
-                                obscureText: true,
                                 isPasswordField: true,
                                 controller: passwordController,
                               ),

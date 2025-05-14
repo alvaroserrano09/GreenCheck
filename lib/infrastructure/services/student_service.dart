@@ -9,23 +9,43 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final SupabaseClient supabase = Supabase.instance.client;
 
 class StudentService {
-  Future<user.User> saveStudent(user.User student, password) async {
+  Future<user.User> saveStudent(
+      user.User student, String password, String role) async {
     try {
-      final studentDatabase = await supabase
-          .from("Alumno")
-          .insert(
-            UserMapper.toEntity(student).toJsonStudent(),
-          )
-          .select();
-      final studentEntity = SupabaseStudent.fromJson(studentDatabase[0]);
-      final studentSaved = UserMapper.toDomainStudent(studentEntity);
-      if (password != "") {
+      final userExists = await supabase
+          .from(role == "student" ? "Alumno" : "Profesor")
+          .select()
+          .eq('email', student.email)
+          .maybeSingle();
+
+      if (userExists != null) {
+        throw Exception("El usuario ya existe");
+      }
+
+      if (password.isNotEmpty) {
         await Supabase.instance.client.auth.signUp(
           email: student.email,
           password: password,
         );
       }
-      return studentSaved;
+
+      final newUser = user.User.create(
+        email: student.email,
+        name: student.name,
+        surname: student.surname,
+      );
+      final response = await supabase
+          .from(role == "student" ? "Alumno" : "Profesor")
+          .insert(UserMapper.toEntity(newUser).toJsonStudent())
+          .select()
+          .single();
+      if (role == "student") {
+        final studentEntity = SupabaseStudent.fromJson(response);
+        return UserMapper.toDomainStudent(studentEntity);
+      } else {
+        final teacherEntity = SupabaseTeacher.fromJson(response);
+        return UserMapper.toDomainTeacher(teacherEntity);
+      }
     } catch (e) {
       rethrow;
     }
