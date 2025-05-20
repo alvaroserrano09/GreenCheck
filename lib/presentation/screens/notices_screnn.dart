@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/presentation/providers/notice_provider.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
 
@@ -31,7 +31,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
       setState(() => isLoading = true);
     }
     try {
-      final student = ref.read(studentProvider).student;
+      final student = ref.read(userProvider).student;
 
       await ref.read(noticeProvider.notifier).fetchNotices(student!.id);
       if (mounted) {
@@ -49,7 +49,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final student = studentState.student;
     final role = student?.role;
     final isTeacher = role == 'profesor';
@@ -123,7 +123,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
   Widget _buildNoticeCard({
     required String heading,
     required String content,
-    required String courseName, // Nuevo parámetro para el nombre del curso
+    required String courseName,
   }) {
     return Card(
       elevation: 4,

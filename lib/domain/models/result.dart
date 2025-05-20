@@ -34,13 +34,4 @@ class Result {
       testName: testName,
     );
   }
-  factory Result.fromJson(Map<String, dynamic> json) {
-    return Result(
-      id: json['id'],
-      dateFinished: DateTime.parse(json['fecha_realizacion']),
-      score: json['puntuacion'],
-      idStudent: json['id_alumno'],
-      idTest: json['id_test'],
-    );
-  }
 }

@@ -66,13 +66,13 @@ class UserState {
   factory UserState.initial() => UserState(isLoading: false);
 }
 
-class StudentNotifier extends StateNotifier<UserState> {
+class UserNotifier extends StateNotifier<UserState> {
   final SaveStudentUseCase saveStudentUseCase;
   final AuthenticateStudentUseCase authenticateStudentUseCase;
   final UpdatePersonalInfoUseCase updatePersonalInfoUseCase;
   final SaveStudentGoogleUseCase saveStudentGoogleUseCase;
 
-  StudentNotifier(
+  UserNotifier(
     this.saveStudentUseCase,
     this.authenticateStudentUseCase,
     this.updatePersonalInfoUseCase,
@@ -120,7 +120,7 @@ class StudentNotifier extends StateNotifier<UserState> {
     await prefs.remove('user_role');
   }
 
-  Future<void> registerStudent({
+  Future<void> registerUser({
     required String email,
     required String password,
     required String name,
@@ -220,8 +220,8 @@ class StudentNotifier extends StateNotifier<UserState> {
   }
 }
 
-final studentProvider = StateNotifierProvider<StudentNotifier, UserState>(
-  (ref) => StudentNotifier(
+final userProvider = StateNotifierProvider<UserNotifier, UserState>(
+  (ref) => UserNotifier(
     ref.watch(saveStudentUseCaseProvider),
     ref.watch(authenticatUseCaseProvider),
     ref.watch(updatePersonalInfoUseCaseProvider),

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/result.dart';
 import 'package:green_check/presentation/providers/results_provider.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
 
@@ -23,7 +23,7 @@ class _LastsResultsTestsScreenState
   void initState() {
     super.initState();
     Future.microtask(() {
-      final studentState = ref.read(studentProvider);
+      final studentState = ref.read(userProvider);
       if (studentState.student?.id != null) {
         ref
             .read(resultProvider.notifier)

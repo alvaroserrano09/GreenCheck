@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/screens/add_notice_screen.dart';
 import 'package:green_check/presentation/screens/admin/add_course_screen.dart';
 import 'package:green_check/presentation/screens/course_screen.dart';
@@ -26,7 +26,7 @@ Future<bool> _checkIfUserIsAuthenticated(ProviderContainer container) async {
   final auth = Supabase.instance.client.auth;
   if (auth.currentUser != null) {
     final user = auth.currentUser!;
-    await container.read(studentProvider.notifier).signInWithGoogle(user);
+    await container.read(userProvider.notifier).signInWithGoogle(user);
     return true;
   }
   return false;

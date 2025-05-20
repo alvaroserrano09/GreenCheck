@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/infrastructure/services/google_service.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/custom_button_user.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
 
 class UserHomeScreen extends ConsumerStatefulWidget {
   UserHomeScreen({super.key});
@@ -48,7 +48,7 @@ class _UserHomeScreenState extends ConsumerState<UserHomeScreen> {
     try {
       await widget.googleService.signOut();
 
-      await ref.read(studentProvider.notifier).logoutStudent();
+      await ref.read(userProvider.notifier).logoutStudent();
       if (!mounted) return;
       context.go('/');
     } catch (e) {
@@ -81,7 +81,7 @@ class _UserHomeScreenState extends ConsumerState<UserHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final student = studentState.student;
     final userName = student?.name ?? "Usuario";
     isTeacher = student?.role == 'profesor';

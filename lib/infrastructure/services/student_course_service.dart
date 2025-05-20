@@ -1,5 +1,5 @@
 import 'package:green_check/domain/models/course.dart';
-import 'package:green_check/domain/models/studentCourse.dart';
+import 'package:green_check/domain/models/student_course.dart';
 import 'package:green_check/infrastructure/entities/supabase_course.dart';
 import 'package:green_check/infrastructure/entities/supabase_student.dart';
 import 'package:green_check/infrastructure/mappers/course_mapper.dart';
@@ -72,7 +72,7 @@ class StudentCourseService {
           .update({'favorito': isFavorite})
           .eq('id_alumno', studentId)
           .eq('id_curso', courseId)
-          .select(); // <-- Esto fuerza a Supabase a devolver los datos actualizados
+          .select();
     } catch (e) {
       throw Exception(
           'No se pudo actualizar el estado de favorito: ${e.toString()}');

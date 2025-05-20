@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
@@ -59,7 +59,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final User? student = studentState.student;
 
     return Scaffold(

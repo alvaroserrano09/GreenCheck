@@ -5,7 +5,7 @@ import 'package:green_check/domain/models/course.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/notice_provider.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
@@ -41,7 +41,7 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
   }
 
   Future<void> _loadTeacherCourses() async {
-    final student = ref.read(studentProvider).student;
+    final student = ref.read(userProvider).student;
     if (student != null && student.role == 'profesor') {
       setState(() => _isLoadingCourses = true);
       try {
@@ -83,7 +83,7 @@ class _AddNoticeScreenState extends ConsumerState<AddNoticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final User? student = studentState.student;
     final courseState = ref.watch(courseProvider);
     final courses = courseState.courses;

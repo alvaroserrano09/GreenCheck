@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
@@ -105,7 +105,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = ref.watch(studentProvider);
+    final provider = ref.watch(userProvider);
     final isLoading = provider.isLoading;
     final errorMessage = provider.errorMessage;
 
@@ -292,7 +292,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   }
 
                   try {
-                    await ref.read(studentProvider.notifier).registerStudent(
+                    await ref.read(userProvider.notifier).registerUser(
                           email: emailController.text,
                           password: passwordController.text,
                           name: nameController.text,

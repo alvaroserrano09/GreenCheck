@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 
 import 'package:green_check/presentation/widgets/custom_button.dart';
@@ -109,7 +109,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       }
 
                       try {
-                        await ref.read(studentProvider.notifier).loginStudent(
+                        await ref.read(userProvider.notifier).loginStudent(
                               email: emailController.text,
                               password: passwordController.text,
                             );

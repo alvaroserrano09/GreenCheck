@@ -1,4 +1,4 @@
-import 'package:green_check/domain/models/notices.dart';
+import 'package:green_check/domain/models/notice.dart';
 import 'package:green_check/infrastructure/repositories/notice_repository.dart';
 
 class SaveNoticeUseCase {

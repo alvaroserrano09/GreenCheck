@@ -1,4 +1,4 @@
-import 'package:green_check/domain/models/notices.dart';
+import 'package:green_check/domain/models/notice.dart';
 import 'package:green_check/infrastructure/entities/supabase_notice.dart';
 
 class NoticeMapper {

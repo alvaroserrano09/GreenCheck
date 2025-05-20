@@ -29,7 +29,13 @@ class ResultService {
           .eq('id_alumno', studentId)
           .order('fecha_realizacion', ascending: false);
 
-      return (response as List).map((json) => Result.fromJson(json)).toList();
+      final resultSupabase = (response as List)
+          .map((json) => SupabaseResult.fromJson(json))
+          .toList();
+      final results = resultSupabase.map((result) {
+        return ResultMapper.toDomain(result);
+      }).toList();
+      return results;
     } catch (e) {
       rethrow;
     }

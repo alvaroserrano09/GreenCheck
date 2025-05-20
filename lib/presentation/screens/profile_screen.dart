@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/user.dart' as user;
 import 'package:green_check/infrastructure/services/google_service.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 import 'package:green_check/presentation/widgets/custom_text_field.dart';
@@ -38,11 +38,11 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
-    final student = ref.read(studentProvider).student;
+    final student = ref.read(userProvider).student;
     if (student == null) return;
 
     try {
-      await ref.read(studentProvider.notifier).updatePersonalInfo(
+      await ref.read(userProvider.notifier).updatePersonalInfo(
             email: student.email,
             name: nameController.text.isNotEmpty
                 ? nameController.text
@@ -99,7 +99,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
 
     try {
       await widget.googleService.signOut();
-      ref.read(studentProvider.notifier).logoutStudent();
+      ref.read(userProvider.notifier).logoutStudent();
       if (!mounted) return;
       context.go('/');
     } catch (e) {
@@ -115,7 +115,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final user.User? student = studentState.student;
     final isLoading = studentState.isLoading;
 

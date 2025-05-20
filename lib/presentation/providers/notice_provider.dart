@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:green_check/domain/models/notices.dart';
+import 'package:green_check/domain/models/notice.dart';
 import 'package:green_check/domain/usecases/get_courses_student_use_case.dart';
 import 'package:green_check/domain/usecases/get_courses_teacher_use_case.dart';
 import 'package:green_check/domain/usecases/get_notices_use_case.dart';
@@ -94,15 +94,15 @@ class NoticeState {
 }
 
 class NoticeNotifier extends StateNotifier<NoticeState> {
-  final GetNoticesUseCase getNotices;
+  final GetNoticesUseCase getNoticesUseCase;
   final SaveNoticeUseCase saveNoticeUseCase;
-  NoticeNotifier(this.getNotices, this.saveNoticeUseCase)
+  NoticeNotifier(this.getNoticesUseCase, this.saveNoticeUseCase)
       : super(NoticeState.initial());
 
   Future<void> fetchNotices(String idStudent) async {
     state = state.copyWith(isLoading: true);
     try {
-      final notices = await getNotices.execute(idStudent);
+      final notices = await getNoticesUseCase.execute(idStudent);
       state = state.copyWith(isLoading: false, notices: notices);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());

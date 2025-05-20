@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/course_card.dart';
 import 'package:green_check/presentation/widgets/toolbar.dart';
@@ -26,7 +26,7 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
 
   void _loadCourses() {
     Future.microtask(() {
-      final studentState = ref.read(studentProvider);
+      final studentState = ref.read(userProvider);
       final User? student = studentState.student;
       if (student != null) {
         if (student.role == 'alumno') {
@@ -72,7 +72,7 @@ class _CourseScreenState extends ConsumerState<CoursesScreen> {
   @override
   Widget build(BuildContext context) {
     final courseState = ref.watch(courseProvider);
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final bool isProfessor = studentState.student?.role == 'profesor';
 
     return Scaffold(

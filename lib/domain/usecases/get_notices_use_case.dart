@@ -1,5 +1,5 @@
 import 'package:green_check/domain/models/course.dart';
-import 'package:green_check/domain/models/notices.dart';
+import 'package:green_check/domain/models/notice.dart';
 import 'package:green_check/domain/usecases/get_courses_student_use_case.dart';
 import 'package:green_check/domain/usecases/get_courses_teacher_use_case.dart';
 import 'package:green_check/infrastructure/repositories/notice_repository.dart';

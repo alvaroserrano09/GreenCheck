@@ -8,20 +8,17 @@ class Question {
   final String title;
   final List<Answer> answers;
   final List<String>? correctAnswers;
-  final String? feedback;
 
   Question({
     required this.id,
     required this.title,
     required this.answers,
     this.correctAnswers,
-    this.feedback,
   });
   factory Question.create({
     required String title,
     required List<Answer> answers,
     List<String>? correctAnswers,
-    String? feedback,
   }) {
     final id = const Uuid().v4();
     return Question(
@@ -29,7 +26,6 @@ class Question {
       title: title,
       answers: answers,
       correctAnswers: correctAnswers,
-      feedback: feedback,
     );
   }
 
@@ -45,16 +41,6 @@ class Question {
           .map((e) => Answer.fromJson(e as Map<String, dynamic>))
           .toList(),
       correctAnswers: List<String>.from(json['respuestas_correctas']),
-      feedback: json['feedback_general'] as String?,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'pregunta': title,
-      'respuestas': answers.map((a) => a.toJson()).toList(),
-      'respuestas_correctas': correctAnswers,
-      if (feedback != null) 'feedback_general': feedback,
-    };
   }
 }

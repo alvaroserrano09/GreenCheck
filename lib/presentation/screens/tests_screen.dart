@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/test.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
@@ -148,7 +148,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
   @override
   Widget build(BuildContext context) {
     final testState = ref.watch(testProvider);
-    final studentState = ref.watch(studentProvider);
+    final studentState = ref.watch(userProvider);
     final bool isProfessor = studentState.student?.role == 'profesor';
     return Scaffold(
       body: SafeArea(

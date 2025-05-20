@@ -1,5 +1,5 @@
 import 'package:green_check/domain/models/question.dart';
-import 'package:green_check/domain/models/questionBuilder.dart';
+import 'package:green_check/domain/models/question_builder.dart';
 
 class TestParser {
   List<Question> parse(String content) {

@@ -4,12 +4,13 @@ import 'package:green_check/infrastructure/repositories/student_repository.dart'
 
 class SaveStudentCourseUseCase {
   final StudentCourseRepository studentCourseRepository;
-  final StudentRepository studentRepositoy;
+  final StudentRepository studentRepository;
 
-  SaveStudentCourseUseCase(this.studentCourseRepository, this.studentRepositoy);
+  SaveStudentCourseUseCase(
+      this.studentCourseRepository, this.studentRepository);
 
   Future<User> execute(String idCourse, String email) async {
-    final student = await studentRepositoy.getStudentByEmail(email);
+    final student = await studentRepository.getStudentByEmail(email);
     final response =
         await studentCourseRepository.saveStudent(idCourse, student!.id);
     return response;

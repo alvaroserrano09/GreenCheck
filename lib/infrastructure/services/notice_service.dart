@@ -1,4 +1,4 @@
-import 'package:green_check/domain/models/notices.dart';
+import 'package:green_check/domain/models/notice.dart';
 import 'package:green_check/infrastructure/entities/supabase_notice.dart';
 import 'package:green_check/infrastructure/mappers/notice_mapper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

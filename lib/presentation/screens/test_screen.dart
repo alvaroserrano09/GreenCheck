@@ -6,7 +6,7 @@ import 'package:green_check/domain/models/result.dart';
 import 'package:green_check/domain/models/question.dart';
 import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/results_provider.dart';
-import 'package:green_check/presentation/providers/student_provider.dart';
+import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/custom_button.dart';
 
@@ -271,7 +271,7 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final studentState = ref.read(studentProvider);
+      final studentState = ref.read(userProvider);
       final result = Result.create(
         idTest: widget.testId,
         score: _score,

@@ -52,7 +52,6 @@ class TestService {
           title: question.title,
           answers: question.answers,
           correctAnswers: question.correctAnswers,
-          feedback: question.feedback,
         );
 
         final supabaseQuestion = QuestionMapper.toEntity(createdQuestion);

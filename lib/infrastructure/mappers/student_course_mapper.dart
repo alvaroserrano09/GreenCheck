@@ -1,4 +1,4 @@
-import 'package:green_check/domain/models/studentCourse.dart';
+import 'package:green_check/domain/models/student_course.dart';
 import 'package:green_check/infrastructure/entities/supabase_course_teacher.dart';
 
 class StudentCourseMapper {
