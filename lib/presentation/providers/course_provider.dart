@@ -189,10 +189,10 @@ class CourseNotifier extends StateNotifier<CourseState> {
     }
   }
 
-  Future<void> loadCoursesForStudent(String idTeacher) async {
+  Future<void> loadCoursesForStudent(String idStudent) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final courses = await getCoursesStudentUseCase.execute(idTeacher);
+      final courses = await getCoursesStudentUseCase.execute(idStudent);
 
       if (mounted) {
         state = state.copyWith(isLoading: false, courses: courses);

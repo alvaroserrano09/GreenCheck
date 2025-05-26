@@ -13,7 +13,7 @@ import 'package:green_check/presentation/screens/login_screen.dart';
 import 'package:green_check/presentation/screens/notices_screnn.dart';
 import 'package:green_check/presentation/screens/profile_screen.dart';
 import 'package:green_check/presentation/screens/register_screen.dart';
-import 'package:green_check/presentation/screens/review_test_screen.dart';
+import 'package:green_check/presentation/screens/test_review_screen.dart';
 import 'package:green_check/presentation/screens/students_screen.dart';
 import 'package:green_check/presentation/screens/test_screen.dart';
 import 'package:green_check/presentation/screens/tests_screen.dart';

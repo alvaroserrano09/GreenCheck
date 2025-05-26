@@ -44,7 +44,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['txt', 'pdf', 'doc', 'docx', 'jpg', 'png'],
+        allowedExtensions: ['txt'],
         allowMultiple: false,
       );
 
