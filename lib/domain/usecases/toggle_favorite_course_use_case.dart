@@ -11,7 +11,8 @@ class ToggleFavoriteCourseUseCase {
       await studentCourseRepository.toggleFavorite(
           courseId, isFavorite, idStudent);
     } catch (e) {
-      throw Exception('Error toggling favorite status: $e');
+      throw Exception(
+          'No se pudo actualizar el estado de favorito: ${e.toString()}');
     }
   }
 }

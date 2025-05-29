@@ -83,7 +83,8 @@ class UserNotifier extends StateNotifier<UserState> {
 
   Future<void> _loadUserState() async {
     final prefs = await SharedPreferences.getInstance();
-    final id = prefs.getString('user_id');
+    final idRaw = prefs.get('user_id');
+    final id = idRaw?.toString();
     final email = prefs.getString('user_email');
     final name = prefs.getString('user_name');
     final surname = prefs.getString('user_surname');
