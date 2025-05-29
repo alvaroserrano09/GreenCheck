@@ -32,7 +32,21 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+build/
+android/.gradle/
+android/captures/
+
+# Archivos generados por flutter build (APK, AppBundle, etc.)
+build/
+*.apk
+*.aab
+*.ipa
+
+# Archivos generados tras ejecutar flutter upgrade
+.version
+.packages
+flutter_*.png
+flutter_export_environment.sh
 
 # Symbolication related
 app.*.symbols
