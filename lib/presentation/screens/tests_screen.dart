@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:green_check/domain/models/test.dart';
+import 'package:green_check/presentation/providers/course_provider.dart';
 import 'package:green_check/presentation/providers/user_provider.dart';
 import 'package:green_check/presentation/providers/test_provider.dart';
 import 'package:green_check/presentation/widgets/background.dart';
@@ -149,6 +150,7 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
   Widget build(BuildContext context) {
     final testState = ref.watch(testProvider);
     final studentState = ref.watch(userProvider);
+    final courseState = ref.watch(courseProvider);
     final bool isProfessor = studentState.student?.role == 'profesor';
     return Scaffold(
       body: SafeArea(
@@ -170,7 +172,15 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
                             style: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
+                          AutoSizeText(
+                            courseState.course?.name ?? 'Cargando...',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 20),
                           if (testState.isLoading)
                             const Center(child: CircularProgressIndicator()),
                           if (testState.errorMessage != null)

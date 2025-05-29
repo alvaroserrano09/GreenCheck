@@ -96,7 +96,15 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
                             ),
                             textAlign: TextAlign.start,
                           ),
-                          SizedBox(height: 80),
+                          const SizedBox(height: 16),
+                          AutoSizeText(
+                            courseState.course?.name ?? 'Cargando...',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 20),
                           if (courseState.isLoading)
                             const Center(child: CircularProgressIndicator()),
                           if (courseState.errorMessage != null)
