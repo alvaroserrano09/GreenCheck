@@ -22,7 +22,7 @@
 1. Clona este repositorio:
 
    ```bash
-   git clone https://github.com/tuusuario/greencheck.git
+   git clone https://github.com/alvaroserrano09/GreenCheck.git
    cd greencheck
    ```
 
@@ -55,4 +55,23 @@
    flutter run -d chrome --web-port 3000
    ```
 
+5. Generar archivos APK (para Android):
+
+   Si deseas generar archivos `.apk` optimizados por arquitectura:
+
+   ```bash
+   flutter build apk --split-per-abi
+   ```
+
+   Esto generará varios archivos APK en:
+
+   ```
+   build/app/outputs/flutter-apk/
+   ```
+
+   - `app-arm64-v8a-release.apk`
+   - `app-armeabi-v7a-release.apk`
+   - `app-x86_64-release.apk`
+
+   Puedes instalar el que corresponda a la arquitectura de tu dispositivo.
 
