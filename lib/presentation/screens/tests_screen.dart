@@ -26,6 +26,7 @@ class TestsScreen extends ConsumerStatefulWidget {
 class _TestsScreenState extends ConsumerState<TestsScreen> {
   final _titleController = TextEditingController();
   PlatformFile? _selectedFile;
+  bool _isTestsExpanded = true;
 
   @override
   void initState() {
@@ -270,38 +271,49 @@ class _TestsScreenState extends ConsumerState<TestsScreen> {
   }
 
   Widget _buildTestsList(List<Test> tests, dynamic studentState) {
-    return ExpansionTile(
-      title: const Text('Mis Tests',
-          style: TextStyle(fontWeight: FontWeight.bold)),
-      initiallyExpanded: true,
-      children: tests.map((test) {
-        return ListTile(
-          leading: InkWell(
-            borderRadius: BorderRadius.circular(24),
-            onTap: () => _navigateToTest(test),
-            child: IconButton(
-              icon: Icon(Icons.play_arrow, color: Colors.green),
-              onPressed: () => _navigateToTest(test),
+    return Container(
+      decoration: BoxDecoration(
+        border: !_isTestsExpanded ? Border.all(color: Colors.grey) : null,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ExpansionTile(
+        title: const Text('Mis Tests',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        initiallyExpanded: _isTestsExpanded,
+        onExpansionChanged: (expanded) {
+          setState(() {
+            _isTestsExpanded = expanded;
+          });
+        },
+        children: tests.map((test) {
+          return ListTile(
+            leading: InkWell(
+              borderRadius: BorderRadius.circular(24),
+              onTap: () => _navigateToTest(test),
+              child: IconButton(
+                icon: Icon(Icons.play_arrow, color: Colors.green),
+                onPressed: () => _navigateToTest(test),
+              ),
             ),
-          ),
-          trailing: studentState.student?.role == "profesor"
-              ? IconButton(
-                  icon: const Icon(Icons.remove_circle_outline,
-                      color: Colors.red),
-                  onPressed: () async {
-                    await _showDeleteConfirmation(test);
-                  },
-                )
-              : null,
-          title: InkWell(
-            onTap: () => _navigateToTest(test),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text(test.title),
+            trailing: studentState.student?.role == "profesor"
+                ? IconButton(
+                    icon: const Icon(Icons.remove_circle_outline,
+                        color: Colors.red),
+                    onPressed: () async {
+                      await _showDeleteConfirmation(test);
+                    },
+                  )
+                : null,
+            title: InkWell(
+              onTap: () => _navigateToTest(test),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text(test.title),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 

@@ -88,6 +88,12 @@ class StudentService {
       }
 
       throw Exception("Usuario no encontrado como alumno ni como profesor");
+    } on AuthApiException catch (e) {
+      if (e.code == 'invalid_credentials') {
+        throw Exception(
+            "Credenciales inválidas. Por favor verifica tu correo y contraseña.");
+      }
+      rethrow;
     } catch (e) {
       rethrow;
     }

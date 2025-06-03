@@ -32,7 +32,7 @@ class Toolbar extends StatelessWidget {
             label: 'Perfil',
           ),
         ],
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.white70,
         unselectedItemColor: Colors.white70,
         iconSize: 30,
         currentIndex: 0,

@@ -18,6 +18,7 @@ class StudentsScreen extends ConsumerStatefulWidget {
 }
 
 class _StudentsScreenState extends ConsumerState<StudentsScreen> {
+  bool _isStudentsExpanded = true;
   @override
   void initState() {
     super.initState();
@@ -131,23 +132,34 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
   }
 
   Widget _buildStudentsList(List<User> students) {
-    return ExpansionTile(
-      title: const Text('Mis Alumnos',
-          style: TextStyle(fontWeight: FontWeight.bold)),
-      initiallyExpanded: true,
-      children: students
-          .map((student) => ListTile(
-                trailing: IconButton(
-                  icon: const Icon(Icons.remove_circle_outline,
-                      color: Colors.red),
-                  onPressed: () async {
-                    await _showDeleteConfirmation(student);
-                  },
-                ),
-                title: Text('${student.name} ${student.surname}'),
-                onTap: null,
-              ))
-          .toList(),
+    return Container(
+      decoration: BoxDecoration(
+        border: !_isStudentsExpanded ? Border.all(color: Colors.grey) : null,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ExpansionTile(
+        title: const Text('Mis Alumnos',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        initiallyExpanded: _isStudentsExpanded,
+        onExpansionChanged: (expanded) {
+          setState(() {
+            _isStudentsExpanded = expanded;
+          });
+        },
+        children: students
+            .map((student) => ListTile(
+                  trailing: IconButton(
+                    icon: const Icon(Icons.remove_circle_outline,
+                        color: Colors.red),
+                    onPressed: () async {
+                      await _showDeleteConfirmation(student);
+                    },
+                  ),
+                  title: Text('${student.name} ${student.surname}'),
+                  onTap: null,
+                ))
+            .toList(),
+      ),
     );
   }
 

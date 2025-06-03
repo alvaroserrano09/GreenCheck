@@ -1,51 +1,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:green_check/domain/usecases/save_student_google_use_case.dart';
-import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
-import 'package:green_check/infrastructure/services/teacher_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:green_check/domain/models/user.dart';
 import 'package:green_check/domain/usecases/authenticate_student_use_case.dart';
 import 'package:green_check/domain/usecases/save_student_use_case.dart';
 import 'package:green_check/domain/usecases/update_personal_info_use_case.dart';
+import 'package:green_check/domain/usecases/save_student_google_use_case.dart';
 import 'package:green_check/infrastructure/repositories/student_repository.dart';
 import 'package:green_check/infrastructure/services/student_service.dart';
+import 'package:green_check/infrastructure/repositories/teacher_repository.dart';
+import 'package:green_check/infrastructure/services/teacher_service.dart';
 
-final studentRepositoryProvider = Provider<StudentRepository>((ref) {
-  return StudentRepository(StudentService());
-});
-final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
-  return TeacherRepository(TeacherService());
-});
+final studentRepositoryProvider =
+    Provider((ref) => StudentRepository(StudentService()));
+final teacherRepositoryProvider =
+    Provider((ref) => TeacherRepository(TeacherService()));
 
-final authenticatUseCaseProvider = Provider<AuthenticateStudentUseCase>((ref) {
-  final studentRepository = ref.watch(studentRepositoryProvider);
-  return AuthenticateStudentUseCase(studentRepository);
-});
+final authenticateUseCaseProvider = Provider(
+    (ref) => AuthenticateStudentUseCase(ref.watch(studentRepositoryProvider)));
 
-final saveStudentUseCaseProvider = Provider<SaveStudentUseCase>((ref) {
-  final studentRepository = ref.watch(studentRepositoryProvider);
-  return SaveStudentUseCase(studentRepository);
-});
+final saveStudentUseCaseProvider =
+    Provider((ref) => SaveStudentUseCase(ref.watch(studentRepositoryProvider)));
 
 final updatePersonalInfoUseCaseProvider =
-    Provider<UpdatePersonalInfoUseCase>((ref) {
-  final studentRepository = ref.watch(studentRepositoryProvider);
-  return UpdatePersonalInfoUseCase(
-      studentRepository, ref.watch(teacherRepositoryProvider));
-});
-final saveStudentGoogleUseCaseProvider =
-    Provider<SaveStudentGoogleUseCase>((ref) {
-  final studentRepository = ref.watch(studentRepositoryProvider);
-  return SaveStudentGoogleUseCase(
-      studentRepository, ref.watch(teacherRepositoryProvider));
-});
+    Provider((ref) => UpdatePersonalInfoUseCase(
+          ref.watch(studentRepositoryProvider),
+          ref.watch(teacherRepositoryProvider),
+        ));
 
+final saveStudentGoogleUseCaseProvider =
+    Provider((ref) => SaveStudentGoogleUseCase(
+          ref.watch(studentRepositoryProvider),
+          ref.watch(teacherRepositoryProvider),
+        ));
+
+// User State
 class UserState {
   final bool isLoading;
   final String? errorMessage;
   final User? student;
 
-  UserState({
+  const UserState({
     required this.isLoading,
     this.errorMessage,
     this.student,
@@ -58,12 +52,12 @@ class UserState {
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage,
       student: student ?? this.student,
     );
   }
 
-  factory UserState.initial() => UserState(isLoading: false);
+  factory UserState.initial() => const UserState(isLoading: false);
 }
 
 class UserNotifier extends StateNotifier<UserState> {
@@ -83,8 +77,7 @@ class UserNotifier extends StateNotifier<UserState> {
 
   Future<void> _loadUserState() async {
     final prefs = await SharedPreferences.getInstance();
-    final idRaw = prefs.get('user_id');
-    final id = idRaw?.toString();
+    final id = prefs.getString('user_id');
     final email = prefs.getString('user_email');
     final name = prefs.getString('user_name');
     final surname = prefs.getString('user_surname');
@@ -93,11 +86,11 @@ class UserNotifier extends StateNotifier<UserState> {
     if (email != null && name != null && surname != null && role != null) {
       state = state.copyWith(
         student: User(
+          id: id ?? '',
           email: email,
           name: name,
           surname: surname,
           role: role,
-          id: id ?? '',
         ),
       );
     }
@@ -129,23 +122,16 @@ class UserNotifier extends StateNotifier<UserState> {
     required String role,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
-      final response = await saveStudentUseCase.execute(
-          User.create(
-            email: email,
-            name: name,
-            surname: surname,
-          ),
-          password,
-          role);
-
+      final user = User.create(email: email, name: name, surname: surname);
+      final response = await saveStudentUseCase.execute(user, password, role);
       await _saveUserState(response);
-
-      state = state.copyWith(isLoading: false, student: response);
+      state = state.copyWith(student: response);
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
-      throw Exception(e);
+      state = state.copyWith(errorMessage: e.toString());
+      rethrow;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -154,24 +140,23 @@ class UserNotifier extends StateNotifier<UserState> {
     required String password,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
       final response = await authenticateStudentUseCase.execute(
         email: email,
         password: password,
       );
       await _saveUserState(response);
-
-      state = state.copyWith(isLoading: false, student: response);
+      state = state.copyWith(student: response);
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
-      throw Exception(e);
+      state = state.copyWith(errorMessage: e.toString());
+      rethrow;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> logoutStudent() async {
     await _clearUserState();
-
     state = state.copyWith(student: null);
   }
 
@@ -182,7 +167,6 @@ class UserNotifier extends StateNotifier<UserState> {
     required String role,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
       final response = await updatePersonalInfoUseCase.execute(
         email,
@@ -190,42 +174,47 @@ class UserNotifier extends StateNotifier<UserState> {
         surname,
         role,
       );
-
       await _saveUserState(response);
-
-      state = state.copyWith(isLoading: false, student: response);
+      state = state.copyWith(student: response);
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
-      throw Exception(e);
+      state = state.copyWith(errorMessage: e.toString());
+      rethrow;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
-  Future<void> signInWithGoogle(currentUser) async {
+  Future<void> signInWithGoogle(dynamic currentUser) async {
     try {
       if (currentUser != null) {
         final fullName =
-            currentUser.userMetadata?['full_name']?.split(' ') ?? ['', ''];
+            currentUser.userMetadata?['full_name']?.split(' ') ?? [];
+        final name = fullName.isNotEmpty ? fullName.first : '';
+        final surname =
+            fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
         final user = User.create(
           email: currentUser.email!,
-          name: fullName.first,
-          surname: fullName.length > 1 ? fullName.sublist(1).join(' ') : '',
+          name: name,
+          surname: surname,
         );
-
         final response = await saveStudentGoogleUseCase.execute(user);
-
-        state = state.copyWith(isLoading: false, student: response);
+        await _saveUserState(response);
+        state = state.copyWith(student: response);
       }
     } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
       rethrow;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 }
 
-final userProvider = StateNotifierProvider<UserNotifier, UserState>(
-  (ref) => UserNotifier(
+final userProvider = StateNotifierProvider<UserNotifier, UserState>((ref) {
+  return UserNotifier(
     ref.watch(saveStudentUseCaseProvider),
-    ref.watch(authenticatUseCaseProvider),
+    ref.watch(authenticateUseCaseProvider),
     ref.watch(updatePersonalInfoUseCaseProvider),
     ref.watch(saveStudentGoogleUseCaseProvider),
-  ),
-);
+  );
+});

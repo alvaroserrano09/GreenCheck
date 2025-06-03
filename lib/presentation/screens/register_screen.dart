@@ -78,7 +78,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
       errorMessages['confirmPassword'] = confirmPasswordController.text.isEmpty
           ? 'Debes repetir la contraseña.'
-          : null;
+          : confirmPasswordController.text != passwordController.text
+              ? 'Las contraseñas no coinciden.'
+              : null;
 
       if (selectedRole == 'teacher') {
         if (teacherCodeController.text.isEmpty) {
@@ -101,6 +103,43 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     });
 
     return isValid;
+  }
+
+  Future<void> _handleRegister() async {
+    FocusScope.of(context).unfocus();
+
+    if (!validateFields()) return;
+
+    try {
+      await ref.read(userProvider.notifier).registerUser(
+            email: emailController.text,
+            password: passwordController.text,
+            name: nameController.text,
+            surname: lastNameController.text,
+            role: selectedRole,
+          );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registrado con éxito')),
+      );
+
+      emailController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+      nameController.clear();
+      lastNameController.clear();
+      teacherCodeController.clear();
+
+      context.push('/');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error: ${e is Exception ? e.toString().replaceFirst('Exception: ', '') : 'Error inesperado.'}',
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -167,14 +206,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   controller: teacherCodeController,
                                   isPasswordField: false,
                                 ),
-                                if (errorMessages['teacherCode'] != null)
-                                  Text(
-                                    errorMessages['teacherCode']!,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12,
-                                    ),
-                                  ),
+                                ErrorText(errorMessages['teacherCode']),
                                 const SizedBox(height: 16),
                               ],
                               CustomTextField(
@@ -182,28 +214,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 icon: Icons.email,
                                 controller: emailController,
                               ),
-                              if (errorMessages['email'] != null)
-                                Text(
-                                  errorMessages['email']!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                              ErrorText(errorMessages['email']),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 labelText: 'Nombre',
                                 icon: Icons.person,
                                 controller: nameController,
                               ),
-                              if (errorMessages['name'] != null)
-                                Text(
-                                  errorMessages['name']!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                              ErrorText(errorMessages['name']),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 labelText: 'Apellidos',
@@ -211,14 +229,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 controller: lastNameController,
                                 isPasswordField: false,
                               ),
-                              if (errorMessages['lastName'] != null)
-                                Text(
-                                  errorMessages['lastName']!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                              ErrorText(errorMessages['lastName']),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
@@ -226,14 +237,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 controller: passwordController,
                                 isPasswordField: true,
                               ),
-                              if (errorMessages['password'] != null)
-                                Text(
-                                  errorMessages['password']!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                              ErrorText(errorMessages['password']),
                               const SizedBox(height: 16),
                               CustomTextField(
                                 icon: Icons.remove_red_eye,
@@ -241,14 +245,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 controller: confirmPasswordController,
                                 isPasswordField: true,
                               ),
-                              if (errorMessages['confirmPassword'] != null)
-                                Text(
-                                  errorMessages['confirmPassword']!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                              ErrorText(errorMessages['confirmPassword']),
                               if (errorMessage != null)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16),
@@ -276,48 +273,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             : CustomButton(
                 text: "Registrarse",
                 backgroundColor: const Color(0xFF8DC324),
-                onPressed: () async {
-                  if (!validateFields()) {
-                    return;
-                  }
-
-                  if (passwordController.text !=
-                      confirmPasswordController.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Las contraseñas no coinciden'),
-                      ),
-                    );
-                    return;
-                  }
-
-                  try {
-                    await ref.read(userProvider.notifier).registerUser(
-                          email: emailController.text,
-                          password: passwordController.text,
-                          name: nameController.text,
-                          surname: lastNameController.text,
-                          role: selectedRole,
-                        );
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Registrado con éxito')),
-                    );
-
-                    emailController.clear();
-                    passwordController.clear();
-                    nameController.clear();
-                    lastNameController.clear();
-                    teacherCodeController.clear();
-
-                    context.push('/');
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${e.toString()}')),
-                    );
-                  }
-                },
+                onPressed: _handleRegister,
               ),
+      ),
+    );
+  }
+}
+
+class ErrorText extends StatelessWidget {
+  final String? error;
+  const ErrorText(this.error, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (error == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Text(
+        error!,
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 12,
+        ),
       ),
     );
   }
