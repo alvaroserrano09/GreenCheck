@@ -1,4 +1,4 @@
-# GreenCheck 🌱
+# GreenCheck 
 
 **GreenCheck** es una aplicación educativa multiplataforma (Android y Web) desarrollada con Flutter. Está diseñada para facilitar la creación, gestión y resolución de tests por parte de profesores y estudiantes, con un enfoque en la experiencia de usuario y la eficiencia educativa.
 
