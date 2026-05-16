@@ -29,7 +29,12 @@ class TestReviewScreen extends StatelessWidget {
             ),
             Positioned.fill(
               child: Padding(
-                padding: const EdgeInsets.only(top: 90, left: 16, right: 16),
+                padding: EdgeInsets.only(
+                  top: 90,
+                  left: 16,
+                  right: 16,
+                  bottom: MediaQuery.of(context).viewPadding.bottom + 16,
+                ),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [

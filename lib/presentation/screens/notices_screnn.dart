@@ -95,27 +95,21 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> {
                   ),
                 ),
               ),
-            if (isTeacher)
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: FloatingActionButton(
-                    onPressed: () =>
-                        context.push("/home/notices-screen/add-notice-screen"),
-                    backgroundColor: const Color(0xFF8DC324),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),
+      floatingActionButton: isTeacher
+          ? FloatingActionButton(
+              onPressed: () =>
+                  context.push("/home/notices-screen/add-notice-screen"),
+              backgroundColor: const Color(0xFF8DC324),
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: const Toolbar(),
     );
   }

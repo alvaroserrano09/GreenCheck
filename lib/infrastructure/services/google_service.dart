@@ -49,6 +49,7 @@ class GoogleService {
     } else {
       await Supabase.instance.client.auth.signInWithOAuth(
         OAuthProvider.google,
+        redirectTo: Uri.base.origin,
         queryParams: {
           'prompt': 'select_account',
         },

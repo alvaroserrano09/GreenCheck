@@ -29,7 +29,6 @@ void main() {
       verify(mockCourseRepository.saveCourse(testCourse));
       expect(saveCourseUseCase.execute(testCourse), completes);
     });
-
     test('should return the saved course from repository', () async {
       when(mockCourseRepository.saveCourse(testCourse))
           .thenAnswer((_) async => testCourse);

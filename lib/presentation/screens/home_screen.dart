@@ -116,7 +116,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     imagePath: "assets/logoGoogle.png",
                     onPressed: () async {
                       try {
-                        widget.googleServices.nativeGoogleSignIn(context);
+                        await widget.googleServices.nativeGoogleSignIn(context);
                       } catch (e) {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

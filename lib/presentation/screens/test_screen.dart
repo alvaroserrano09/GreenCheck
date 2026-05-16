@@ -105,13 +105,21 @@ class _TestScreenState extends ConsumerState<TestScreen> {
             },
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _isLoading
-              ? _buildLoadingIndicator()
-              : _testCompleted
-                  ? _buildResults(courseState.course!.id)
-                  : _buildQuestion(),
+        body: SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              16,
+              16,
+              MediaQuery.of(context).viewPadding.bottom + 16,
+            ),
+            child: _isLoading
+                ? _buildLoadingIndicator()
+                : _testCompleted
+                    ? _buildResults(courseState.course!.id)
+                    : _buildQuestion(),
+          ),
         ),
       ),
     );
@@ -169,6 +177,10 @@ class _TestScreenState extends ConsumerState<TestScreen> {
 
   Widget _buildQuestion() {
     final currentQuestion = _questions[_currentQuestionIndex];
+    final Answer? selectedAnswer =
+        _selectedAnswers.length > _currentQuestionIndex
+            ? _selectedAnswers[_currentQuestionIndex]
+            : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +195,12 @@ class _TestScreenState extends ConsumerState<TestScreen> {
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 24),
-        ...currentQuestion.answers.map((answer) => _buildAnswerButton(answer)),
+        ...currentQuestion.answers
+            .map((answer) => _buildAnswerButton(answer, selectedAnswer)),
+        if (selectedAnswer != null) ...[
+          const SizedBox(height: 16),
+          _buildAnswerFeedback(selectedAnswer, currentQuestion.answers),
+        ],
         const Spacer(),
         if (_currentQuestionIndex > 0)
           CustomButton(
@@ -203,15 +220,25 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     );
   }
 
-  Widget _buildAnswerButton(Answer answer) {
-    final isSelected = _selectedAnswers.length > _currentQuestionIndex &&
-        _selectedAnswers[_currentQuestionIndex] == answer;
+  Widget _buildAnswerButton(Answer answer, Answer? selectedAnswer) {
+    final bool isSelected = selectedAnswer == answer;
+    final bool answered = selectedAnswer != null;
+    final bool isCorrect = answer.isCorrect;
+    Color? backgroundColor;
+
+    if (answered) {
+      if (isCorrect) {
+        backgroundColor = Colors.green[100];
+      } else if (isSelected) {
+        backgroundColor = Colors.red[100];
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.blue[100] : Colors.white,
+          backgroundColor: backgroundColor ?? Colors.white,
           foregroundColor: Colors.black,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
@@ -220,7 +247,16 @@ class _TestScreenState extends ConsumerState<TestScreen> {
           ),
         ),
         onPressed: () => _selectAnswer(answer),
-        child: Text(answer.text),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: Text(answer.text)),
+            if (answered && isCorrect)
+              const Icon(Icons.check_circle, color: Colors.green),
+            if (answered && isSelected && !isCorrect)
+              const Icon(Icons.cancel, color: Colors.red),
+          ],
+        ),
       ),
     );
   }
@@ -233,6 +269,22 @@ class _TestScreenState extends ConsumerState<TestScreen> {
         _selectedAnswers[_currentQuestionIndex] = answer;
       }
     });
+
+    final bool isCorrect = answer.isCorrect;
+    final String correctAnswerText = _questions[_currentQuestionIndex]
+        .answers
+        .firstWhere((item) => item.isCorrect)
+        .text;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isCorrect
+            ? '¡Respuesta correcta!'
+            : 'Incorrecto. La respuesta correcta es: $correctAnswerText'),
+        backgroundColor: isCorrect ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   void _goToNextQuestion() {
@@ -254,6 +306,32 @@ class _TestScreenState extends ConsumerState<TestScreen> {
 
   void _goToPreviousQuestion() {
     setState(() => _currentQuestionIndex--);
+  }
+
+  Widget _buildAnswerFeedback(Answer selectedAnswer, List<Answer> answers) {
+    final bool isCorrect = selectedAnswer.isCorrect;
+    final String correctAnswerText =
+        answers.firstWhere((answer) => answer.isCorrect).text;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isCorrect ? Colors.green[50] : Colors.red[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isCorrect ? Colors.green : Colors.red),
+      ),
+      child: Text(
+        isCorrect
+            ? '¡Correcto! Has seleccionado la respuesta correcta.'
+            : 'Incorrecto. La respuesta correcta es: $correctAnswerText',
+        style: TextStyle(
+          color: isCorrect ? Colors.green[800] : Colors.red[800],
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
   void _calculateScore() {
